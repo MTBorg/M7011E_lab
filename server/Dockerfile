@@ -1,8 +1,12 @@
 FROM node:13.0.1-alpine
 
-WORKDIR /app
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
 
 COPY . .
+
+RUN npm install
 
 EXPOSE 8080
 
