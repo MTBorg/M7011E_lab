@@ -6,3 +6,5 @@
 |2019-11-04   | 1       | Add linting and code formatting standards using eslint and prettier|
 |2019-11-11   | 2				| Discussed how to split the work and started working on the graphql schema |
 |2019-11-11   | 3				| Fixed automatic restart of simulator and continued working on the graphql schema. Also helped out with the windspeed model.|
+|2019-11-14   | 1				| Worked on git history. |
+|2019-11-14		| 3.5				| Worked on models and graphql api.|
