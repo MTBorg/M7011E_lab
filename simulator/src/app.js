@@ -11,6 +11,8 @@ app.use(
   })
 );
 const port = 8080;
-app.listen(port, () =>
-  console.log(`Express GraphQL Server Now Running On localhost:${port}/graphql`)
-);
+app.listen(port, () => {
+  console.log(
+    `Express GraphQl Server Now Running On localhost:${port}/graphql`
+  );
+});
