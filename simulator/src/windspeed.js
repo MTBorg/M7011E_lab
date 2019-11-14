@@ -3,7 +3,7 @@ const gaussian = require("gaussian");
 // wind config in m/s
 const mean = 5.26;
 const dev = 3.24;
-let variance = dev ^ 2;
+let variance = dev ** 2;
 
 /**
  * Samples a average day wind speed from a Gaussian distribution
@@ -30,3 +30,11 @@ function currWindSpeed(meanWindSpeed) {
   }
   return currWindSpeed;
 }
+
+// let dayWS = meanWindSpeed();
+// console.log("dayWS = ", dayWS);
+
+// for (i = 0; i < 25; i++) {
+//   hourWS = currWindSpeed(dayWS);
+//   console.log("hourWS = ", hourWS);
+// }
