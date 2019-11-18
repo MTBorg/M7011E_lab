@@ -8,3 +8,4 @@
 |2019-11-11   | 3				| Fixed automatic restart of simulator and continued working on the graphql schema. Also helped out with the windspeed model.|
 |2019-11-14   | 1				| Worked on git history. |
 |2019-11-14		| 3.5				| Worked on models and graphql api.|
+|2019-11-18		| 2.5			| Worked on electricity consumption, database and started looking into testing libraries |
