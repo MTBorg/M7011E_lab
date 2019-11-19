@@ -8,6 +8,7 @@ const {
 } = require("graphql");
 const joinMonster = require("join-monster");
 const { getHouseholdConsumption } = require("./consumption");
+const { currWindSpeed } = require("./windspeed");
 const { dbClient } = require("./db_client");
 
 // Database client
@@ -34,7 +35,10 @@ const prosumerType = new GraphQLObjectType({
     },
     currentWindSpeed: {
       type: GraphQLFloat,
-      sqlColumn: "current_wind_speed"
+      sqlColumn: "current_wind_speed",
+      resolve(prosumer) {
+        return currWindSpeed(prosumer.meanDayWindSpeed);
+      }
     },
     currentConsumption: {
       type: GraphQLFloat,
