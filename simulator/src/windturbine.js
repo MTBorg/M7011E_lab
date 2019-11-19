@@ -1,9 +1,9 @@
 // Turbine configs
 const cp = 0.45; // the power coefficent
 const airDensity = 1.25; // [kg/m^2]
-const rotorDiameter = 90; // rotor diameter [m]
-const cutInSpeed = 2; // when the turbine starts producing power [m/s]
-const cutOutSpeed = 25; // when the turbine shuts down to minimize damage [m/s]
+const rotorDiameter = 45; // rotor diameter [m]
+const cutInSpeed = 2; // at what wind speed the turbine starts producing power [m/s]
+const cutOutSpeed = 25; // at what wind speed the turbine shuts down to minimize damages [m/s]
 const ratedOutputPower = 2000; // the turbines maximum power output [kW]
 
 function turbineOutput(windSpeed) {
@@ -25,6 +25,3 @@ function turbineOutput(windSpeed) {
     return 0;
   }
 }
-
-// let power = turbineOutput(26);
-// console.log("power = ", power);
