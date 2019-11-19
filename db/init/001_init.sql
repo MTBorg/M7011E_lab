@@ -7,9 +7,9 @@ ALTER DATABASE gle OWNER TO gle;
 
 CREATE TABLE prosumers (
 	id SERIAL,
-	mean_day_wind_speed BIGINT,
-	current_wind_speed BIGINT,
-	current_consumption BIGINT,
+	mean_day_wind_speed REAL,
+	current_wind_speed REAL,
+	current_consumption REAL,
 	PRIMARY KEY (id)
 );
 ALTER TABLE prosumers OWNER TO gle;
