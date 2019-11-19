@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --watch src/ src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha tests/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -26,11 +26,14 @@
     "pg": "^7.12.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "easygraphql-tester": "^5.1.6",
     "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.1",
+    "mocha": "^6.2.2",
     "nodemon": "^1.19.4",
     "prettier": "^1.18.2"
   }
