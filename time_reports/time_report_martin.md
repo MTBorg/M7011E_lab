@@ -9,3 +9,4 @@
 |2019-11-14   | 1				| Worked on git history. |
 |2019-11-14		| 3.5				| Worked on models and graphql api.|
 |2019-11-18		| 2.5			| Worked on electricity consumption, database and started looking into testing libraries |
+|2019-11-19		| 7			| Implemented testing suite |
