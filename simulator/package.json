@@ -21,7 +21,9 @@
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "gaussian": "^1.1.0",
-    "graphql": "^14.5.8"
+    "graphql": "^14.5.8",
+    "join-monster": "^2.1.0",
+    "pg": "^7.12.1"
   },
   "devDependencies": {
     "eslint": "^6.6.0",
