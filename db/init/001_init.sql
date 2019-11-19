@@ -1,6 +1,7 @@
 CREATE USER gle;
 CREATE DATABASE gle;
 GRANT ALL PRIVILEGES ON DATABASE gle TO gle;
+ALTER DATABASE gle OWNER TO gle;
 
 \c gle
 
@@ -11,3 +12,4 @@ CREATE TABLE prosumers (
 	current_consumption BIGINT,
 	PRIMARY KEY (id)
 );
+ALTER TABLE prosumers OWNER TO gle;
