@@ -32,11 +32,3 @@ function currWindSpeed(meanWindSpeed) {
 }
 
 module.exports = { currWindSpeed, meanWindSpeed };
-
-// let dayWS = meanWindSpeed();
-// console.log("dayWS = ", dayWS);
-
-// for (i = 0; i < 25; i++) {
-//   hourWS = currWindSpeed(dayWS);
-//   console.log("hourWS = ", hourWS);
-// }
