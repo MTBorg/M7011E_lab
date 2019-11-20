@@ -1,3 +1,12 @@
+const { dbClient } = require("./db_client");
+const { randomProsumerConsumption } = require("./consumption.js");
+
+// Create database connection
+const client = dbClient();
+client.connect(error => {
+  if (error) console.error(`Database connection error: ${error}`);
+});
+
 /**
  * Start the simulation.
  *
@@ -41,11 +50,46 @@ function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
     );
     tickCount++;
     time += timeScale / tickRatio;
+    updateProsumers();
     if (tickCount >= tickRatio) {
-      //TODO: Update mean values
+      // TODO: Update mean values
       tickCount = 0;
     }
   }, tickInterval);
+}
+
+function updateProsumers() {
+  client.query(
+    `
+			SELECT id FROM prosumers
+		`,
+    (err, res) => {
+      if (err) {
+        console.error(`Failed to fetch prosumers: ${err}`);
+      } else {
+        res.rows.forEach(prosumer => updateProsumerConsumption(prosumer.id));
+      }
+    }
+  );
+}
+
+/**
+ * Update a prosumer's current consumption.
+ *
+ * @param prosumerId The id of the prosumer to update
+ * */
+function updateProsumerConsumption(prosumerId) {
+  client.query(
+    `
+			Update prosumers SET current_consumption=$1 WHERE id=$2
+		`,
+    [randomProsumerConsumption(), prosumerId],
+    (err, res) => {
+      if (err) {
+        console.error(`Failed to update prosumer: ${err}`);
+      }
+    }
+  );
 }
 
 module.exports = { startSimulation };

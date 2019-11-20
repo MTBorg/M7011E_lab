@@ -36,10 +36,7 @@ const prosumerType = new GraphQLObjectType({
     },
     currentConsumption: {
       type: GraphQLFloat,
-      sqlColumn: "current_consumption",
-      resolve() {
-        return getHouseholdConsumption();
-      }
+      sqlColumn: "current_consumption"
     }
   })
 });
