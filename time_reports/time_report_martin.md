@@ -10,3 +10,6 @@
 |2019-11-14		| 3.5				| Worked on models and graphql api.|
 |2019-11-18		| 2.5			| Worked on electricity consumption, database and started looking into testing libraries |
 |2019-11-19		| 7			| Implemented testing suite |
+|2019-11-19		| 2			| Implemented continous simulation |
+|2019-11-20		| 3			| Worked on querying the database |
+|2019-11-20		| 1.5			| Implemented database pooling and authorization via environemnt variables |
