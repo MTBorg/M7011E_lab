@@ -16,8 +16,8 @@ function turbineOutput(windSpeed) {
         ((Math.PI * rotorDiameter ** 2) / 4)) /
       1000;
 
-    if (power > 2000) {
-      power = 2000;
+    if (power > ratedOutputPower) {
+      power = ratedOutputPower;
     }
 
     return power;
