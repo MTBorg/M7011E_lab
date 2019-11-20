@@ -9,17 +9,11 @@ const {
 const joinMonster = require("join-monster");
 const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
-const { dbClient } = require("./db_client");
-
-// Database client
-const client = dbClient();
-client.connect(error => {
-  if (error) console.error("Database connection error : ", error);
-});
+const { pool } = require("./db.js");
 
 function getProsumers(resolveInfo) {
-  return joinMonster.default(resolveInfo, {}, sql => {
-    return client.query(sql);
+  return joinMonster.default(resolveInfo, {}, async sql => {
+    return pool.query(sql);
   });
 }
 
