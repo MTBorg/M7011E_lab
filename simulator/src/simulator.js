@@ -1,5 +1,6 @@
 const { dbClient } = require("./db_client");
 const { randomProsumerConsumption } = require("./consumption.js");
+const { meanWindSpeed } = require("./windspeed.js");
 
 // Create database connection
 const client = dbClient();
@@ -50,15 +51,16 @@ function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
     );
     tickCount++;
     time += timeScale / tickRatio;
-    updateProsumers();
+    let tickReset = false;
     if (tickCount >= tickRatio) {
-      // TODO: Update mean values
       tickCount = 0;
+      tickReset = true;
     }
+    updateProsumers(tickReset);
   }, tickInterval);
 }
 
-function updateProsumers() {
+function updateProsumers(tickReset) {
   client.query(
     `
 			SELECT id FROM prosumers
@@ -67,7 +69,10 @@ function updateProsumers() {
       if (err) {
         console.error(`Failed to fetch prosumers: ${err}`);
       } else {
-        res.rows.forEach(prosumer => updateProsumerConsumption(prosumer.id));
+        res.rows.forEach(prosumer => {
+          updateProsumerConsumption(prosumer.id);
+          if (tickReset) updateProsumerMeanWindSpeed(prosumer.id);
+        });
       }
     }
   );
@@ -84,6 +89,25 @@ function updateProsumerConsumption(prosumerId) {
 			Update prosumers SET current_consumption=$1 WHERE id=$2
 		`,
     [randomProsumerConsumption(), prosumerId],
+    (err, res) => {
+      if (err) {
+        console.error(`Failed to update prosumer: ${err}`);
+      }
+    }
+  );
+}
+
+/**
+ * Update a prosumers's mean wind speed.
+ *
+ * @param prosumerId The id of the prosumer to update
+ * */
+function updateProsumerMeanWindSpeed(prosumerId) {
+  client.query(
+    `
+			Update prosumers SET mean_day_wind_speed=$1 WHERE id=$2
+		`,
+    [meanWindSpeed(), prosumerId],
     (err, res) => {
       if (err) {
         console.error(`Failed to update prosumer: ${err}`);
