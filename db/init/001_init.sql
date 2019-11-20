@@ -7,7 +7,7 @@ ALTER DATABASE gle OWNER TO gle;
 
 CREATE TABLE batteries (
 	id SERIAL,
-	power REAL,
+	power REAL DEFAULT 0,
 	max_capacity REAL,
 	PRIMARY KEY (id)
 );
