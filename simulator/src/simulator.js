@@ -10,81 +10,6 @@ client.connect(error => {
 });
 
 /**
- * Update a prosumer's current production.
- *
- * @param prosumerId The id of the prosumer to update
- * */
-function updateProsumerProduction(prosumerId) {
-  client
-    .query(
-      `
-			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
-		`,
-      [prosumerId]
-    )
-    .then(res => {
-      client.query(
-        `
-				Update prosumers SET current_production=$1 WHERE id=$2
-				`,
-        [
-          turbineOutput(currWindSpeed(res.rows[0].mean_day_wind_speed)),
-          prosumerId
-        ],
-        (err, _res) => {
-          if (err) {
-            console.error(`Failed to update prosumer: ${err}`);
-          }
-        }
-      );
-    })
-    .catch(err => console.error(err));
-}
-
-function updateProsumerCurrentWindSpeed(prosumerId) {
-  client
-    .query(
-      `
-			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
-		`,
-      [prosumerId]
-    )
-    .then(res => {
-      client.query(
-        `
-				Update prosumers SET current_wind_speed=$1 WHERE id=$2
-				`,
-        [currentWindSpeed(res.rows[0].mean_day_wind_speed), prosumerId],
-        (err, _res) => {
-          if (err) {
-            console.error(`Failed to update prosumer: ${err}`);
-          }
-        }
-      );
-    })
-    .catch(err => console.error(err));
-}
-
-/**
- * Update a prosumers's current consumption.
- *
- * @param prosumerId The id of the prosumer to update
- * */
-function updateProsumerConsumption(prosumerId) {
-  client.query(
-    `
-				Update prosumers SET current_consumption=$1 WHERE id=$2
-				`,
-    [randomProsumerConsumption(), prosumerId],
-    (err, _res) => {
-      if (err) {
-        console.error(`Failed to update prosumer: ${err}`);
-      }
-    }
-  );
-}
-
-/**
  * Update a prosumers's mean wind speed.
  *
  * @param prosumerId The id of the prosumer to update
@@ -95,9 +20,58 @@ function updateProsumerMeanWindSpeed(prosumerId) {
 			Update prosumers SET mean_day_wind_speed=$1 WHERE id=$2
 		`,
     [meanWindSpeed(), prosumerId],
-    (err, res) => {
+    err => {
       if (err) {
         console.error(`Failed to update prosumer: ${err}`);
+      }
+    }
+  );
+}
+
+function updateProsumerTick(prosumerId) {
+  client
+    .query(
+      `
+			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
+		`,
+      [prosumerId]
+    )
+    .then(res => {
+      client.query(
+        `
+				Update prosumers 
+				SET current_production=$1, current_consumption=$2, current_wind_speed=$3
+				WHERE id=$4
+				`,
+        [
+          turbineOutput(currWindSpeed(res.rows[0].mean_day_wind_speed)), // production
+          randomProsumerConsumption(), // consumption
+          currWindSpeed(res.rows[0].mean_day_wind_speed), // current wind speed
+          prosumerId
+        ],
+        err => {
+          if (err) {
+            console.error(`Failed to update prosumer: ${err}`);
+          }
+        }
+      );
+    })
+    .catch(err => console.error(err));
+}
+
+function updateProsumers(tickReset) {
+  client.query(
+    `
+			SELECT id FROM prosumers
+		`,
+    (err, res) => {
+      if (err) {
+        console.error(`Failed to fetch prosumers: ${err}`);
+      } else {
+        res.rows.forEach(prosumer => {
+          updateProsumerTick(prosumer.id);
+          if (tickReset) updateProsumerMeanWindSpeed(prosumer.id);
+        });
       }
     }
   );
@@ -144,7 +118,7 @@ function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
     console.log(
       `SIMUPDATE (tick ${tickCount}, time: ${new Date(time).toISOString()})`
     );
-    tickCount++;
+    tickCount += 1;
     time += timeScale / tickRatio;
     let tickReset = false;
     if (tickCount >= tickRatio) {
@@ -153,26 +127,6 @@ function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
     }
     updateProsumers(tickReset);
   }, tickInterval);
-}
-
-function updateProsumers(tickReset) {
-  client.query(
-    `
-			SELECT id FROM prosumers
-		`,
-    (err, res) => {
-      if (err) {
-        console.error(`Failed to fetch prosumers: ${err}`);
-      } else {
-        res.rows.forEach(prosumer => {
-          updateProsumerConsumption(prosumer.id);
-          updateProsumerProduction(prosumer.id);
-          updateProsumerCurrentWindSpeed(prosumer.id);
-          if (tickReset) updateProsumerMeanWindSpeed(prosumer.id);
-        });
-      }
-    }
-  );
 }
 
 module.exports = { startSimulation };
