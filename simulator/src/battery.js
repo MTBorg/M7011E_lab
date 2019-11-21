@@ -1,9 +1,4 @@
-const { dbClient } = require("./db_client");
-
-const client = dbClient();
-client.connect(error => {
-  if (error) console.error("Databse connection error : ", error);
-});
+const { pool } = require("./db");
 
 const newBatteryQuery = `
 	WITH new_bat AS (
@@ -25,21 +20,35 @@ const chargeBatteryQuery = `
 		WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
 `;
 
+const useBatteryPowerQuery = `
+WITH old_state AS (
+	SELECT power FROM batteries WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
+)
+UPDATE batteries
+	SET power = (
+		CASE
+		WHEN power - $2 < 0 THEN
+		0
+		ELSE
+		power - $2
+		end
+	)
+	WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
+	RETURNING (SELECT power FROM old_state)  - power as used_power
+`;
+
 /**
  * Creates a new battery in the database and adds it to the prosumer in the database
  * @param {Number} prosumerId the prosumer who receives the battery
  * @param {Number} maxCapacity the maximum capacity of the new battery in kW
- * @returns {Boolean} if the battery was created or not
  */
 function newBattery(prosumerId, maxCapacity) {
   // create new battery with maxCapacity
-  client.query(newBatteryQuery, [maxCapacity, prosumerId], (err, _res) => {
+  pool.query(newBatteryQuery, [maxCapacity, prosumerId], (err, _res) => {
     if (err) {
       console.error("Error while creating new battery");
-      return false;
     }
   });
-  return true;
 }
 
 /**
@@ -47,18 +56,36 @@ function newBattery(prosumerId, maxCapacity) {
  * up to the max capacity of the battery.
  * @param {Number} ownerId the owner of the battery to charge
  * @param {Number} amount the amount (in kW) to charge the battery with
- * @returns {Boolean} if the battery was charged or not
  */
 // TODO: ownerId should be able to be both prosumer and manager later on,
 // maybe add boolean to indicate prosumer or manager (different tables in the database)
 function chargeBattery(ownerId, amount) {
-  client.query(chargeBatteryQuery, [ownerId, amount], (err, _res) => {
+  pool.query(chargeBatteryQuery, [ownerId, amount], (err, _res) => {
     if (err) {
       console.error("Error while charging battery");
-      return false;
     }
   });
-  return true;
 }
 
-module.exports = { newBattery, chargeBattery };
+/**
+ * Uses a specified amount of power from the owners battery. If the specified amount exceeds the
+ * stored power on the battery, the amount that was used will be returned instead of the full amount specified.
+ * @param {Number} ownerId the id of the battery owner
+ * @param {Number} amount the amount of power to use from the battery
+ * @returns the amount of power used from the battery
+ */
+async function useBatteryPower(ownerId, amount) {
+  let usedAmount = null;
+  await pool
+    .query(useBatteryPowerQuery, [ownerId, amount])
+    .then(res => (usedAmount = res.rows[0].used_power))
+    .catch(err => console.error("Failed to use battery: ", err));
+
+  if (usedAmount != amount) {
+    return amount - usedAmount;
+  }
+
+  return usedAmount;
+}
+
+module.exports = { newBattery, chargeBattery, useBatteryPower };
