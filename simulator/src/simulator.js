@@ -40,6 +40,69 @@ function updateProsumerProduction(prosumerId) {
     })
     .catch(err => console.error(err));
 }
+
+function updateProsumerCurrentWindSpeed(prosumerId) {
+  client
+    .query(
+      `
+			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
+		`,
+      [prosumerId]
+    )
+    .then(res => {
+      client.query(
+        `
+				Update prosumers SET current_wind_speed=$1 WHERE id=$2
+				`,
+        [currentWindSpeed(res.rows[0].mean_day_wind_speed), prosumerId],
+        (err, _res) => {
+          if (err) {
+            console.error(`Failed to update prosumer: ${err}`);
+          }
+        }
+      );
+    })
+    .catch(err => console.error(err));
+}
+
+/**
+ * Update a prosumers's current consumption.
+ *
+ * @param prosumerId The id of the prosumer to update
+ * */
+function updateProsumerConsumption(prosumerId) {
+  client.query(
+    `
+				Update prosumers SET current_consumption=$1 WHERE id=$2
+				`,
+    [randomProsumerConsumption(), prosumerId],
+    (err, _res) => {
+      if (err) {
+        console.error(`Failed to update prosumer: ${err}`);
+      }
+    }
+  );
+}
+
+/**
+ * Update a prosumers's mean wind speed.
+ *
+ * @param prosumerId The id of the prosumer to update
+ * */
+function updateProsumerMeanWindSpeed(prosumerId) {
+  client.query(
+    `
+			Update prosumers SET mean_day_wind_speed=$1 WHERE id=$2
+		`,
+    [meanWindSpeed(), prosumerId],
+    (err, res) => {
+      if (err) {
+        console.error(`Failed to update prosumer: ${err}`);
+      }
+    }
+  );
+}
+
 /**
  * Start the simulation.
  *
@@ -104,46 +167,9 @@ function updateProsumers(tickReset) {
         res.rows.forEach(prosumer => {
           updateProsumerConsumption(prosumer.id);
           updateProsumerProduction(prosumer.id);
+          updateProsumerCurrentWindSpeed(prosumer.id);
           if (tickReset) updateProsumerMeanWindSpeed(prosumer.id);
         });
-      }
-    }
-  );
-}
-
-/**
- * Update a prosumer's current consumption.
- *
- * @param prosumerId The id of the prosumer to update
- * */
-function updateProsumerConsumption(prosumerId) {
-  client.query(
-    `
-			Update prosumers SET current_consumption=$1 WHERE id=$2
-		`,
-    [randomProsumerConsumption(), prosumerId],
-    (err, res) => {
-      if (err) {
-        console.error(`Failed to update prosumer: ${err}`);
-      }
-    }
-  );
-}
-
-/**
- * Update a prosumers's mean wind speed.
- *
- * @param prosumerId The id of the prosumer to update
- * */
-function updateProsumerMeanWindSpeed(prosumerId) {
-  client.query(
-    `
-			Update prosumers SET mean_day_wind_speed=$1 WHERE id=$2
-		`,
-    [meanWindSpeed(), prosumerId],
-    (err, res) => {
-      if (err) {
-        console.error(`Failed to update prosumer: ${err}`);
       }
     }
   );
