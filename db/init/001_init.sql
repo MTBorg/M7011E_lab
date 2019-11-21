@@ -18,6 +18,7 @@ CREATE TABLE prosumers (
 	mean_day_wind_speed REAL,
 	current_wind_speed REAL,
 	current_consumption REAL,
+	current_production REAL,
 	battery_id INTEGER,
 	PRIMARY KEY (id),
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)

@@ -1,6 +1,7 @@
 const { dbClient } = require("./db_client");
 const { randomProsumerConsumption } = require("./consumption.js");
-const { meanWindSpeed } = require("./windspeed.js");
+const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
+const { turbineOutput } = require("./windturbine.js");
 
 // Create database connection
 const client = dbClient();
@@ -8,6 +9,37 @@ client.connect(error => {
   if (error) console.error(`Database connection error: ${error}`);
 });
 
+/**
+ * Update a prosumer's current production.
+ *
+ * @param prosumerId The id of the prosumer to update
+ * */
+function updateProsumerProduction(prosumerId) {
+  client
+    .query(
+      `
+			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
+		`,
+      [prosumerId]
+    )
+    .then(res => {
+      client.query(
+        `
+				Update prosumers SET current_production=$1 WHERE id=$2
+				`,
+        [
+          turbineOutput(currWindSpeed(res.rows[0].mean_day_wind_speed)),
+          prosumerId
+        ],
+        (err, _res) => {
+          if (err) {
+            console.error(`Failed to update prosumer: ${err}`);
+          }
+        }
+      );
+    })
+    .catch(err => console.error(err));
+}
 /**
  * Start the simulation.
  *
@@ -71,6 +103,7 @@ function updateProsumers(tickReset) {
       } else {
         res.rows.forEach(prosumer => {
           updateProsumerConsumption(prosumer.id);
+          updateProsumerProduction(prosumer.id);
           if (tickReset) updateProsumerMeanWindSpeed(prosumer.id);
         });
       }
