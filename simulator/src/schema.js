@@ -10,8 +10,9 @@ const joinMonster = require("join-monster");
 const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
 const { pool } = require("./db.js");
+const { getPricing } = require("./pricing.js");
 
-function getProsumers(resolveInfo) {
+async function getProsumers(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
     return pool.query(sql);
   });
@@ -61,8 +62,14 @@ const queryType = new GraphQLObjectType({
     },
     prosumers: {
       type: GraphQLList(prosumerType),
-      resolve(_parent, _args, _context, resolveInfo) {
+      async resolve(_parent, _args, _context, resolveInfo) {
         return getProsumers(resolveInfo);
+      }
+    },
+    currentPricing: {
+      type: GraphQLFloat,
+      async resolve() {
+        return getPricing();
       }
     }
   }

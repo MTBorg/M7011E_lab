@@ -21,9 +21,8 @@ function turbineOutput(windSpeed) {
     }
 
     return power;
-  } else {
-    return 0;
   }
+  return 0;
 }
 
 module.exports = { turbineOutput };
