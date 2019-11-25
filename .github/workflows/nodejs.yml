@@ -1,0 +1,32 @@
+name: Simulator CI
+
+on: 
+  pull_request:
+    paths: 
+      - 'simulator/**'
+  
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [13.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm test
+      run: |
+        npm ci
+        npm install
+        npm install --only-dev
+        npm test
+      working-directory: ./simulator
+      env:
+        CI: true
