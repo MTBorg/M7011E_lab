@@ -29,17 +29,15 @@ const prosumerType = new GraphQLObjectType({
     },
     currentWindSpeed: {
       type: GraphQLFloat,
-      sqlColumn: "current_wind_speed",
-      resolve(prosumer) {
-        return currWindSpeed(prosumer.meanDayWindSpeed);
-      }
+      sqlColumn: "current_wind_speed"
+    },
+    currentProduction: {
+      type: GraphQLFloat,
+      sqlColumn: "current_production"
     },
     currentConsumption: {
       type: GraphQLFloat,
-      sqlColumn: "current_consumption",
-      resolve() {
-        return getHouseholdConsumption();
-      }
+      sqlColumn: "current_consumption"
     }
   })
 });
