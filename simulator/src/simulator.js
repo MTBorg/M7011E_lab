@@ -87,29 +87,6 @@ function updateProsumers(tickReset) {
 }
 
 /**
- * Creates starting prosumers in the database and gives them a mean day wind speed
- * and a new battery with "random" capacity
- * @param {Number} numProsumers the number of prosumers in the simulation
- */
-async function initProsumers(numProsumers) {
-  while (numProsumers > 0) {
-    let id = null;
-
-    await pool
-      .query(`INSERT INTO prosumers DEFAULT VALUES RETURNING id`)
-      .then(res => (id = res.rows[0].id))
-      .catch(err => console.error("Failed to create new prosumer: ", err));
-
-    // "Random" battery size
-    let maxCapacity = 50 + 50 * Math.random();
-    newBattery(id, maxCapacity);
-    updateProsumerMeanWindSpeed(id);
-
-    numProsumers--;
-  }
-}
-
-/**
  * Start the simulation.
  *
  * Start running the simulation by using an interval timer.
@@ -151,7 +128,6 @@ async function startSimulation({
 }) {
   let tickCount = 0;
   let time = timeStart;
-  initProsumers(10);
   return setInterval(() => {
     console.log(
       `SIMUPDATE (tick ${tickCount}, time: ${new Date(time).toISOString()})`
