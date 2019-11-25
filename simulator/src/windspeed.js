@@ -12,12 +12,13 @@ let variance = dev ** 2;
  */
 function meanWindSpeed() {
   const distrib = gaussian(mean, variance);
-  let sample = distrib.ppf(Math.random());
 
-  if (sample < 0) {
-    meanWindSpeed();
-  } else {
-    return sample;
+  while (true) {
+    let sample = distrib.ppf(Math.random());
+
+    if (sample > 0) {
+      return sample;
+    }
   }
 }
 /**

@@ -10,11 +10,13 @@ const { newBattery, chargeBattery, useBatteryPower } = require("./battery.js");
  * @param prosumerId The id of the prosumer to update
  * */
 function updateProsumerMeanWindSpeed(prosumerId) {
+  let dayMeanWindSpeed = meanWindSpeed();
+
   pool.query(
     `
 			Update prosumers SET mean_day_wind_speed=$1 WHERE id=$2
 		`,
-    [meanWindSpeed(), prosumerId],
+    [dayMeanWindSpeed, prosumerId],
     err => {
       if (err) {
         console.error(`Failed to update prosumer: ${err}`);
