@@ -17,3 +17,4 @@
 |2019-11-25		| 1.5			| Merged pull requests and finished the pricing model |
 |2019-11-25		| 3.5			| Researched about authentication/authorization and started implementing the power plant functionalities|
 |2019-11-25		| 2.5			| Implemented new testing suites with support for stubbing/mocking and addded some new tests |
+|2019-11-25		| 0.5			| Setup a CI-pipeline for the simulator using Github actions |
