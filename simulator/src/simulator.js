@@ -1,13 +1,7 @@
-const { dbClient } = require("./db_client");
+const { pool } = require("./db");
 const { randomProsumerConsumption } = require("./consumption.js");
 const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
 const { turbineOutput } = require("./windturbine.js");
-
-// Create database connection
-const client = dbClient();
-client.connect(error => {
-  if (error) console.error(`Database connection error: ${error}`);
-});
 
 /**
  * Update a prosumers's mean wind speed.
@@ -15,7 +9,7 @@ client.connect(error => {
  * @param prosumerId The id of the prosumer to update
  * */
 function updateProsumerMeanWindSpeed(prosumerId) {
-  client.query(
+  pool.query(
     `
 			Update prosumers SET mean_day_wind_speed=$1 WHERE id=$2
 		`,
@@ -29,7 +23,7 @@ function updateProsumerMeanWindSpeed(prosumerId) {
 }
 
 function updateProsumerTick(prosumerId) {
-  client
+  pool
     .query(
       `
 			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
@@ -37,7 +31,7 @@ function updateProsumerTick(prosumerId) {
       [prosumerId]
     )
     .then(res => {
-      client.query(
+      pool.query(
         `
 				Update prosumers 
 				SET current_production=$1, current_consumption=$2, current_wind_speed=$3
@@ -60,7 +54,7 @@ function updateProsumerTick(prosumerId) {
 }
 
 function updateProsumers(tickReset) {
-  client.query(
+  pool.query(
     `
 			SELECT id FROM prosumers
 		`,

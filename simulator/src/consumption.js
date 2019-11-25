@@ -1,5 +1,5 @@
 const gaussian = require("gaussian");
-const { dbClient } = require("./db_client");
+const { pool } = require("./db");
 
 const consumptionMean = 32;
 const consumptionVariance = 10;
@@ -14,14 +14,9 @@ function randomProsumerConsumption() {
   return getNormalSample(consumptionMean, consumptionVariance);
 }
 
-const client = dbClient();
-client.connect(error => {
-  if (error) console.error("Database connection error" + error);
-});
-
 async function getHouseholdConsumption(id) {
   let consumption = null;
-  await client
+  await pool
     .query(
       `
 		SELECT current_consumption FROM prosumers WHERE id=$1
