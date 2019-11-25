@@ -12,9 +12,14 @@ let variance = dev ** 2;
  */
 function meanWindSpeed() {
   const distrib = gaussian(mean, variance);
-  return distrib.ppf(Math.random());
-}
+  let mean = distrib.ppf(Math.random());
 
+  if (mean < 0) {
+    meanWindSpeed();
+  } else {
+    return mean;
+  }
+}
 /**
  * Returns the current wind speed
  * @param {Number} meanWindSpeed the average wind speed
