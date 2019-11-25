@@ -4,15 +4,17 @@ const {
   GraphQLSchema,
   GraphQLFloat,
   GraphQLList,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLNonNull
 } = require("graphql");
 const joinMonster = require("join-monster");
 const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
 const { pool } = require("./db.js");
 const { getPricing } = require("./pricing.js");
+const { startRequestPowerPlant, stopPowerPlant } = require("./powerplant");
 
-async function getProsumers(resolveInfo) {
+function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
     return pool.query(sql);
   });
@@ -48,6 +50,53 @@ prosumerType._typeConfig = {
   uniqueKey: "id"
 };
 
+const batteryType = new GraphQLObjectType({
+  name: "battery",
+  fields: () => ({
+    maxCapacity: {
+      type: GraphQLFloat,
+      sqlColumn: "max_capacity"
+    },
+    power: {
+      type: GraphQLFloat,
+      sqlColumn: "power"
+    }
+  })
+});
+batteryType._typeConfig = {
+  sqlTable: "batteries",
+  uniqueKey: "id"
+};
+
+const powerPlantType = new GraphQLObjectType({
+  name: "powerPlant",
+  fields: () => ({
+    id: {
+      type: GraphQLInt,
+      sqlColumn: "id"
+    },
+    currentProduction: {
+      type: GraphQLFloat,
+      sqlColumn: "current_production"
+    },
+    status: {
+      type: GraphQLString,
+      sqlColumn: "status"
+    },
+    battery: {
+      type: batteryType,
+      sqlColumn: "battery_id",
+      sqlJoin: (powerPlantsTable, batteriesTable, _args) =>
+        `${powerPlantsTable}.id = ${batteriesTable}.id`
+    }
+  })
+});
+
+powerPlantType._typeConfig = {
+  sqlTable: "power_plants",
+  uniqueKey: "id"
+};
+
 const queryType = new GraphQLObjectType({
   name: "Query",
   fields: {
@@ -60,8 +109,38 @@ const queryType = new GraphQLObjectType({
     },
     prosumers: {
       type: GraphQLList(prosumerType),
-      async resolve(_parent, _args, _context, resolveInfo) {
-        return getProsumers(resolveInfo);
+      resolve(_parent, _args, _context, resolveInfo) {
+        return joinMonsterQuery(resolveInfo);
+      }
+    },
+    powerplants: {
+      type: powerPlantType,
+      resolve(_parent, _args, _context, resolveInfo) {
+        return joinMonsterQuery(resolveInfo);
+      }
+    }
+  }
+});
+
+const mutationType = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    startPowerPlant: {
+      type: GraphQLString,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(_obj, args) {
+        return startRequestPowerPlant(args.id);
+      }
+    },
+    stopPowerPlant: {
+      type: GraphQLString,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(_obj, args) {
+        return stopPowerPlant(args.id);
       }
     },
     currentPricing: {
@@ -73,6 +152,6 @@ const queryType = new GraphQLObjectType({
   }
 });
 
-const schema = new GraphQLSchema({ query: queryType });
+const schema = new GraphQLSchema({ query: queryType, mutation: mutationType });
 
 module.exports = schema;

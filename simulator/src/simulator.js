@@ -88,6 +88,53 @@ function updateProsumers(tickReset) {
   );
 }
 
+async function updatePowerPlants() {
+  let powerPlants = await pool.query(
+    `
+		SELECT id FROM power_plants;
+		`
+  );
+  // TODO: Use some accurrate value
+  const PowerPlantOutput = 1500;
+
+  //Note: There is only assumed to be one power plant in existence,
+  // so this looping is kind of redundant, unless multiple power plants is
+  // implemented in the future.
+  powerPlants.rows.forEach(async powerPlant => {
+    const powerDiff = await pool.query(
+      `
+				SELECT (
+					(SELECT SUM(current_production) FROM prosumers) - 
+					(SELECT SUM(current_consumption) FROM prosumers)) as diff
+				`
+    );
+    pool
+      .query(
+        `
+    UPDATE batteries
+		SET power=(
+			CASE 
+			WHEN power+$1 > max_capacity then
+				max_capacity
+			WHEN power+$1 < 0 then
+				0
+			ELSE 
+				power+$1
+			end
+		)
+    WHERE id = (
+    SELECT battery_id
+    FROM power_plants
+    WHERE id = $2
+    )
+    `,
+        [PowerPlantOutput - powerDiff.rows[0].diff, powerPlant.id]
+      )
+      .then()
+      .catch(e => console.error(e));
+  });
+}
+
 /**
  * Start the simulation.
  *
@@ -122,7 +169,12 @@ function updateProsumers(tickReset) {
  *
  * @return A <Timeout> object which can be used to stop the simulation.
  * */
-function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
+async function startSimulation({
+  timeScale,
+  timeStart,
+  tickInterval,
+  tickRatio
+}) {
   let tickCount = 0;
   let time = timeStart;
   return setInterval(() => {
@@ -137,6 +189,7 @@ function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
       tickReset = true;
     }
     updateProsumers(tickReset);
+    updatePowerPlants();
   }, tickInterval);
 }
 

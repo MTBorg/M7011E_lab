@@ -24,3 +24,14 @@ CREATE TABLE prosumers (
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)
 );
 ALTER TABLE prosumers OWNER TO gle;
+
+CREATE TYPE power_plant_status as ENUM('stopped', 'started', 'starting');
+CREATE TABLE power_plants (
+	id SERIAL,
+	current_production REAL,
+	battery_id INTEGER,
+	status power_plant_status,
+	PRIMARY KEY (id),
+	FOREIGN KEY (battery_id) REFERENCES batteries (id)
+);
+ALTER TABLE power_plants OWNER TO gle;
