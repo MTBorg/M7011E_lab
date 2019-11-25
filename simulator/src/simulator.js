@@ -36,6 +36,7 @@ function updateProsumerTick(prosumerId) {
       let produced = turbineOutput(currWind);
       let consumed = randomProsumerConsumption();
 
+      // Handle diffrences in production and consumption
       if (produced > consumed) {
         let excess = produced - consumed;
         chargeBattery(prosumerId, excess); // TODO: This should return charged amount (So that excess power can be directed to the power plant instead)
