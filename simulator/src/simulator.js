@@ -32,18 +32,31 @@ function updateProsumerTick(prosumerId) {
       [prosumerId]
     )
     .then(res => {
+      let currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
+      let produced = turbineOutput(currWind);
+      let consumed = randomProsumerConsumption();
+
+      if (produced > consumed) {
+        let excess = produced - consumed;
+        chargeBattery(prosumerId, excess); // TODO: This should return charged amount (So that excess power can be directed to the power plant instead)
+      } else if (consumed > produced) {
+        let deficit = consumed - produced;
+        let usedAmount = useBatteryPower(prosumerId, deficit);
+
+        if (usedAmount < deficit) {
+          console.log(
+            `Prosumer ${prosumerId} needs to buy energy from the power plant`
+          );
+        }
+      }
+
       pool.query(
         `
 				Update prosumers 
 				SET current_production=$1, current_consumption=$2, current_wind_speed=$3
 				WHERE id=$4
 				`,
-        [
-          turbineOutput(currWindSpeed(res.rows[0].mean_day_wind_speed)), // production
-          randomProsumerConsumption(), // consumption
-          currWindSpeed(res.rows[0].mean_day_wind_speed), // current wind speed
-          prosumerId
-        ],
+        [produced, consumed, currWind, prosumerId],
         err => {
           if (err) {
             console.error(`Failed to update prosumer: ${err}`);
@@ -77,37 +90,22 @@ function updateProsumers(tickReset) {
  * and a new battery with "random" capacity
  * @param {Number} numProsumers the number of prosumers in the simulation
  */
-function initProsumers(numProsumers) {
+async function initProsumers(numProsumers) {
   while (numProsumers > 0) {
-    pool.query(
-      `
-				INSERT INTO prosumers DEFAULT VALUES
-			`,
-      (err, _res) => {
-        if (err) {
-          console.err(`Failed to insert new prosumer: ${err}`);
-        }
-      }
-    );
+    let id = null;
+
+    await pool
+      .query(`INSERT INTO prosumers DEFAULT VALUES RETURNING id`)
+      .then(res => (id = res.rows[0].id))
+      .catch(err => console.error("Failed to create new prosumer: ", err));
+
+    // "Random" battery size
+    let maxCapacity = 50 + 50 * Math.random();
+    newBattery(id, maxCapacity);
+    updateProsumerMeanWindSpeed(id);
+
     numProsumers--;
   }
-
-  pool.query(
-    `
-			SELECT id FROM prosumers
-		`,
-    (err, res) => {
-      if (err) {
-        console.error(`Failed to fetch prosumers: ${err}`);
-      } else {
-        res.rows.forEach(prosumer => {
-          let maxCapacity = 50 + 50 * Math.random();
-          newBattery(prosumer.id, maxCapacity);
-          updateProsumerMeanWindSpeed(prosumer.id);
-        });
-      }
-    }
-  );
 }
 
 /**
@@ -144,7 +142,12 @@ function initProsumers(numProsumers) {
  *
  * @return A <Timeout> object which can be used to stop the simulation.
  * */
-function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
+async function startSimulation({
+  timeScale,
+  timeStart,
+  tickInterval,
+  tickRatio
+}) {
   let tickCount = 0;
   let time = timeStart;
   initProsumers(10);
