@@ -15,3 +15,4 @@
 |2019-11-20		| 1.5			| Implemented database pooling and authorization via environemnt variables |
 |2019-11-21		| 3.5			| Worked on the pricing model |
 |2019-11-25		| 1.5			| Merged pull requests and finished the pricing model |
+|2019-11-25		| 3.5			| Researched about authentication/authorization and started implementing the power plant functionalities|
