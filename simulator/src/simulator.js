@@ -2,7 +2,7 @@ const { pool } = require("./db");
 const { randomProsumerConsumption } = require("./consumption.js");
 const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
 const { turbineOutput } = require("./windturbine.js");
-const { newBattery, chargeBattery, useBatteryPower } = require("./battery.js");
+const { chargeBattery, useBatteryPower } = require("./battery.js");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -122,12 +122,7 @@ function updateProsumers(tickReset) {
  *
  * @return A <Timeout> object which can be used to stop the simulation.
  * */
-async function startSimulation({
-  timeScale,
-  timeStart,
-  tickInterval,
-  tickRatio
-}) {
+function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
   let tickCount = 0;
   let time = timeStart;
   return setInterval(() => {
