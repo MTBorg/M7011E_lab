@@ -2,6 +2,7 @@ const { pool } = require("./db");
 const { randomProsumerConsumption } = require("./consumption.js");
 const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
 const { turbineOutput } = require("./windturbine.js");
+const { newBattery, chargeBattery, useBatteryPower } = require("./battery.js");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -72,6 +73,44 @@ function updateProsumers(tickReset) {
 }
 
 /**
+ * Creates starting prosumers in the database and gives them a mean day wind speed
+ * and a new battery with "random" capacity
+ * @param {Number} numProsumers the number of prosumers in the simulation
+ */
+function initProsumers(numProsumers) {
+  while (numProsumers > 0) {
+    pool.query(
+      `
+				INSERT INTO prosumers DEFAULT VALUES
+			`,
+      (err, _res) => {
+        if (err) {
+          console.err(`Failed to insert new prosumer: ${err}`);
+        }
+      }
+    );
+    numProsumers--;
+  }
+
+  pool.query(
+    `
+			SELECT id FROM prosumers
+		`,
+    (err, res) => {
+      if (err) {
+        console.error(`Failed to fetch prosumers: ${err}`);
+      } else {
+        res.rows.forEach(prosumer => {
+          let maxCapacity = 50 + 50 * Math.random();
+          newBattery(prosumer.id, maxCapacity);
+          updateProsumerMeanWindSpeed(prosumer.id);
+        });
+      }
+    }
+  );
+}
+
+/**
  * Start the simulation.
  *
  * Start running the simulation by using an interval timer.
@@ -108,6 +147,7 @@ function updateProsumers(tickReset) {
 function startSimulation({ timeScale, timeStart, tickInterval, tickRatio }) {
   let tickCount = 0;
   let time = timeStart;
+  initProsumers(10);
   return setInterval(() => {
     console.log(
       `SIMUPDATE (tick ${tickCount}, time: ${new Date(time).toISOString()})`
