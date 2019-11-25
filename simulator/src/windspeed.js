@@ -3,7 +3,8 @@ const gaussian = require("gaussian");
 // wind config in m/s
 const mean = 5.26;
 const dev = 3.24;
-let variance = dev ** 2;
+const variance = dev ** 2;
+const MAX_SPEED = 40;
 
 /**
  * Samples a average day wind speed from a Gaussian distribution
@@ -14,7 +15,7 @@ function meanWindSpeed() {
   const distrib = gaussian(mean, variance);
 
   while (true) {
-    let sample = distrib.ppf(Math.random());
+    const sample = distrib.ppf(Math.random());
 
     if (sample > 0) {
       return sample;
@@ -31,8 +32,8 @@ function currWindSpeed(meanWindSpeed) {
 
   if (currWindSpeed < 0) {
     currWindSpeed = 0;
-  } else if (currWindSpeed > 40) {
-    currWindSpeed = 40;
+  } else if (currWindSpeed > MAX_SPEED) {
+    currWindSpeed = MAX_SPEED;
   }
   return currWindSpeed;
 }
