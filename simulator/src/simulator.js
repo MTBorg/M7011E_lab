@@ -3,6 +3,8 @@ const { randomProsumerConsumption } = require("./consumption.js");
 const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
 const { turbineOutput } = require("./windturbine.js");
 const { chargeBattery, useBatteryPower } = require("./battery.js");
+const { excessRatio, deficitRatio } = require("./ratio.js");
+const {sellToMarket, buyFromMarket} = require("./market.js");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -41,16 +43,32 @@ function updateProsumerTick(prosumerId) {
       // Handle diffrences in production and consumption
       if (produced > consumed) {
         let excess = produced - consumed;
-        chargeBattery(prosumerId, excess); // TODO: This should return charged amount (So that excess power can be directed to the power plant instead)
-      } else if (consumed > produced) {
-        let deficit = consumed - produced;
-        let usedAmount = useBatteryPower(prosumerId, deficit);
+				let ratioExcessMarket = await excessRatio(prosumerId);
+				let marketAmount = ratioExcessMarket * excess;
+				let batteryAmount = (1 - ratioExcessMarket) * excess;
 
-        if (usedAmount < deficit) {
-          console.log(
-            `Prosumer ${prosumerId} needs to buy energy from the power plant`
-          );
-        }
+				let chargedAmount = await chargeBattery(prosumerId, batteryAmount);
+
+				// add any excess power, which couldnt be stored in the battery, to the market amount
+				if (chargedAmount != batteryAmount) {
+					marketAmount += batteryAmount - chargedAmount;
+				}
+
+				sellToMarket(marketAmount);
+      } else if (consumed > produced) {
+				let deficit = consumed - produced;
+				let ratioDeficitMarket = await deficitRatio(prosumerId);
+				let marketAmount = ratioDeficitMarket * deficit;
+				let batteryAmount = (1 - ratioDeficitMarket) * deficit;
+
+        let usedAmount = await useBatteryPower(prosumerId, deficit);
+
+				// if the power stored in the battery was less than battery amount buy more from the market
+				if (usedAmount != batteryAmount) {
+					marketAmount += batteryAmount - usedAmount;
+				}
+
+				buyFromMarket(marketAmount);
       }
 
       pool.query(
