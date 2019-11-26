@@ -13,7 +13,7 @@ INSERT INTO batteries (max_capacity) VALUES
 	(65),	
 	(55);
 
-INSERT INTO prosumers (mean_day_wind_speed, battery_id) VALUES
+INSERT INTO prosumers (mean_day_wind_speed, battery_id, ratio_excess_market, ratio_deficit_market) VALUES
 	(15, 1, 0.3, 0.2),
 	(10, 2, 0.3, 0.2),
 	(5, 3, 0.3, 0.2),
