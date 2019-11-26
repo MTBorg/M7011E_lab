@@ -5,6 +5,7 @@ const { turbineOutput } = require("./windturbine.js");
 const { chargeBattery, useBatteryPower } = require("./battery.js");
 const { excessRatio, deficitRatio } = require("./ratio.js");
 const { sellToMarket, buyFromMarket } = require("./market.js");
+const { POWERPLANT_OUTPUT } = require("./powerplant");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -12,7 +13,7 @@ const { sellToMarket, buyFromMarket } = require("./market.js");
  * @param prosumerId The id of the prosumer to update
  * */
 function updateProsumerMeanWindSpeed(prosumerId) {
-  let dayMeanWindSpeed = meanWindSpeed();
+  const dayMeanWindSpeed = meanWindSpeed();
 
   pool.query(
     `
@@ -108,15 +109,13 @@ function updateProsumers(tickReset) {
 }
 
 async function updatePowerPlants() {
-  let powerPlants = await pool.query(
+  const powerPlants = await pool.query(
     `
-		SELECT id FROM power_plants;
+		SELECT id, status FROM power_plants;
 		`
   );
-  // TODO: Use some accurrate value
-  const PowerPlantOutput = 1500;
 
-  //Note: There is only assumed to be one power plant in existence,
+  // Note: There is only assumed to be one power plant in existence,
   // so this looping is kind of redundant, unless multiple power plants is
   // implemented in the future.
   powerPlants.rows.forEach(async powerPlant => {
@@ -147,7 +146,7 @@ async function updatePowerPlants() {
     WHERE id = $2
     )
     `,
-        [PowerPlantOutput - powerDiff.rows[0].diff, powerPlant.id]
+        [POWERPLANT_OUTPUT - powerDiff.rows[0].diff, powerPlant.id]
       )
       .then()
       .catch(e => console.error(e));

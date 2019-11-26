@@ -28,4 +28,4 @@ INSERT INTO prosumers (mean_day_wind_speed, battery_id, ratio_excess_market, rat
 WITH power_plant_bat AS (
 	INSERT INTO batteries (max_capacity, power) VALUES(5000, 0) RETURNING id
 )
-INSERT INTO power_plants (current_production, battery_id, status) VALUES(0, (SELECT id FROM power_plant_bat), 'stopped');
+INSERT INTO power_plants (battery_id, status) VALUES((SELECT id FROM power_plant_bat), 'stopped');

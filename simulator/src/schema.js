@@ -12,7 +12,11 @@ const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
 const { pool } = require("./db.js");
 const { getPricing } = require("./pricing.js");
-const { startRequestPowerPlant, stopPowerPlant } = require("./powerplant");
+const {
+  startRequestPowerPlant,
+  stopPowerPlant,
+  getCurrentProduction
+} = require("./powerplant");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -75,10 +79,6 @@ const powerPlantType = new GraphQLObjectType({
       type: GraphQLInt,
       sqlColumn: "id"
     },
-    currentProduction: {
-      type: GraphQLFloat,
-      sqlColumn: "current_production"
-    },
     status: {
       type: GraphQLString,
       sqlColumn: "status"
@@ -88,6 +88,12 @@ const powerPlantType = new GraphQLObjectType({
       sqlColumn: "battery_id",
       sqlJoin: (powerPlantsTable, batteriesTable, _args) =>
         `${powerPlantsTable}.id = ${batteriesTable}.id`
+    },
+    currentProduction: {
+      type: GraphQLFloat,
+      resolve(powerplant) {
+        return getCurrentProduction(powerplant.id);
+      }
     }
   })
 });
