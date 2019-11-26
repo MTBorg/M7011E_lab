@@ -8,16 +8,20 @@ const newBatteryQuery = `
 `;
 
 const chargeBatteryQuery = `
+	WITH old_bat_state AS (
+		SELECT power FROM batteries WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
+	)
 	UPDATE batteries 
 		SET power = (
 			CASE
-			WHEN power + $2 > max_capacity THEN
-			max_capacity
+				WHEN power + $2 > max_capacity THEN
+					max_capacity
 			ELSE
-			power + $2
+				power + $2
 			END
 		)
 		WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
+		RETURNING (SELECT power FROM old_bat_state) - power AS carged_amount
 `;
 
 const useBatteryPowerQuery = `
@@ -27,14 +31,14 @@ WITH old_state AS (
 UPDATE batteries
 	SET power = (
 		CASE
-		WHEN power - $2 < 0 THEN
-		0
-		ELSE
-		power - $2
-		end
+			WHEN power - $2 < 0 THEN
+				0
+			ELSE
+				power - $2
+		END
 	)
 	WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
-	RETURNING (SELECT power FROM old_state)  - power as used_power
+	RETURNING (SELECT power FROM old_state)  - power AS used_power
 `;
 
 /**
@@ -53,18 +57,24 @@ function newBattery(prosumerId, maxCapacity) {
 
 /**
  * Charges the owners battery by adding the specified amount to the current power stored in the battery
- * up to the max capacity of the battery.
+ * up to the max capacity of the battery. If the specified amount exceeds the capacity of the battery
+ * the unused power amount will be returned.
  * @param {Number} ownerId the owner of the battery to charge
  * @param {Number} amount the amount (in kW) to charge the battery with
  */
 // TODO: ownerId should be able to be both prosumer and manager later on,
 // maybe add boolean to indicate prosumer or manager (different tables in the database)
-function chargeBattery(ownerId, amount) {
-  pool.query(chargeBatteryQuery, [ownerId, amount], (err, _res) => {
-    if (err) {
-      console.error("Error while charging battery");
-    }
-  });
+async function chargeBattery(ownerId, amount) {
+  let chargedAmount = null;
+  await pool
+    .query(chargeBatteryQuery, [ownerId, amount])
+    .then(res => (chargedAmount = res.rows[0].charged_amount))
+    .catch(err => console.error("Error while charging battery: ", err));
+
+  if (chargedAmount != amount) {
+    return amount - chargedAmount;
+  }
+  return chargedAmount;
 }
 
 /**
@@ -79,12 +89,11 @@ async function useBatteryPower(ownerId, amount) {
   await pool
     .query(useBatteryPowerQuery, [ownerId, amount])
     .then(res => (usedAmount = res.rows[0].used_power))
-    .catch(err => console.error("Failed to use battery: ", err));
+    .catch(err => console.error("Error while using battery: ", err));
 
   if (usedAmount != amount) {
     return amount - usedAmount;
   }
-
   return usedAmount;
 }
 
