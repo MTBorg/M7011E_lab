@@ -50,7 +50,7 @@ async function buyFromMarket(amount) {
   let boughtAmount = null;
   await pool
     .query(buyQuery, [amount])
-    .then(res => (boughtAmount = res.rows[0].boughtAmount))
+    .then(res => (boughtAmount = res.rows[0].bought_amount))
     .catch(err => console.error("Error while buying from the market: ", err));
   return boughtAmount;
 }

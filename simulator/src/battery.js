@@ -21,7 +21,7 @@ const chargeBatteryQuery = `
 			END
 		)
 		WHERE id = (SELECT battery_id FROM prosumers WHERE id = $1)
-		RETURNING (SELECT power FROM old_bat_state) - power AS carged_amount
+		RETURNING power - (SELECT power FROM old_bat_state) AS charged_amount
 `;
 
 const useBatteryPowerQuery = `
@@ -57,8 +57,7 @@ function newBattery(prosumerId, maxCapacity) {
 
 /**
  * Charges the owners battery by adding the specified amount to the current power stored in the battery
- * up to the max capacity of the battery. If the specified amount exceeds the capacity of the battery
- * the unused power amount will be returned.
+ * up to the max capacity of the battery. The charged amount will be returned.
  * @param {Number} ownerId the owner of the battery to charge
  * @param {Number} amount the amount (in kW) to charge the battery with
  */
@@ -71,9 +70,6 @@ async function chargeBattery(ownerId, amount) {
     .then(res => (chargedAmount = res.rows[0].charged_amount))
     .catch(err => console.error("Error while charging battery: ", err));
 
-  if (chargedAmount != amount) {
-    return amount - chargedAmount;
-  }
   return chargedAmount;
 }
 
@@ -91,9 +87,6 @@ async function useBatteryPower(ownerId, amount) {
     .then(res => (usedAmount = res.rows[0].used_power))
     .catch(err => console.error("Error while using battery: ", err));
 
-  if (usedAmount != amount) {
-    return amount - usedAmount;
-  }
   return usedAmount;
 }
 

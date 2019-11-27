@@ -4,7 +4,7 @@ const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
 const { turbineOutput } = require("./windturbine.js");
 const { chargeBattery, useBatteryPower } = require("./battery.js");
 const { excessRatio, deficitRatio } = require("./ratio.js");
-const {sellToMarket, buyFromMarket} = require("./market.js");
+const { sellToMarket, buyFromMarket } = require("./market.js");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -35,7 +35,7 @@ function updateProsumerTick(prosumerId) {
 		`,
       [prosumerId]
     )
-    .then(res => {
+    .then(async res => {
       let currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
       let produced = turbineOutput(currWind);
       let consumed = randomProsumerConsumption();
@@ -43,32 +43,33 @@ function updateProsumerTick(prosumerId) {
       // Handle diffrences in production and consumption
       if (produced > consumed) {
         let excess = produced - consumed;
-				let ratioExcessMarket = await excessRatio(prosumerId);
-				let marketAmount = ratioExcessMarket * excess;
-				let batteryAmount = (1 - ratioExcessMarket) * excess;
+        let ratioExcessMarket = await excessRatio(prosumerId);
+        let marketAmount = ratioExcessMarket * excess;
+        let batteryAmount = (1 - ratioExcessMarket) * excess;
+        let chargedAmount = await chargeBattery(prosumerId, batteryAmount);
 
-				let chargedAmount = await chargeBattery(prosumerId, batteryAmount);
+        // add any excess power, which couldnt be stored in the battery, to the market amount
+        if (chargedAmount != batteryAmount) {
+          marketAmount += batteryAmount - chargedAmount;
+        }
 
-				// add any excess power, which couldnt be stored in the battery, to the market amount
-				if (chargedAmount != batteryAmount) {
-					marketAmount += batteryAmount - chargedAmount;
-				}
-
-				sellToMarket(marketAmount);
+        // TODO: Handle balance for prosumers etc
+        sellToMarket(marketAmount);
       } else if (consumed > produced) {
-				let deficit = consumed - produced;
-				let ratioDeficitMarket = await deficitRatio(prosumerId);
-				let marketAmount = ratioDeficitMarket * deficit;
-				let batteryAmount = (1 - ratioDeficitMarket) * deficit;
+        let deficit = consumed - produced;
+        let ratioDeficitMarket = await deficitRatio(prosumerId);
+        let marketAmount = ratioDeficitMarket * deficit;
+        let batteryAmount = (1 - ratioDeficitMarket) * deficit;
 
         let usedAmount = await useBatteryPower(prosumerId, deficit);
 
-				// if the power stored in the battery was less than battery amount buy more from the market
-				if (usedAmount != batteryAmount) {
-					marketAmount += batteryAmount - usedAmount;
-				}
+        // if the power stored in the battery was less than battery amount buy more from the market
+        if (usedAmount != batteryAmount) {
+          marketAmount += batteryAmount - usedAmount;
+        }
 
-				buyFromMarket(marketAmount);
+        // TODO: Handle balance for prosumers etc
+        buyFromMarket(marketAmount);
       }
 
       pool.query(
