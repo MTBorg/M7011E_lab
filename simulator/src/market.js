@@ -66,4 +66,4 @@ async function buyFromMarket(amount) {
   return boughtAmount;
 }
 
-module.exports = { sellToMarket, buyFromMarket };
+module.exports = { sellToMarket, buyFromMarket, sellQuery, buyQuery };
