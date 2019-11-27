@@ -50,7 +50,7 @@ function updateProsumerTick(prosumerId) {
         const chargedAmount = await chargeBattery(prosumerId, batteryAmount);
 
         // add any excess power, which couldnt be stored in the battery, to the market amount
-        if (chargedAmount != batteryAmount) {
+        if (chargedAmount !== batteryAmount) {
           marketAmount += batteryAmount - chargedAmount;
         }
 
@@ -65,7 +65,7 @@ function updateProsumerTick(prosumerId) {
         const usedAmount = await useBatteryPower(prosumerId, batteryAmount);
 
         // if the power stored in the battery was less than battery amount buy more from the market
-        if (usedAmount != batteryAmount) {
+        if (usedAmount !== batteryAmount) {
           marketAmount += batteryAmount - usedAmount;
         }
 
