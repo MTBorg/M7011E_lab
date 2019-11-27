@@ -36,17 +36,17 @@ function updateProsumerTick(prosumerId) {
       [prosumerId]
     )
     .then(async res => {
-      let currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
-      let produced = turbineOutput(currWind);
-      let consumed = randomProsumerConsumption();
+      const currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
+      const produced = turbineOutput(currWind);
+      const consumed = randomProsumerConsumption();
 
       // Handle diffrences in production and consumption
       if (produced > consumed) {
-        let excess = produced - consumed;
-        let ratioExcessMarket = await excessRatio(prosumerId);
+        const excess = produced - consumed;
+        const ratioExcessMarket = await excessRatio(prosumerId);
         let marketAmount = ratioExcessMarket * excess;
-        let batteryAmount = (1 - ratioExcessMarket) * excess;
-        let chargedAmount = await chargeBattery(prosumerId, batteryAmount);
+        const batteryAmount = (1 - ratioExcessMarket) * excess;
+        const chargedAmount = await chargeBattery(prosumerId, batteryAmount);
 
         // add any excess power, which couldnt be stored in the battery, to the market amount
         if (chargedAmount != batteryAmount) {
@@ -56,12 +56,12 @@ function updateProsumerTick(prosumerId) {
         // TODO: Handle balance for prosumers etc
         sellToMarket(marketAmount);
       } else if (consumed > produced) {
-        let deficit = consumed - produced;
-        let ratioDeficitMarket = await deficitRatio(prosumerId);
+        const deficit = consumed - produced;
+        const ratioDeficitMarket = await deficitRatio(prosumerId);
         let marketAmount = ratioDeficitMarket * deficit;
-        let batteryAmount = (1 - ratioDeficitMarket) * deficit;
+        const batteryAmount = (1 - ratioDeficitMarket) * deficit;
 
-        let usedAmount = await useBatteryPower(prosumerId, deficit);
+        const usedAmount = await useBatteryPower(prosumerId, batteryAmount);
 
         // if the power stored in the battery was less than battery amount buy more from the market
         if (usedAmount != batteryAmount) {
