@@ -90,4 +90,9 @@ async function useBatteryPower(ownerId, amount) {
   return usedAmount;
 }
 
-module.exports = { newBattery, chargeBattery, useBatteryPower };
+module.exports = {
+  newBattery,
+  chargeBattery,
+  useBatteryPower,
+  useBatteryPowerQuery
+};
