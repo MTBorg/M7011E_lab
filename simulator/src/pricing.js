@@ -5,14 +5,15 @@ const { turbineOutput } = require("./windturbine");
 const START_PRICE = 0.5;
 const PRICE_COEFFICIENT = 0.05;
 
+const CONSUMPTION_SUM_QUERY = `
+  SELECT SUM(current_consumption) FROM prosumers
+`;
+const CURRENT_WINDSPEED_QUERY = "SELECT current_wind_speed FROM prosumers";
+
 async function getPricing() {
   let consumptionRes = null;
   try {
-    consumptionRes = pool.query(
-      `
-				SELECT SUM(current_consumption) FROM prosumers;
-    `
-    );
+    consumptionRes = pool.query(CONSUMPTION_SUM_QUERY);
   } catch (e) {
     console.error(e);
     return null;
@@ -20,11 +21,7 @@ async function getPricing() {
 
   let windSpeedRes = null;
   try {
-    windSpeedRes = pool.query(
-      `
-			SELECT current_wind_speed FROM prosumers
-		`
-    );
+    windSpeedRes = pool.query(CURRENT_WINDSPEED_QUERY);
   } catch (e) {
     console.error(e);
     return null;
@@ -47,4 +44,10 @@ async function getPricing() {
   return pricing;
 }
 
-module.exports = { getPricing };
+module.exports = {
+  getPricing,
+  START_PRICE,
+  PRICE_COEFFICIENT,
+  CONSUMPTION_SUM_QUERY,
+  CURRENT_WINDSPEED_QUERY
+};
