@@ -36,6 +36,12 @@ UPDATE batteries
 	RETURNING (SELECT power FROM old_bat_state) - power AS bought_amount
 `;
 
+/**
+ * Sells a specified amount of power to the power plant. Note that amount sold might not
+ * equal the amount specified if the power plants battery capacity is reached.
+ * @param {Number} amount the amount of power to sell
+ * @returns the amount sold
+ */
 async function sellToMarket(amount) {
   let soldAmount = null;
   await pool
@@ -45,7 +51,12 @@ async function sellToMarket(amount) {
   return soldAmount;
 }
 
-// TODO: wait for Martin branch before implementing
+/**
+ * Buys a specified amount of power from the power plant. Note that the amount bought might not
+ * equal the amount specified if the power plants battery is depleted.
+ * @param {Number} amount the amount of power to buy
+ * @retuns the amount bought
+ */
 async function buyFromMarket(amount) {
   let boughtAmount = null;
   await pool
