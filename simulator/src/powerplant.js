@@ -5,13 +5,15 @@ const POWERPLANT_STARTUP_TIME = 30 * 1000;
 // TODO: Use some accurrate value
 const POWERPLANT_OUTPUT = 1500;
 
+const POWERPLANT_STATUS_QUERY = "SELECT status FROM power_plants WHERE id=$1";
+const POWERPLANT_STOP_QUERY =
+  "UPDATE power_plants SET status=$1 WHERE id=$2 RETURNING status";
+const POWERPLANT_UPDATE_QUERY = "UPDATE power_plants SET status=$1 WHERE id=$2";
+
 function startPowerPlant(id) {
   setTimeout(() => {
     try {
-      pool.query(`UPDATE power_plants SET status=$1 WHERE id=$2`, [
-        "started",
-        id
-      ]);
+      pool.query(POWERPLANT_UPDATE_QUERY, ["started", id]);
     } catch (e) {
       console.error(e);
     }
@@ -20,10 +22,7 @@ function startPowerPlant(id) {
 
 async function getCurrentProduction(id) {
   try {
-    const statusRes = await pool.query(
-      "SELECT status FROM power_plants WHERE id=$1",
-      [id]
-    );
+    const statusRes = await pool.query(POWERPLANT_STATUS_QUERY, [id]);
     if (statusRes.rows[0].status === "started") {
       return POWERPLANT_OUTPUT;
     }
@@ -44,16 +43,10 @@ async function getCurrentProduction(id) {
  * */
 async function startRequestPowerPlant(id) {
   try {
-    const statusRes = await pool.query(
-      "SELECT status FROM power_plants WHERE id=$1",
-      [id]
-    );
+    const statusRes = await pool.query(POWERPLANT_STATUS_QUERY, [id]);
     const { status } = statusRes.rows[0];
     if (status === "stopped") {
-      pool.query("UPDATE power_plants SET status=$1 WHERE id=$2", [
-        "starting",
-        id
-      ]);
+      pool.query(POWERPLANT_UPDATE_QUERY, ["starting", id]);
       startPowerPlant(id);
       return "starting";
     }
@@ -72,13 +65,16 @@ async function startRequestPowerPlant(id) {
  * @return The new status of the power plant
  * */
 async function stopPowerPlant(id) {
-  pool.query("UPDATE power_plants SET status=$1 WHERE id=$2", ["stopped", id]);
-  return "stopped";
+  return (await pool.query(POWERPLANT_STOP_QUERY, ["stopped", id])).rows[0]
+    .status;
 }
 
 module.exports = {
   startRequestPowerPlant,
   stopPowerPlant,
   getCurrentProduction,
-  POWERPLANT_OUTPUT
+  POWERPLANT_OUTPUT,
+  POWERPLANT_STATUS_QUERY,
+  POWERPLANT_STOP_QUERY,
+  POWERPLANT_UPDATE_QUERY
 };
