@@ -7,7 +7,7 @@ describe("getHouseholdConsumption", async () => {
   let poolStub; // stub for the database pool
 
   afterEach(() => {
-    if (poolStub) poolStub.reset();
+    sinon.restore();
   });
 
   it("Should return correct values", async () => {
