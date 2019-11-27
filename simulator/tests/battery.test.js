@@ -19,4 +19,14 @@ describe("useBatteryPower", async () => {
     const usedBatteryPower = useBatteryPower(1, 8);
     expect(await usedBatteryPower).to.equal(5);
   });
+
+  it("should return requested amount when request subceeds availabe power", async () => {
+    poolStub = sinon
+      .stub(pool, "query")
+      .withArgs(useBatteryPowerQuery, [1, 8])
+      .resolves({ rows: [{ used_power: 8 }] });
+
+    const usedBatteryPower = useBatteryPower(1, 8);
+    expect(await usedBatteryPower).to.equal(8);
+  });
 });
