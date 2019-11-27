@@ -87,7 +87,7 @@ const powerPlantType = new GraphQLObjectType({
       type: batteryType,
       sqlColumn: "battery_id",
       sqlJoin: (powerPlantsTable, batteriesTable, _args) =>
-        `${powerPlantsTable}.id = ${batteriesTable}.id`
+        `${powerPlantsTable}.battery_id = ${batteriesTable}.id`
     },
     currentProduction: {
       type: GraphQLFloat,
