@@ -40,4 +40,9 @@ async function deficitRatio(prosumerId) {
   return ratioDeficitMarket;
 }
 
-module.exports = { excessRatio, deficitRatio };
+module.exports = {
+  excessRatio,
+  deficitRatio,
+  excessRatioQuery,
+  deficitRatioQuery
+};
