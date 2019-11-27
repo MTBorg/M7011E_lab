@@ -20,3 +20,4 @@
 |2019-11-25		| 0.5			| Setup a CI-pipeline for the simulator using Github actions |
 |2019-11-26		| 2.5			| Fixed issues with the power plant |
 |2019-11-27		| 3.5			| Fixed issues with the testing suite |
+|2019-11-27		| 2			| Wrote tests for the models |
