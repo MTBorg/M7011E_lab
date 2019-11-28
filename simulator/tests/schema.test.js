@@ -174,6 +174,34 @@ describe("GraphQl schema", async () => {
       expect(res.data.prosumers[0]).to.have.property("ratioDeficitMarket");
       expect(res.data.prosumers[0].ratioDeficitMarket).to.be.a("number");
     });
+
+    it("Should be able to query the battery", async () => {
+      const query = `
+			{
+				prosumers{
+					battery{
+						power,
+						maxCapacity
+					}
+				}
+			}
+			`;
+
+      const res = tester.mock({
+        query,
+        fixture: {
+          data: {
+            prosumers: [{ battery: { power: 50, maxCapacity: 100 } }]
+          }
+        }
+      });
+
+      expect(res.data.prosumers[0]).to.have.property("battery");
+      expect(res.data.prosumers[0].battery).to.have.property("power");
+      expect(res.data.prosumers[0].battery).to.have.property("maxCapacity");
+      expect(res.data.prosumers[0].battery.power).to.be.a("number");
+      expect(res.data.prosumers[0].battery.maxCapacity).to.be.a("number");
+    });
   });
 
   describe("Prosumers query", async () => {
