@@ -7,7 +7,9 @@ const {
   setDeficitRatio,
   setExcessRatio,
   excessRatioQuery,
-  deficitRatioQuery
+  deficitRatioQuery,
+  setDeficitRatioQuery,
+  setExcessRatioQuery
 } = require("../src/ratio");
 
 describe("excessRatio", async () => {
@@ -47,13 +49,33 @@ describe("deficitRatio", async () => {
 });
 
 describe("setDeficitRatio", () => {
+  let poolStub;
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
   it("should return the prosumers new market deficit ratio", () => {
+    poolStub = sinon
+      .stub(pool, "query")
+      .withArgs(setDeficitRatioQuery, [1, 0.9])
+      .resolves({ rows: [{}] });
     expect(setDeficitRatio(1, 0.9)).to.equal(0.9);
   });
 });
 
-describe("setExcessRatio", () => {
-  it("should return the prosumers new market excess ratio", () => {
-    expect(setExcessRatio(1, 0.1)).to.equal(0.1);
+describe("setExcessRatio", async () => {
+  let poolStub;
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it("should return the prosumers new market excess ratio", async () => {
+    poolStub = sinon
+      .stub(pool, "query")
+      .withArgs(setExcessRatioQuery, [1, 0.1])
+      .resolves({ rows: [{}] });
+    expect(await setExcessRatio(1, 0.1)).to.equal(0.1);
   });
 });

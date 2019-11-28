@@ -68,5 +68,7 @@ module.exports = {
   setDeficitRatio,
   setExcessRatio,
   excessRatioQuery,
-  deficitRatioQuery
+  deficitRatioQuery,
+  setDeficitRatioQuery,
+  setExcessRatioQuery
 };
