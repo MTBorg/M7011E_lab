@@ -1,39 +1,76 @@
 const sinon = require("sinon");
+const proxyquire = require("proxyquire");
 const { expect } = require("chai");
 const { pool } = require("../src/db.js");
 const {
-  getPricing,
   START_PRICE,
   PRICE_COEFFICIENT,
-  CONSUMPTION_SUM_QUERY,
-  CURRENT_WINDSPEED_QUERY
+  PROSUMERS_QUERY
 } = require("../src/pricing");
-const { turbineOutput } = require("../src/windturbine");
 
 describe("pricing", async () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  it("should return the correct price", async () => {
-    const windSpeeds = [
-      { current_wind_speed: 10 },
-      { current_wind_speed: 20 },
-      { current_wind_speed: 30 }
+  it("should return at least the starting price", async () => {
+    const mockModule = proxyquire("../src/pricing", {
+      "./windturbine": {
+        turbineOutput: () => 1000000
+      }
+    });
+    const prosumers = [
+      {
+        consumption: 0,
+        current_wind_speed: 10,
+        ratio_excess_market: 1,
+        ratio_deficit_market: 0.8
+      },
+      {
+        consumption: 0,
+        current_wind_speed: 10,
+        ratio_excess_market: 1,
+        ratio_deficit_market: 0.4
+      }
     ];
-    const prodSum = windSpeeds.reduce(
-      (sum, w) => sum + turbineOutput(w.current_wind_speed),
-      0
-    );
+
     sinon
       .stub(pool, "query")
-      .withArgs(CONSUMPTION_SUM_QUERY)
-      .resolves({ rows: [{ sum: 200 }] })
-      .withArgs(CURRENT_WINDSPEED_QUERY)
-      .resolves({ rows: windSpeeds });
+      .withArgs(PROSUMERS_QUERY)
+      .resolves({ rows: prosumers });
 
-    expect(await getPricing()).to.equal(
-      START_PRICE + (200 - prodSum) * PRICE_COEFFICIENT
+    expect(await mockModule.getPricing()).to.be.at.least(START_PRICE);
+  });
+
+  it("should return the correct price", async () => {
+    const prosumers = [
+      {
+        consumption: 20,
+        current_wind_speed: 10,
+        ratio_excess_market: 10,
+        ratio_deficit_market: 0.8
+      },
+      {
+        consumption: 0,
+        current_wind_speed: 10,
+        ratio_excess_market: 0.4,
+        ratio_deficit_market: 10
+      }
+    ];
+
+    const mockModule = proxyquire("../src/pricing", {
+      "./windturbine": {
+        turbineOutput: () => 10
+      }
+    });
+
+    sinon
+      .stub(pool, "query")
+      .withArgs(PROSUMERS_QUERY)
+      .resolves({ rows: prosumers });
+
+    expect(await mockModule.getPricing()).to.equal(
+      START_PRICE + 4 * PRICE_COEFFICIENT
     );
   });
 });
