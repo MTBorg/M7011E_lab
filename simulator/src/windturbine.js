@@ -7,7 +7,7 @@ const cutOutSpeed = 25; // at what wind speed the turbine shuts down to minimize
 const ratedOutputPower = 2000; // the turbines maximum power output [kW]
 
 function turbineOutput(windSpeed) {
-  if (windSpeed > cutInSpeed && windSpeed <= cutOutSpeed) {
+  if (windSpeed > cutInSpeed && windSpeed < cutOutSpeed) {
     let power = // the power in kW
       (cp *
         (1 / 2) *
@@ -25,4 +25,4 @@ function turbineOutput(windSpeed) {
   return 0;
 }
 
-module.exports = { turbineOutput };
+module.exports = { turbineOutput, cutInSpeed, cutOutSpeed, ratedOutputPower };
