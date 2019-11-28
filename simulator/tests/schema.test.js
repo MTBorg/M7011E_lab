@@ -79,12 +79,100 @@ describe("GraphQl schema", async () => {
         query,
         fixture: {
           data: {
-            prosumers: [{ id: 1, meanDayWindSpeed: 5.237 }]
+            prosumers: [{ meanDayWindSpeed: 5.237 }]
           }
         }
       });
       expect(res.data.prosumers[0]).to.have.property("meanDayWindSpeed");
       expect(res.data.prosumers[0].meanDayWindSpeed).to.be.a("number");
+    });
+
+    it("Should be able to query the current wind speed", async () => {
+      const query = `
+			{
+				prosumers{
+					currentWindSpeed
+				}
+			}
+			`;
+
+      const res = tester.mock({
+        query,
+        fixture: {
+          data: {
+            prosumers: [{ currentWindSpeed: 2.302 }]
+          }
+        }
+      });
+
+      expect(res.data.prosumers[0]).to.have.property("currentWindSpeed");
+      expect(res.data.prosumers[0].currentWindSpeed).to.be.a("number");
+    });
+
+    it("Should be able to query the current production", async () => {
+      const query = `
+			{
+				prosumers{
+					currentProduction
+				}
+			}
+			`;
+
+      const res = tester.mock({
+        query,
+        fixture: {
+          data: {
+            prosumers: [{ currentProduction: 200.302 }]
+          }
+        }
+      });
+
+      expect(res.data.prosumers[0]).to.have.property("currentProduction");
+      expect(res.data.prosumers[0].currentProduction).to.be.a("number");
+    });
+
+    it("Should be able to query the excess market ratio", async () => {
+      const query = `
+			{
+				prosumers{
+					ratioExcessMarket
+				}
+			}
+			`;
+
+      const res = tester.mock({
+        query,
+        fixture: {
+          data: {
+            prosumers: [{ ratioExcessMarket: 0.1 }]
+          }
+        }
+      });
+
+      expect(res.data.prosumers[0]).to.have.property("ratioExcessMarket");
+      expect(res.data.prosumers[0].ratioExcessMarket).to.be.a("number");
+    });
+
+    it("Should be able to query the deficit market ratio", async () => {
+      const query = `
+			{
+				prosumers{
+					ratioDeficitMarket
+				}
+			}
+			`;
+
+      const res = tester.mock({
+        query,
+        fixture: {
+          data: {
+            prosumers: [{ ratioDeficitMarket: 0.3 }]
+          }
+        }
+      });
+
+      expect(res.data.prosumers[0]).to.have.property("ratioDeficitMarket");
+      expect(res.data.prosumers[0].ratioDeficitMarket).to.be.a("number");
     });
   });
 
