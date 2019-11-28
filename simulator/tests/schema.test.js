@@ -66,6 +66,26 @@ describe("GraphQl schema", async () => {
       expect(res.data.prosumers[0]).to.have.property("currentConsumption");
       expect(res.data.prosumers[0].currentConsumption).to.be.a("number");
     });
+
+    it("Should be able to query the mean wind speed of the day", async () => {
+      const query = `
+			{
+				prosumers{
+					meanDayWindSpeed
+				}
+			}
+			`;
+      const res = tester.mock({
+        query,
+        fixture: {
+          data: {
+            prosumers: [{ id: 1, meanDayWindSpeed: 5.237 }]
+          }
+        }
+      });
+      expect(res.data.prosumers[0]).to.have.property("meanDayWindSpeed");
+      expect(res.data.prosumers[0].meanDayWindSpeed).to.be.a("number");
+    });
   });
 
   describe("Prosumers query", async () => {
