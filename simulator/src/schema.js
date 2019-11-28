@@ -25,6 +25,24 @@ function joinMonsterQuery(resolveInfo) {
   });
 }
 
+const batteryType = new GraphQLObjectType({
+  name: "battery",
+  fields: () => ({
+    maxCapacity: {
+      type: GraphQLFloat,
+      sqlColumn: "max_capacity"
+    },
+    power: {
+      type: GraphQLFloat,
+      sqlColumn: "power"
+    }
+  })
+});
+batteryType._typeConfig = {
+  sqlTable: "batteries",
+  uniqueKey: "id"
+};
+
 const prosumerType = new GraphQLObjectType({
   name: "prosumer",
   fields: () => ({
@@ -54,30 +72,18 @@ const prosumerType = new GraphQLObjectType({
     ratioDeficitMarket: {
       type: GraphQLFloat,
       sqlColumn: "ratio_deficit_market"
+    },
+    battery: {
+      type: batteryType,
+      sqlColumn: "battery_id",
+      sqlJoin: (prosumerTable, batteriesTable, _args) =>
+        `${prosumerTable}.battery_id = ${batteriesTable}.id`
     }
   })
 });
 
 prosumerType._typeConfig = {
   sqlTable: "prosumers",
-  uniqueKey: "id"
-};
-
-const batteryType = new GraphQLObjectType({
-  name: "battery",
-  fields: () => ({
-    maxCapacity: {
-      type: GraphQLFloat,
-      sqlColumn: "max_capacity"
-    },
-    power: {
-      type: GraphQLFloat,
-      sqlColumn: "power"
-    }
-  })
-});
-batteryType._typeConfig = {
-  sqlTable: "batteries",
   uniqueKey: "id"
 };
 
