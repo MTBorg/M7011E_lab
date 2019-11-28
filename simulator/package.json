@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --watch src/ src/app.js",
-    "test": "mocha tests/**/*.test.js"
+    "test": "NODE_ENV=test mocha tests/**/*.test.js"
   },
   "repository": {
     "type": "git",
