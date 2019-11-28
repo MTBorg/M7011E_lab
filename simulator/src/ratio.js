@@ -32,10 +32,12 @@ async function excessRatio(prosumerId) {
   return ratioExcessMarket;
 }
 
-function setExcessRatio(prosumerId, ratio) {
-  pool.query(setExcessRatioQuery, [prosumerId, ratio], (err, _res) => {
-    if (err) console.error(err);
-  });
+async function setExcessRatio(prosumerId, ratio) {
+  try {
+    await pool.query(setExcessRatioQuery, [prosumerId, ratio]);
+  } catch (err) {
+    console.error(err);
+  }
   return ratio;
 }
 
@@ -55,10 +57,12 @@ async function deficitRatio(prosumerId) {
   return ratioDeficitMarket;
 }
 
-function setDeficitRatio(prosumerId, ratio) {
-  pool.query(setDeficitRatioQuery, [prosumerId, ratio], (err, _res) => {
-    if (err) console.error(err);
-  });
+async function setDeficitRatio(prosumerId, ratio) {
+  try {
+    await pool.query(setDeficitRatioQuery, [prosumerId, ratio]);
+  } catch (err) {
+    console.error(err);
+  }
   return ratio;
 }
 

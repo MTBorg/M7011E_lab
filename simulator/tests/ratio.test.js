@@ -48,19 +48,19 @@ describe("deficitRatio", async () => {
   });
 });
 
-describe("setDeficitRatio", () => {
+describe("setDeficitRatio", async () => {
   let poolStub;
 
   afterEach(() => {
     sinon.restore();
   });
 
-  it("should return the prosumers new market deficit ratio", () => {
+  it("should return the prosumers new market deficit ratio", async () => {
     poolStub = sinon
       .stub(pool, "query")
       .withArgs(setDeficitRatioQuery, [1, 0.9])
       .resolves({ rows: [{}] });
-    expect(setDeficitRatio(1, 0.9)).to.equal(0.9);
+    expect(await setDeficitRatio(1, 0.9)).to.equal(0.9);
   });
 });
 
