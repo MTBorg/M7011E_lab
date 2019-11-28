@@ -4,6 +4,8 @@ const { pool } = require("../src/db");
 const {
   excessRatio,
   deficitRatio,
+  setDeficitRatio,
+  setExcessRatio,
   excessRatioQuery,
   deficitRatioQuery
 } = require("../src/ratio");
@@ -41,5 +43,17 @@ describe("deficitRatio", async () => {
 
     const ratioDeficitMarket = deficitRatio(1);
     expect(await ratioDeficitMarket).to.equal(0.2);
+  });
+});
+
+describe("setDeficitRatio", () => {
+  it("should return the prosumers new market deficit ratio", () => {
+    expect(setDeficitRatio(1, 0.9)).to.equal(0.9);
+  });
+});
+
+describe("setExcessRatio", () => {
+  it("should return the prosumers new market excess ratio", () => {
+    expect(setExcessRatio(1, 0.1)).to.equal(0.1);
   });
 });
