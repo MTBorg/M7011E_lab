@@ -21,3 +21,4 @@
 |2019-11-26		| 2.5			| Fixed issues with the power plant |
 |2019-11-27		| 3.5			| Fixed issues with the testing suite |
 |2019-11-27		| 2			| Wrote tests for the models |
+|2019-11-28		|	3.5			| More testing and meeting |
