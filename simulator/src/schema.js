@@ -17,6 +17,7 @@ const {
   stopPowerPlant,
   getCurrentProduction
 } = require("./powerplant");
+const { setDeficitRatio, setExcessRatio } = require("./ratio");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -45,6 +46,14 @@ const prosumerType = new GraphQLObjectType({
     currentConsumption: {
       type: GraphQLFloat,
       sqlColumn: "current_consumption"
+    },
+    ratioExcessMarket: {
+      type: GraphQLFloat,
+      sqlColumn: "ratio_excess_market"
+    },
+    ratioDeficitMarket: {
+      type: GraphQLFloat,
+      sqlColumn: "ratio_deficit_market"
     }
   })
 });
@@ -153,6 +162,26 @@ const mutationType = new GraphQLObjectType({
       type: GraphQLFloat,
       async resolve() {
         return getPricing();
+      }
+    },
+    setRatioDeficitMarket: {
+      type: GraphQLFloat,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLInt) },
+        ratio: { type: GraphQLFloat }
+      },
+      resolve(_obj, args) {
+        return setDeficitRatio(args.id, args.ratio);
+      }
+    },
+    setRatioExcessMarket: {
+      type: GraphQLFloat,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLInt) },
+        ratio: { type: GraphQLFloat }
+      },
+      resolve(_obj, args) {
+        return setExcessRatio(args.id, args.ratio);
       }
     }
   }

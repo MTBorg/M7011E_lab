@@ -8,6 +8,14 @@ const deficitRatioQuery = `
 SELECT ratio_deficit_market FROM prosumers WHERE id = $1
 `;
 
+const setDeficitRatioQuery = `
+UPDATE prosumers SET ratio_deficit_market = $2 WHERE id = $1
+`;
+
+const setExcessRatioQuery = `
+UPDATE prosumers SET ratio_excess_market = $2 WHERE id = $1
+`;
+
 /**
  * Gets the ratio of the excess power to redirect to the market
  * @param {Number} prosumerId the prosumers id
@@ -22,6 +30,13 @@ async function excessRatio(prosumerId) {
       console.error("Error while querying excess market ratio: ", err)
     );
   return ratioExcessMarket;
+}
+
+function setExcessRatio(prosumerId, ratio) {
+  pool.query(setExcessRatioQuery, [prosumerId, ratio], (err, _res) => {
+    if (err) console.error(err);
+  });
+  return ratio;
 }
 
 /**
@@ -40,9 +55,20 @@ async function deficitRatio(prosumerId) {
   return ratioDeficitMarket;
 }
 
+function setDeficitRatio(prosumerId, ratio) {
+  pool.query(setDeficitRatioQuery, [prosumerId, ratio], (err, _res) => {
+    if (err) console.error(err);
+  });
+  return ratio;
+}
+
 module.exports = {
   excessRatio,
   deficitRatio,
+  setDeficitRatio,
+  setExcessRatio,
   excessRatioQuery,
-  deficitRatioQuery
+  deficitRatioQuery,
+  setDeficitRatioQuery,
+  setExcessRatioQuery
 };
