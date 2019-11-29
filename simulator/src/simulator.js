@@ -6,6 +6,7 @@ const { chargeBattery, useBatteryPower } = require("./battery.js");
 const { excessRatio, deficitRatio } = require("./ratio.js");
 const { sellToMarket, buyFromMarket } = require("./market.js");
 const { POWERPLANT_OUTPUT } = require("./powerplant");
+const { setBlackout } = require("./blackout");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -70,7 +71,14 @@ function updateProsumerTick(prosumerId) {
         }
 
         // TODO: Handle balance for prosumers etc
-        buyFromMarket(marketAmount);
+        const boughtAmount = await buyFromMarket(marketAmount);
+        if (boughtAmount !== marketAmount) {
+          console.log(
+            `${prosumerId}: market = ${marketAmount}, bought = ${boughtAmount}`
+          );
+          console.log(`${prosumerId}: blackout`);
+          setBlackout(prosumerId, true);
+        }
       }
 
       pool.query(
