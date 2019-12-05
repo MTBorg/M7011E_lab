@@ -7,20 +7,20 @@ ALTER DATABASE gle OWNER TO gle;
 
 CREATE TABLE batteries (
 	id SERIAL,
-	power NUMERIC(5, 2) DEFAULT 0,
-	max_capacity NUMERIC(5, 0),
+	power NUMERIC DEFAULT 0,
+	max_capacity NUMERIC,
 	PRIMARY KEY (id)
 );
 ALTER TABLE batteries OWNER TO gle;
 
 CREATE TABLE prosumers (
 	id SERIAL,
-	mean_day_wind_speed NUMERIC(5, 2),
-	current_wind_speed NUMERIC(5, 2),
-	current_consumption NUMERIC(5, 2),
-	current_production NUMERIC(5, 2),
-	ratio_excess_market NUMERIC(2, 1),
-	ratio_deficit_market NUMERIC(2, 1),
+	mean_day_wind_speed NUMERIC,
+	current_wind_speed NUMERIC,
+	current_consumption NUMERIC,
+	current_production NUMERIC,
+	ratio_excess_market NUMERIC,
+	ratio_deficit_market NUMERIC,
 	battery_id INTEGER,
 	blackout BOOLEAN DEFAULT false,
 	PRIMARY KEY (id),

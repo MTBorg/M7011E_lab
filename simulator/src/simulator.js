@@ -29,7 +29,7 @@ function updateProsumerMeanWindSpeed(prosumerId) {
   );
 }
 
-function updateProsumerTick(prosumerId) {
+async function updateProsumerTick(prosumerId) {
   pool
     .query(
       `
@@ -56,7 +56,7 @@ function updateProsumerTick(prosumerId) {
         }
 
         // TODO: Handle balance for prosumers etc
-        sellToMarket(marketAmount);
+        await sellToMarket(marketAmount);
       } else if (consumed > produced) {
         const deficit = consumed - produced;
         const ratioDeficitMarket = await deficitRatio(prosumerId);
@@ -66,17 +66,18 @@ function updateProsumerTick(prosumerId) {
         const usedAmount = await useBatteryPower(prosumerId, batteryAmount);
 
         // if the power stored in the battery was less than battery amount buy more from the market
-        if (usedAmount !== batteryAmount) {
+        if (usedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)) {
           marketAmount += batteryAmount - usedAmount;
         }
 
         // TODO: Handle balance for prosumers etc
         const boughtAmount = await buyFromMarket(marketAmount);
-        if (boughtAmount !== marketAmount) {
+        // Some rounding to compensate for floating point errors
+        if (boughtAmount.toPrecision(5) !== marketAmount.toPrecision(5)) {
+          console.log(`${prosumerId}: blackout`);
           console.log(
             `${prosumerId}: market = ${marketAmount}, bought = ${boughtAmount}`
           );
-          console.log(`${prosumerId}: blackout`);
           setBlackout(prosumerId, true);
         }
       }

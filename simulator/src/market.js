@@ -19,10 +19,10 @@ UPDATE batteries
 `;
 
 // NOTE: Needs to change if more power plants
+const buyBeforeQuery = `
+SELECT power FROM batteries WHERE id = (SELECT battery_id FROM power_plants WHERE id = 1) FOR UPDATE
+`;
 const buyQuery = `
-WITH old_bat_state AS (
-	SELECT power FROM batteries WHERE id = (SELECT battery_id FROM power_plants WHERE id = 1)
-)
 UPDATE batteries
 	SET power = (
 		CASE
@@ -33,7 +33,7 @@ UPDATE batteries
 		END
 	)
 	WHERE id = (SELECT battery_id FROM power_plants WHERE id = 1)
-	RETURNING (SELECT power FROM old_bat_state) - power AS bought_amount
+	RETURNING power AS after_amount
 `;
 
 /**
@@ -44,11 +44,13 @@ UPDATE batteries
  */
 async function sellToMarket(amount) {
   let soldAmount = null;
-  await pool
-    .query(sellQuery, [amount])
-    .then(res => (soldAmount = res.rows[0].sold_amount))
-    .catch(err => console.error("Error while selling to market: ", err));
-  return soldAmount;
+  try {
+    const res = await pool.query(sellQuery, [amount]);
+    soldAmount = res.rows[0].sold_amount;
+  } catch (e) {
+    console.error("Error while selling to market: ", e);
+  }
+  return Number(soldAmount);
 }
 
 /**
@@ -59,11 +61,21 @@ async function sellToMarket(amount) {
  */
 async function buyFromMarket(amount) {
   let boughtAmount = null;
-  await pool
-    .query(buyQuery, [amount])
-    .then(res => (boughtAmount = res.rows[0].bought_amount))
-    .catch(err => console.error("Error while buying from the market: ", err));
-  return boughtAmount;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const before = await client.query(buyBeforeQuery);
+    const beforeAmount = before.rows[0].power;
+    const after = await client.query(buyQuery, [amount]);
+    boughtAmount = beforeAmount - after.rows[0].after_amount;
+    await client.query("COMMIT");
+  } catch (e) {
+    await client.query("ROLLBACK");
+    console.error("Error while buying from the market: ", e);
+  } finally {
+    client.release();
+  }
+  return Number(boughtAmount);
 }
 
 module.exports = { sellToMarket, buyFromMarket, sellQuery, buyQuery };

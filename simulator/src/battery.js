@@ -70,7 +70,7 @@ async function chargeBattery(ownerId, amount) {
     .then(res => (chargedAmount = res.rows[0].charged_amount))
     .catch(err => console.error("Error while charging battery: ", err));
 
-  return chargedAmount;
+  return Number(chargedAmount);
 }
 
 /**
@@ -87,7 +87,7 @@ async function useBatteryPower(ownerId, amount) {
     .then(res => (usedAmount = res.rows[0].used_power))
     .catch(err => console.error("Error while using battery: ", err));
 
-  return usedAmount;
+  return Number(usedAmount);
 }
 
 module.exports = {
