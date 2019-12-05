@@ -49,6 +49,7 @@ async function updateProsumerTick(prosumerId) {
         let marketAmount = ratioExcessMarket * excess;
         const batteryAmount = (1 - ratioExcessMarket) * excess;
         const chargedAmount = await chargeBattery(prosumerId, batteryAmount);
+        setBlackout(prosumerId, false);
 
         // add any excess power, which couldnt be stored in the battery, to the market amount
         if (chargedAmount !== batteryAmount) {
@@ -79,6 +80,8 @@ async function updateProsumerTick(prosumerId) {
             `${prosumerId}: market = ${marketAmount}, bought = ${boughtAmount}`
           );
           setBlackout(prosumerId, true);
+        } else {
+          setBlackout(prosumerId, false);
         }
       }
 
