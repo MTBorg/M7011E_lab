@@ -33,15 +33,15 @@ async function updateProsumerTick(prosumerId) {
   pool
     .query(
       `
-			SELECT mean_day_wind_speed FROM prosumers WHERE id=$1
+			SELECT mean_day_wind_speed, blackout FROM prosumers WHERE id=$1
 		`,
       [prosumerId]
     )
     .then(async res => {
       const currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
+      const currBlackout = res.rows[0].blackout;
       const produced = turbineOutput(currWind);
       const consumed = randomProsumerConsumption();
-
       // Handle diffrences in production and consumption
       if (produced > consumed) {
         const excess = produced - consumed;
@@ -49,7 +49,8 @@ async function updateProsumerTick(prosumerId) {
         let marketAmount = ratioExcessMarket * excess;
         const batteryAmount = (1 - ratioExcessMarket) * excess;
         const chargedAmount = await chargeBattery(prosumerId, batteryAmount);
-        setBlackout(prosumerId, false);
+
+        if (currBlackout) setBlackout(prosumerId, false);
 
         // add any excess power, which couldnt be stored in the battery, to the market amount
         if (chargedAmount !== batteryAmount) {
@@ -80,7 +81,7 @@ async function updateProsumerTick(prosumerId) {
             `${prosumerId}: market = ${marketAmount}, bought = ${boughtAmount}`
           );
           setBlackout(prosumerId, true);
-        } else {
+        } else if (currBlackout) {
           setBlackout(prosumerId, false);
         }
       }
