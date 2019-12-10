@@ -23,3 +23,4 @@
 |2019-11-27		| 2			| Wrote tests for the models |
 |2019-11-28		|	3.5			| More testing and meeting |
 |2019-11-29		|	3			| Tests and bug fixes |
+|2019-12-9		| 4			  | Research and start implementing front-end |
