@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 # Copy package and source files
 COPY package.json .
 COPY package-lock.json .
-COPY src/ .
+COPY server/ .
 
 # Install packages
 RUN npm install -g
