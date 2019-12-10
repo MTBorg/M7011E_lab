@@ -5,7 +5,8 @@ const {
   sellToMarket,
   buyFromMarket,
   sellQuery,
-  buyQuery
+  buyQuery,
+  buyBeforeQuery
 } = require("../src/market");
 
 describe("sellToMarket", async () => {
@@ -37,29 +38,38 @@ describe("sellToMarket", async () => {
 });
 
 describe("buyFromMarket", async () => {
-  let poolStub;
-
   afterEach(() => {
     sinon.restore();
   });
 
+  const client = {
+    query() {},
+    release() {}
+  };
+
   it("should return requested amount when the power plant can supply it", async () => {
-    poolStub = sinon
-      .stub(pool, "query")
+    sinon.stub(pool, "connect").resolves(client);
+    sinon
+      .stub(client, "query")
+      .withArgs(buyBeforeQuery)
+      .resolves({ rows: [{ power: 500 }] })
       .withArgs(buyQuery, [500])
-      .resolves({ rows: [{ bought_amount: 500 }] });
+      .resolves({ rows: [{ after_amount: 0 }] });
 
     const boughtAmount = buyFromMarket(500);
     expect(await boughtAmount).to.equal(500);
   });
 
   it("should return the actual bought amount if the request exceeds the available supply", async () => {
-    poolStub = sinon
-      .stub(pool, "query")
+    sinon.stub(pool, "connect").resolves(client);
+    sinon
+      .stub(client, "query")
+      .withArgs(buyBeforeQuery)
+      .resolves({ rows: [{ power: 50 }] })
       .withArgs(buyQuery, [500])
-      .resolves({ rows: [{ bought_amount: 200 }] });
+      .resolves({ rows: [{ after_amount: 0 }] });
 
     const boughtAmount = buyFromMarket(500);
-    expect(await boughtAmount).to.equal(200);
+    expect(await boughtAmount).to.equal(50);
   });
 });
