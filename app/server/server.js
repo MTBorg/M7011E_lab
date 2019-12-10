@@ -1,8 +1,25 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "../client/views"));
+
 app.get("/", (req, res) => {
-  res.send("Hello World! hahahahahaha\n");
+  res.render("pages/index");
+});
+
+app.get("/login", (req, res) => {
+  res.render("pages/login");
+});
+
+app.get("/profile", (req, res) => {
+  res.render("pages/profile");
+});
+
+app.get("/register", (req, res) => {
+  res.render("pages/register");
 });
 
 app.listen(process.env.SERVER_PORT, () => {
