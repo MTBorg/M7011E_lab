@@ -25,3 +25,4 @@
 |2019-11-29		|	3			| Tests and bug fixes |
 |2019-12-9		| 4			  | Research and start implementing front-end |
 |2019-12-10		| 5			  | Started working on the front-end by setting up basic pages|
+|2019-12-11		| 8			  | Implemented and wrote test for authentication between the client and server |
