@@ -4,6 +4,13 @@ const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
 
+const {
+  authenticateRequest,
+  logInUser,
+  authenticateLoggedOut,
+  logoutUser
+} = require("./auth.js");
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../client/views"));
 
@@ -14,20 +21,24 @@ app.get("/", (req, res) => {
   res.render("pages/index");
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", authenticateLoggedOut, (req, res) => {
   res.render("pages/login");
 });
 
-app.get("/profile", (req, res) => {
+app.get("/profile", authenticateRequest, (req, res) => {
   res.render("pages/profile");
 });
 
-app.get("/register", (req, res) => {
+app.get("/register", authenticateLoggedOut, (req, res) => {
   res.render("pages/register");
 });
 
-app.post("/action/login", req => {
-  console.log(`User login request for ${req.body.email}`);
+app.post("/action/login", (req, res) => {
+  logInUser(req, res);
+});
+
+app.post("/action/logout", (req, res) => {
+  logoutUser(req, res);
 });
 
 app.listen(process.env.SERVER_PORT, () => {
