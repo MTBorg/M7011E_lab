@@ -72,6 +72,10 @@ app.get("/profile", authenticateRequest, async (req, res) => {
   }
 });
 
+app.get("/dashboard", (req, res) => {
+  res.render("pages/prosumerDashboard");
+});
+
 app.get("/register", authenticateLoggedOut, (req, res) => {
   res.render("pages/register");
 });
