@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --watch app/ server/server.js"
+    "dev": "nodemon --watch app/ server/server.js client"
   },
   "repository": {
     "type": "git",
