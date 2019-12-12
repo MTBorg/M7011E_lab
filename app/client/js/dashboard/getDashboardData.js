@@ -1,19 +1,24 @@
+// import prosumerFields from "../gqlFragment";
+
 const API_ADDRESS = "http://localhost:8080/graphql";
-const QUERY = `
-	query Prosumers {
-		id
-	}
+// const QUERY = `
+// query Prosumers {
+// ... prosumerFields
+// }
+// ${prosumerFields}
+// `;
+const test = `
+	query {active}
 `;
 async function getDashboardData() {
   console.log("in getDashboardData()");
   await fetch(API_ADDRESS, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
-      "access-control-allow-origin": "*"
+      "content-type": "application/json"
     },
     body: JSON.stringify({
-      query: "{prosumers {id}}"
+      query: "{active}"
     })
   })
     .then(res => res.json())

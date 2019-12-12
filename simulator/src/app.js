@@ -21,7 +21,7 @@ app.use(authMiddleWare);
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(
   cors({
-    origin: "http://localhost:3000"
+    origin: `http://${process.env.APP_HOST}:${process.env.APP_PORT}`
   })
 );
 app.use(
