@@ -3,19 +3,21 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Login</title>
+	<script type="text/javascript" src="/js/login/login.js"></script>
 </head>
 <body>
 	<div class="login-section">
-		<form id="login-form" method="post" action="/action/login">
+		<form id="login-form" onsubmit="submitLogin(event, this)">
 			<div>
 				<span>Email</span>
-				<input placeholder="email" type="email" name="email" required>
+				<input id="email-input" placeholder="email" type="email" required>
 			</div>
 			<div>
 				<span>Password</span>
-				<input placeholder="password" type="password" name="password" required>
+				<input id="password-input" placeholder="password" type="password" required>
 			</div>
 			<input type="submit" value="Log in">
+			<button onclick='window.location.replace("/register")'>Register</button>
 		</form>
 	</div>
 </body>

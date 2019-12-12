@@ -9,3 +9,4 @@ services:
       - ./client:/usr/src/app/client
     env_file:
       - app.env
+    network_mode: host

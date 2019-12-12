@@ -1,17 +1,30 @@
 const express = require("express");
 const expressGraphQL = require("express-graphql");
+const cors = require("cors");
 const schema = require("./schema.js");
 const { startSimulation } = require("./simulator.js");
+const { authMiddleWare } = require("./auth.js");
 
 const app = express();
+const port = 8080;
+
 app.use(
-  "/graphql",
-  expressGraphQL({
-    schema,
-    graphiql: true
+  cors({
+    origin: `http://${process.env.APP_HOST}:${process.env.APP_PORT}`
   })
 );
-const port = 8080;
+app.use(authMiddleWare);
+app.use(
+  "/graphql",
+  expressGraphQL(req => ({
+    schema,
+    context: {
+      user: req.user
+    },
+    graphiql: true
+  }))
+);
+
 app.listen(port, () => {
   console.log(
     `Express GraphQl Server Now Running On localhost:${port}/graphql`

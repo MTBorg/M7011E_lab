@@ -54,26 +54,6 @@ function authenticateLoggedOut(req, res, next) {
   }
 }
 
-function checkUserCredentials(user, password) {
-  // TODO: implement
-  return user === "t@t" && password === "password";
-}
-
-function logInUser(req, res) {
-  if (req.body.email !== undefined) {
-    if (checkUserCredentials(req.body.email, req.body.password)) {
-      const token = jwt.sign({ body: "hello" }, privateKey, {
-        algorithm: JWT_ALGORITHM
-      });
-      res.cookie(TOKEN_NAME, token);
-      res.redirect("/profile");
-    } else {
-      // TODO: Give some feedback to the user
-      res.redirect("/login");
-    }
-  }
-}
-
 function logoutUser(req, res) {
   if (getCookie(TOKEN_NAME, req.headers.cookie)) {
     res.cookie(TOKEN_NAME, undefined);
@@ -85,7 +65,6 @@ function logoutUser(req, res) {
 
 module.exports = {
   authenticateRequest,
-  logInUser,
   authenticateLoggedOut,
   logoutUser
 };

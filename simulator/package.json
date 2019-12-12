@@ -18,11 +18,14 @@
   },
   "homepage": "https://github.com/MTBorg/M7011E_lab#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "gaussian": "^1.1.0",
     "graphql": "^14.5.8",
     "join-monster": "^2.1.0",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^7.12.1"
   },
   "devDependencies": {

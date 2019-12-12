@@ -3,8 +3,23 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Register</title>
+	<script type="text/javascript" src="/js/register/register.js"></script>
 </head>
 <body>
 	Register
+	<form onsubmit="submitRegisterForm(event, this)">
+		<div>
+			<span>Email</span>
+			<input type="email" placeholder="email" required>
+		</div>
+		<div>
+			<span>Password</span>
+			<input type="password" placeholder="password" required>
+		</div>
+		<input type="submit" value="Register">
+		<div>
+			<span> Already have a user? Log in here</span>
+			<button onclick='window.location.replace("/login")'>Login</button>
+	</form>
 </body>
 </html>

@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 
 const {
   authenticateRequest,
-  logInUser,
   authenticateLoggedOut,
   logoutUser
 } = require("./auth.js");
@@ -14,6 +13,7 @@ const {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../client/views"));
 
+app.use("/js", express.static(path.join(__dirname, "../client/js")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -31,10 +31,6 @@ app.get("/profile", authenticateRequest, (req, res) => {
 
 app.get("/register", authenticateLoggedOut, (req, res) => {
   res.render("pages/register");
-});
-
-app.post("/action/login", (req, res) => {
-  logInUser(req, res);
 });
 
 app.post("/action/logout", (req, res) => {

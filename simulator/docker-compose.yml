@@ -6,6 +6,6 @@ services:
       - "8080:8080"
     volumes:
       - ./src:/usr/src/app/src
-    network_mode: host
     env_file:
       - sim.env
+    network_mode: host

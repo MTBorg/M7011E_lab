@@ -18,6 +18,7 @@ const {
   getCurrentProduction
 } = require("./powerplant");
 const { setDeficitRatio, setExcessRatio } = require("./ratio");
+const { authenticateLoggedIn, logInUser, registerUser } = require("./auth.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -130,9 +131,7 @@ const queryType = new GraphQLObjectType({
     },
     pricing: {
       type: GraphQLFloat,
-      async resolve() {
-        return getPricing();
-      }
+      resolve: authenticateLoggedIn(() => getPricing())
     },
     prosumer: {
       type: prosumerType,
@@ -148,15 +147,15 @@ const queryType = new GraphQLObjectType({
     },
     prosumers: {
       type: GraphQLList(prosumerType),
-      resolve(_parent, _args, _context, resolveInfo) {
-        return joinMonsterQuery(resolveInfo);
-      }
+      resolve: authenticateLoggedIn((parent, args, context, resolveInfo) =>
+        joinMonsterQuery(resolveInfo)
+      )
     },
     powerplants: {
       type: powerPlantType,
-      resolve(_parent, _args, _context, resolveInfo) {
-        return joinMonsterQuery(resolveInfo);
-      }
+      resolve: authenticateLoggedIn((_parent, _args, _context, resolveInfo) =>
+        joinMonsterQuery(resolveInfo)
+      )
     }
   }
 });
@@ -169,18 +168,16 @@ const mutationType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLNonNull(GraphQLInt) }
       },
-      resolve(_obj, args) {
-        return startRequestPowerPlant(args.id);
-      }
+      resolve: authenticateLoggedIn((_obj, args) =>
+        startRequestPowerPlant(args.id)
+      )
     },
     stopPowerPlant: {
       type: GraphQLString,
       args: {
         id: { type: GraphQLNonNull(GraphQLInt) }
       },
-      resolve(_obj, args) {
-        return stopPowerPlant(args.id);
-      }
+      resolve: authenticateLoggedIn((_obj, args) => stopPowerPlant(args.id))
     },
     setRatioDeficitMarket: {
       type: GraphQLFloat,
@@ -188,9 +185,9 @@ const mutationType = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLInt) },
         ratio: { type: GraphQLFloat }
       },
-      resolve(_obj, args) {
-        return setDeficitRatio(args.id, args.ratio);
-      }
+      resolve: authenticateLoggedIn((_obj, args) =>
+        setDeficitRatio(args.id, args.ratio)
+      )
     },
     setRatioExcessMarket: {
       type: GraphQLFloat,
@@ -198,8 +195,28 @@ const mutationType = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLInt) },
         ratio: { type: GraphQLFloat }
       },
+      resolve: authenticateLoggedIn((_obj, args) =>
+        setExcessRatio(args.id, args.ratio)
+      )
+    },
+    login: {
+      type: GraphQLString,
+      args: {
+        email: { type: GraphQLNonNull(GraphQLString) },
+        password: { type: GraphQLNonNull(GraphQLString) }
+      },
       resolve(_obj, args) {
-        return setExcessRatio(args.id, args.ratio);
+        return logInUser(args.email, args.password);
+      }
+    },
+    registerUser: {
+      type: GraphQLString,
+      args: {
+        email: { type: GraphQLNonNull(GraphQLString) },
+        password: { type: GraphQLNonNull(GraphQLString) }
+      },
+      resolve(_obj, args) {
+        return registerUser(args.email, args.password);
       }
     }
   }
