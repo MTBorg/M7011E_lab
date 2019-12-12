@@ -20,6 +20,11 @@ app.use(authMiddleWare);
 // Increase the maximum request limit in order to serve images
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(
+  cors({
+    origin: "http://localhost:3000"
+  })
+);
+app.use(
   "/graphql",
   expressGraphQL(req => ({
     schema,
