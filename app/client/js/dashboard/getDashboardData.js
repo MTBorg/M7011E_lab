@@ -1,14 +1,11 @@
 // import prosumerFields from "../gqlFragment";
 
 const API_ADDRESS = "http://localhost:8080/graphql";
-// const QUERY = `
-// query Prosumers {
-// ... prosumerFields
-// }
-// ${prosumerFields}
-// `;
-const test = `
-	query {active}
+const QUERY = `
+query Prosumers {
+	... prosumerFields
+}
+${prosumerFields}
 `;
 async function getDashboardData() {
   console.log("in getDashboardData()");
