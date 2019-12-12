@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script
+      type="text/javascript"
+      src="/js/dashboard/getDashboardData.js"
+    ></script>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        text-align: center;
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div>
+      <h1>Dashboard</h1>
+      <div>
+        <table>
+          <tr>
+            <th>Wind speed</th>
+            <th>Production</th>
+            <th>Consumption</th>
+            <th>Net production</th>
+            <th>Battery power</th>
+            <th>Electricity pricing</th>
+          </tr>
+          <tr id="dashboardData">
+            <script>
+              getDashboardData();
+            </script>
+            <td>1337</td>
+            <td>1337</td>
+            <td>1337</td>
+            <td>1337</td>
+            <td>1337</td>
+            <td>1337</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
