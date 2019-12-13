@@ -128,6 +128,12 @@ const queryType = new GraphQLObjectType({
         return true;
       }
     },
+    pricing: {
+      type: GraphQLFloat,
+      async resolve() {
+        return getPricing();
+      }
+    },
     prosumer: {
       type: prosumerType,
       args: {
@@ -174,12 +180,6 @@ const mutationType = new GraphQLObjectType({
       },
       resolve(_obj, args) {
         return stopPowerPlant(args.id);
-      }
-    },
-    currentPricing: {
-      type: GraphQLFloat,
-      async resolve() {
-        return getPricing();
       }
     },
     setRatioDeficitMarket: {
