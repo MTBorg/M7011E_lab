@@ -21,13 +21,13 @@ describe("pricing", async () => {
     });
     const prosumers = [
       {
-        consumption: 0,
+        current_consumption: 0,
         current_wind_speed: 10,
         ratio_excess_market: 1,
         ratio_deficit_market: 0.8
       },
       {
-        consumption: 0,
+        current_consumption: 0,
         current_wind_speed: 10,
         ratio_excess_market: 1,
         ratio_deficit_market: 0.4
@@ -45,13 +45,13 @@ describe("pricing", async () => {
   it("should return the correct price", async () => {
     const prosumers = [
       {
-        consumption: 20,
+        current_consumption: 20,
         current_wind_speed: 10,
         ratio_excess_market: 10,
         ratio_deficit_market: 0.8
       },
       {
-        consumption: 0,
+        current_consumption: 0,
         current_wind_speed: 10,
         ratio_excess_market: 0.4,
         ratio_deficit_market: 10
