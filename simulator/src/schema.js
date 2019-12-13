@@ -18,7 +18,12 @@ const {
   getCurrentProduction
 } = require("./powerplant");
 const { setDeficitRatio, setExcessRatio } = require("./ratio");
-const { authenticateLoggedIn, logInUser, registerUser } = require("./auth.js");
+const {
+  authenticateLoggedIn,
+  logInUser,
+  registerUser,
+  authenticateIsMe
+} = require("./auth.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -156,6 +161,20 @@ const queryType = new GraphQLObjectType({
       resolve: authenticateLoggedIn((_parent, _args, _context, resolveInfo) =>
         joinMonsterQuery(resolveInfo)
       )
+<<<<<<< Updated upstream
+=======
+    },
+    me: {
+      type: prosumerType,
+      where: (prosumers, _args, context) => {
+        if (context.user.id) return `${prosumers}.id = ${context.user.id}`;
+      },
+      resolve: authenticateLoggedIn((_parent, _args, context, resolveInfo) => {
+        return joinMonster.default(resolveInfo, context, async sql =>
+          pool.query(sql)
+        );
+      })
+>>>>>>> Stashed changes
     }
   }
 });
@@ -185,8 +204,8 @@ const mutationType = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLInt) },
         ratio: { type: GraphQLFloat }
       },
-      resolve: authenticateLoggedIn((_obj, args) =>
-        setDeficitRatio(args.id, args.ratio)
+      resolve: authenticateLoggedIn(
+        authenticateIsMe((_obj, args) => setDeficitRatio(args.id, args.ratio))
       )
     },
     setRatioExcessMarket: {
@@ -195,8 +214,8 @@ const mutationType = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLInt) },
         ratio: { type: GraphQLFloat }
       },
-      resolve: authenticateLoggedIn((_obj, args) =>
-        setExcessRatio(args.id, args.ratio)
+      resolve: authenticateLoggedIn(
+        authenticateIsMe((_obj, args) => setExcessRatio(args.id, args.ratio))
       )
     },
     login: {

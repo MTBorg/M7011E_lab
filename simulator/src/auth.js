@@ -35,6 +35,14 @@ const authenticateLoggedIn = next => (parent, args, context, resolveInfo) => {
   }
 };
 
+const authenticateIsMe = next => (parent, args, context, resolveInfo) => {
+  if (context.user.id === args.id) {
+    return next(parent, args, context, resolveInfo);
+  } else {
+    return new Error("Not authorized: access to resource denied");
+  }
+};
+
 function userIsAdmin(email) {
   // TODO: implement
   return false;
@@ -105,5 +113,6 @@ module.exports = {
   authMiddleWare,
   logInUser,
   authenticateLoggedIn,
+  authenticateIsMe,
   registerUser
 };
