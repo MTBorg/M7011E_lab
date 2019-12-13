@@ -5,14 +5,14 @@ const QUERY = `{
 	prosumer(id: 1) {
 		... prosumerFields
 	}
-
+	pricing
 }
 ${prosumerFields}
 `;
 
 /**
  * Fetches the prosumer data along with the electricity pricing
- * (.prosumer and .pricing)
+ * @returns an object with subfields prosumer and pricing
  */
 async function getProsumerData() {
   let prosumerData = null;
