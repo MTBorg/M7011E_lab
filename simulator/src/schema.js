@@ -161,8 +161,6 @@ const queryType = new GraphQLObjectType({
       resolve: authenticateLoggedIn((_parent, _args, _context, resolveInfo) =>
         joinMonsterQuery(resolveInfo)
       )
-<<<<<<< Updated upstream
-=======
     },
     me: {
       type: prosumerType,
@@ -174,7 +172,6 @@ const queryType = new GraphQLObjectType({
           pool.query(sql)
         );
       })
->>>>>>> Stashed changes
     }
   }
 });
