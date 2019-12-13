@@ -13,9 +13,12 @@ function authMiddleWare(req, res, next) {
     const token = req.headers.authtoken;
     const user = jwt.verify(token, privateKey);
 
-    // Validate fields
-    if (!user || !user.id || !user.admin) {
-      res.status(401).send({ error: "Invalid token" });
+    // Validate the fields of the token
+    if (user == null || user.id == null || user.admin == null) {
+      res.status(401).send({
+        error:
+          "Invalid token. Try clearing your cache or to log out and in again."
+      });
       next(res);
     }
 
@@ -28,7 +31,7 @@ const authenticateLoggedIn = next => (parent, args, context, resolveInfo) => {
   if (context.user) {
     return next(parent, args, context, resolveInfo);
   } else {
-    return new Error("Not authorized");
+    return new Error("Not authorized: not logged in");
   }
 };
 
@@ -59,7 +62,7 @@ async function logInUser(email, password) {
       const id = res.rows[0].id;
       if (await checkUserCredentials(id, password)) {
         const isAdmin = userIsAdmin(email);
-        const token = jwt.sign({ id: id, admin: isAdmin }, privateKey, {
+        const token = jwt.sign({ id, admin: isAdmin }, privateKey, {
           algorithm: JWT_ALGORITHM
         });
         return token;
@@ -88,8 +91,8 @@ async function registerUser(email, password) {
 			RETURNING id`,
       [email, hash]
     );
-    const userId = res.rows[0].id;
-    const token = jwt.sign({ userId, isAdmin: false }, privateKey, {
+    const id = res.rows[0].id;
+    const token = jwt.sign({ id, admin: false }, privateKey, {
       algorithm: JWT_ALGORITHM
     });
     return token;
