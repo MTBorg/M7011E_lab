@@ -1,11 +1,14 @@
 const prosumerFields = `
-	fragment prosumerFields on prosumer {
-		meanDayWindSpeed,
-		currentWindSpeed,
-		currentProduction,
-		currentConsumption,
-		ratioExcessMarket,
-		ratioDeficitMarket,
-		battery
-	} 
- `;
+fragment prosumerFields on prosumer {
+	meanDayWindSpeed,
+	currentWindSpeed,
+	currentProduction,
+	currentConsumption,
+	ratioExcessMarket,
+	ratioDeficitMarket,
+	battery {
+		power,
+		maxCapacity
+	}
+} 
+`;

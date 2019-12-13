@@ -3,8 +3,14 @@
   <head>
     <script
       type="text/javascript"
-      src="/js/dashboard/getDashboardData.js"
+      src="/js/fragments/prosumerFields.js"
     ></script>
+    <script
+      type="text/javascript"
+      src="/js/prosumer/getProsumerData.js"
+    ></script>
+    <script type="text/javascript" src="/js/prosumer/dashboard.js"></script>
+    <script type="text/javascript" src="/js/pollFunc.js"></script>
     <style>
       table,
       th,
@@ -25,26 +31,28 @@
     <div>
       <h1>Dashboard</h1>
       <div>
+        <h2>Overview</h2>
         <table>
-          <tr>
-            <th>Wind speed</th>
-            <th>Production</th>
-            <th>Consumption</th>
-            <th>Net production</th>
-            <th>Battery power</th>
-            <th>Electricity pricing</th>
-          </tr>
-          <tr id="dashboardData">
-            <script>
-              getDashboardData();
-            </script>
-            <td>1337</td>
-            <td>1337</td>
-            <td>1337</td>
-            <td>1337</td>
-            <td>1337</td>
-            <td>1337</td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Wind speed</th>
+              <th>Production</th>
+              <th>Consumption</th>
+              <th>Net production</th>
+              <th>Battery power</th>
+              <th>Electricity pricing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="windSpeed"></td>
+              <td id="production"></td>
+              <td id="consumption"></td>
+              <td id="netProduction"></td>
+              <td id="battery"></td>
+              <td id="pricing"></td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
