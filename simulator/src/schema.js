@@ -31,6 +31,24 @@ function joinMonsterQuery(resolveInfo) {
   });
 }
 
+const accountType = new GraphQLObjectType({
+  name: "account",
+  fields: () => ({
+    id: {
+      type: GraphQLInt,
+      sqlColumn: "id"
+    },
+    email: {
+      type: GraphQLString,
+      sqlColumn: "email"
+    }
+  })
+});
+accountType._typeConfig = {
+  sqlTable: "accounts",
+  uniqueKey: "id"
+};
+
 const batteryType = new GraphQLObjectType({
   name: "battery",
   fields: () => ({
@@ -84,6 +102,12 @@ const prosumerType = new GraphQLObjectType({
       sqlColumn: "battery_id",
       sqlJoin: (prosumerTable, batteriesTable, _args) =>
         `${prosumerTable}.battery_id = ${batteriesTable}.id`
+    },
+    account: {
+      type: accountType,
+      sqlColumn: "account_id",
+      sqlJoin: (prosumerTable, accountTable) =>
+        `${prosumerTable}.account_id = ${accountTable}.id`
     }
   })
 });
