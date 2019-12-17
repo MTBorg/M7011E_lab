@@ -6,7 +6,18 @@ const { pool } = require("./db.js");
 const privateKey = process.env.SECRET || "secret";
 const JWT_ALGORITHM = "HS256";
 const SALT_ROUNDS = 10;
-const MANAGER_PASSWORD = process.env.MANAGER_PASSWORD || "admin";
+const MANAGER_PASSWORD = process.env.MANAGER_PASSWORD || "manager";
+const prosumerRegistrationAccountQuery = `
+	INSERT INTO accounts (email, password_hash)
+	VALUES ($1, $2) 
+	RETURNING id`;
+const prosumerRegistrationProsumersQuery = `INSERT INTO prosumers
+	(account_id)
+	VALUES($1)`;
+const managerRegistrationAccountsQuery = `
+	INSERT INTO accounts (email, password_hash)
+	VALUES ($1, $2) 
+	RETURNING id`;
 
 function authMiddleWare(req, res, next) {
   if (req.headers.authtoken) {
@@ -55,8 +66,10 @@ async function userIsManager(email) {
 				SELECT * 
 				FROM managers 
 				INNER JOIN accounts ON managers.account_id=accounts.id
+				WHERE email=$1
 			)
-		`
+		`,
+    [email]
   );
   return res.rows[0].exists;
 }
@@ -111,19 +124,12 @@ async function registerProsumer(email, password) {
   const client = await pool.connect();
   try {
     client.query("BEGIN");
-    const accountRes = await client.query(
-      `INSERT INTO accounts (email, password_hash)
-			VALUES ($1, $2) 
-			RETURNING id`,
-      [email, hash]
-    );
+    const accountRes = await client.query(prosumerRegistrationAccountQuery, [
+      email,
+      hash
+    ]);
     const accountId = accountRes.rows[0].id;
-    await client.query(
-      `INSERT INTO prosumers
-			(account_id)
-			VALUES($1)`,
-      [accountId]
-    );
+    await client.query(prosumerRegistrationProsumersQuery, [accountId]);
     const token = jwt.sign({ accountId, manager: false }, privateKey, {
       algorithm: JWT_ALGORITHM
     });
@@ -154,12 +160,10 @@ async function registerManager(email, password, managerPassword) {
   const client = await pool.connect();
   try {
     client.query("BEGIN");
-    const accountRes = await client.query(
-      `INSERT INTO accounts (email, password_hash)
-			VALUES ($1, $2) 
-			RETURNING id`,
-      [email, hash]
-    );
+    const accountRes = await client.query(managerRegistrationAccountsQuery, [
+      email,
+      hash
+    ]);
     const accountId = accountRes.rows[0].id;
     await client.query(
       `INSERT INTO managers
@@ -167,7 +171,7 @@ async function registerManager(email, password, managerPassword) {
 			VALUES($1)`,
       [accountId]
     );
-    const token = jwt.sign({ accountId, manager: false }, privateKey, {
+    const token = jwt.sign({ accountId, manager: true }, privateKey, {
       algorithm: JWT_ALGORITHM
     });
     await client.query("COMMIT");
@@ -188,5 +192,8 @@ module.exports = {
   authenticateIsMe,
   authenticateIsManager,
   registerProsumer,
-  registerManager
+  registerManager,
+  prosumerRegistrationAccountQuery,
+  prosumerRegistrationProsumersQuery,
+  managerRegistrationAccountsQuery
 };
