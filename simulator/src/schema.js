@@ -21,7 +21,8 @@ const { setDeficitRatio, setExcessRatio } = require("./ratio");
 const {
   authenticateLoggedIn,
   logInUser,
-  registerUser,
+  registerProsumer,
+  registerManager,
   authenticateIsMe
 } = require("./auth.js");
 
@@ -249,14 +250,25 @@ const mutationType = new GraphQLObjectType({
         return logInUser(args.email, args.password);
       }
     },
-    registerUser: {
+    registerProsumer: {
       type: GraphQLString,
       args: {
         email: { type: GraphQLNonNull(GraphQLString) },
         password: { type: GraphQLNonNull(GraphQLString) }
       },
       resolve(_obj, args) {
-        return registerUser(args.email, args.password);
+        return registerProsumer(args.email, args.password);
+      }
+    },
+    registerManager: {
+      type: GraphQLString,
+      args: {
+        email: { type: GraphQLNonNull(GraphQLString) },
+        password: { type: GraphQLNonNull(GraphQLString) },
+        managerPassword: { type: GraphQLNonNull(GraphQLString) }
+      },
+      resolve(_obj, args) {
+        return registerManager(args.email, args.password, args.managerPassword);
       }
     }
   }

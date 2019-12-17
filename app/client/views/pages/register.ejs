@@ -16,6 +16,18 @@
 			<span>Password</span>
 			<input type="password" placeholder="password" required>
 		</div>
+		<div>
+			<span>Manager</span>
+			<input 
+		 type="checkbox" 
+	 		onclick=
+	 	'document.getElementById("manager-password-input").disabled = !this.checked;'>
+			<input 
+			id="manager-password-input" 
+	 		type="password" 
+			placeholder="manager password"
+			disabled>
+		</div>
 		<input type="submit" value="Register">
 		<div>
 			<span> Already have a user? Log in here</span>

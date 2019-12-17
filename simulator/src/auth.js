@@ -6,6 +6,7 @@ const { pool } = require("./db.js");
 const privateKey = process.env.SECRET || "secret";
 const JWT_ALGORITHM = "HS256";
 const SALT_ROUNDS = 10;
+const MANAGER_PASSWORD = process.env.MANAGER_PASSWORD || "admin";
 
 function authMiddleWare(req, res, next) {
   if (req.headers.authtoken) {
@@ -13,7 +14,7 @@ function authMiddleWare(req, res, next) {
     const user = jwt.verify(token, privateKey);
 
     // Validate the fields of the token
-    if (user == null || user.id == null || user.admin == null) {
+    if (user == null || user.id == null || user.manager == null) {
       res.status(401).send({
         error:
           "Invalid token. Try clearing your cache or to log out and in again."
@@ -67,9 +68,13 @@ async function logInUser(email, password) {
       const { id } = res.rows[0];
       if (await checkAccountCredentials(id, password)) {
         const isAdmin = userIsAdmin(email);
-        const token = jwt.sign({ accountId: id, admin: isAdmin }, privateKey, {
-          algorithm: JWT_ALGORITHM
-        });
+        const token = jwt.sign(
+          { accountId: id, manager: isAdmin },
+          privateKey,
+          {
+            algorithm: JWT_ALGORITHM
+          }
+        );
         return token;
       }
     } catch (error) {
@@ -79,7 +84,7 @@ async function logInUser(email, password) {
   return null;
 }
 
-async function registerUser(email, password) {
+async function registerProsumer(email, password) {
   if (!email || !password) {
     return null;
   }
@@ -111,7 +116,50 @@ async function registerUser(email, password) {
     return token;
   } catch (error) {
     await client.query("ROLLBACK");
-    console.log(`Failed to register user: ${error}`);
+    console.log(`Failed to register prosumer: ${error}`);
+  } finally {
+    client.release();
+  }
+  return null;
+}
+
+async function registerManager(email, password, managerPassword) {
+  if (email == null || password == null || managerPassword == null) {
+    return null;
+  }
+
+  if (managerPassword !== MANAGER_PASSWORD) {
+    return null;
+  }
+
+  // Hash and salt the password
+  const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+  const hash = bcrypt.hashSync(password, salt);
+
+  const client = await pool.connect();
+  try {
+    client.query("BEGIN");
+    const accountRes = await client.query(
+      `INSERT INTO accounts (email, password_hash)
+			VALUES ($1, $2) 
+			RETURNING id`,
+      [email, hash]
+    );
+    const accountId = accountRes.rows[0].id;
+    await client.query(
+      `INSERT INTO managers
+			(account_id)
+			VALUES($1)`,
+      [accountId]
+    );
+    const token = jwt.sign({ accountId, manager: false }, privateKey, {
+      algorithm: JWT_ALGORITHM
+    });
+    await client.query("COMMIT");
+    return token;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.log(`Failed to register manager: ${error}`);
   } finally {
     client.release();
   }
@@ -123,5 +171,6 @@ module.exports = {
   logInUser,
   authenticateLoggedIn,
   authenticateIsMe,
-  registerUser
+  registerProsumer,
+  registerManager
 };
