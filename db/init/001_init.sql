@@ -13,10 +13,17 @@ CREATE TABLE batteries (
 );
 ALTER TABLE batteries OWNER TO gle;
 
-CREATE TABLE prosumers (
+CREATE TABLE accounts (
 	id SERIAL,
 	email TEXT NOT NULL UNIQUE,
 	password_hash TEXT NOT NULL,
+	PRIMARY KEY (id)
+);
+ALTER TABLE accounts OWNER TO gle;
+
+CREATE TABLE prosumers (
+	id SERIAL,
+	account_id INT NOT NULL,
 	mean_day_wind_speed NUMERIC DEFAULT 0.0,
 	current_wind_speed NUMERIC DEFAULT 0.0,
 	current_consumption NUMERIC DEFAULT 0.0,
@@ -26,9 +33,18 @@ CREATE TABLE prosumers (
 	battery_id INTEGER,
 	blackout BOOLEAN DEFAULT false,
 	PRIMARY KEY (id),
+	FOREIGN KEY (account_id) REFERENCES accounts(id),
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)
 );
 ALTER TABLE prosumers OWNER TO gle;
+
+CREATE TABLE managers(
+	id SERIAL,
+	account_id INT NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (account_id) REFERENCES accounts (id) 
+);
+ALTER TABLE managers OWNER TO gle;
 
 CREATE TYPE power_plant_status as ENUM('stopped', 'started', 'starting');
 CREATE TABLE power_plants (
