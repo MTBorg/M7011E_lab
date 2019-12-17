@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script type="text/javascript" src="/js/APIAddress.js"></script>
     <script
       type="text/javascript"
       src="/js/fragments/prosumerFields.js"
     ></script>
-    <script
-      type="text/javascript"
-      src="/js/prosumer/getProsumerData.js"
-    ></script>
+    <script type="text/javascript" src="/js/prosumer/ratios.js"></script>
     <script type="text/javascript" src="/js/prosumer/dashboard.js"></script>
     <script type="text/javascript" src="/js/pollFunc.js"></script>
     <style>
@@ -54,6 +52,22 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <div>
+        <div>
+          <h3>Excessive production</h3>
+          <div>
+            <%- include("../partials/slider", {id:"ratioExcess"}) %>
+          </div>
+        </div>
+        <div>
+          <div>
+            <h3>Under-production</h3>
+            <div>
+              <%- include("../partials/slider", {id:"ratioDeficit"}) %>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
