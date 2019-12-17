@@ -23,7 +23,8 @@ const {
   logInUser,
   registerProsumer,
   registerManager,
-  authenticateIsMe
+  authenticateIsMe,
+  authenticateIsManager
 } = require("./auth.js");
 
 function joinMonsterQuery(resolveInfo) {
@@ -177,8 +178,10 @@ const queryType = new GraphQLObjectType({
     },
     prosumers: {
       type: GraphQLList(prosumerType),
-      resolve: authenticateLoggedIn((parent, args, context, resolveInfo) =>
-        joinMonsterQuery(resolveInfo)
+      resolve: authenticateLoggedIn(
+        authenticateIsManager((parent, args, context, resolveInfo) =>
+          joinMonsterQuery(resolveInfo)
+        )
       )
     },
     powerplants: {

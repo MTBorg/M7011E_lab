@@ -14,7 +14,7 @@ function authMiddleWare(req, res, next) {
     const user = jwt.verify(token, privateKey);
 
     // Validate the fields of the token
-    if (user == null || user.id == null || user.manager == null) {
+    if (user == null || user.accountId == null || user.manager == null) {
       res.status(401).send({
         error:
           "Invalid token. Try clearing your cache or to log out and in again."
@@ -41,9 +41,24 @@ const authenticateIsMe = next => (parent, args, context, resolveInfo) => {
   return new Error("Not authorized: access to resource denied");
 };
 
-function userIsAdmin(email) {
-  // TODO: implement
-  return false;
+const authenticateIsManager = next => (parent, args, context, resolveInfo) => {
+  if (context.user.manager) {
+    return next(parent, args, context, resolveInfo);
+  }
+  return new Error("Not authorized: insufficient role");
+};
+
+async function userIsManager(email) {
+  const res = await pool.query(
+    `
+			SELECT EXISTS(
+				SELECT * 
+				FROM managers 
+				INNER JOIN accounts ON managers.account_id=accounts.id
+			)
+		`
+  );
+  return res.rows[0].exists;
 }
 
 async function checkAccountCredentials(accountId, password) {
@@ -67,7 +82,7 @@ async function logInUser(email, password) {
       ]);
       const { id } = res.rows[0];
       if (await checkAccountCredentials(id, password)) {
-        const isAdmin = userIsAdmin(email);
+        const isAdmin = await userIsManager(email);
         const token = jwt.sign(
           { accountId: id, manager: isAdmin },
           privateKey,
@@ -171,6 +186,7 @@ module.exports = {
   logInUser,
   authenticateLoggedIn,
   authenticateIsMe,
+  authenticateIsManager,
   registerProsumer,
   registerManager
 };
