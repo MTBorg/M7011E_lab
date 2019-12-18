@@ -8,6 +8,7 @@ const {
   GraphQLNonNull
 } = require("graphql");
 const joinMonster = require("join-monster");
+const { registerProsumer, registerManager } = require("./registration.js");
 const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
 const { pool } = require("./db.js");
@@ -21,8 +22,6 @@ const { setDeficitRatio, setExcessRatio } = require("./ratio");
 const {
   authenticateLoggedIn,
   logInUser,
-  registerProsumer,
-  registerManager,
   authenticateIsMe,
   authenticateIsManager
 } = require("./auth.js");
