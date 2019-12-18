@@ -8,8 +8,8 @@ const SALT_ROUNDS = 10;
 const MANAGER_PASSWORD = process.env.MANAGER_PASSWORD || "manager";
 const JWT_ALGORITHM = "HS256";
 const prosumerRegistrationProsumersQuery = `INSERT INTO prosumers
-	(account_id)
-	VALUES($1)`;
+	(account_id, battery_id)
+	VALUES($1, $2)`;
 const managerRegistrationAccountsQuery = `
 	INSERT INTO accounts (email, password_hash)
 	VALUES ($1, $2) 
@@ -18,6 +18,9 @@ const prosumerRegistrationAccountsQuery = `
 	INSERT INTO accounts (email, password_hash)
 	VALUES ($1, $2) 
 	RETURNING id`;
+const prosumerRegistrationBatteryQuery = `
+	INSERT INTO batteries (max_capacity) VALUES (0) RETURNING id;
+`;
 
 async function registerManager(email, password, managerPassword) {
   if (email == null || password == null || managerPassword == null) {
@@ -77,7 +80,14 @@ async function registerProsumer(email, password) {
       hash
     ]);
     const accountId = accountRes.rows[0].id;
-    await client.query(prosumerRegistrationProsumersQuery, [accountId]);
+
+    const batteryRes = await client.query(prosumerRegistrationBatteryQuery);
+    const batteryId = batteryRes.rows[0].id;
+
+    await client.query(prosumerRegistrationProsumersQuery, [
+      accountId,
+      batteryId
+    ]);
     const token = jwt.sign({ accountId, manager: false }, privateKey, {
       algorithm: JWT_ALGORITHM
     });
@@ -97,5 +107,6 @@ module.exports = {
   registerProsumer,
   prosumerRegistrationProsumersQuery,
   prosumerRegistrationAccountsQuery,
+  prosumerRegistrationBatteryQuery,
   managerRegistrationAccountsQuery
 };

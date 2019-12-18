@@ -9,6 +9,7 @@ const {
   registerProsumer,
   registerManager,
   prosumerRegistrationAccountsQuery,
+  prosumerRegistrationBatteryQuery,
   managerRegistrationAccountsQuery
 } = require("../src/registration");
 const { pool } = require("../src/db");
@@ -141,6 +142,9 @@ describe("registration", () => {
           async query(queryString) {
             if (queryString === prosumerRegistrationAccountsQuery) {
               return { rows: [{ id: 7 }] };
+            }
+            if (queryString === prosumerRegistrationBatteryQuery) {
+              return { rows: [{ id: 4 }] };
             }
             return null;
           },
