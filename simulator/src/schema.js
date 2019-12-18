@@ -192,7 +192,8 @@ const queryType = new GraphQLObjectType({
     me: {
       type: prosumerType,
       where: (prosumers, _args, context) => {
-        if (context.user.id) return `${prosumers}.id = ${context.user.id}`;
+        if (context.user.accountId)
+          return `${prosumers}.account_id = ${context.user.accountId}`;
       },
       resolve: authenticateLoggedIn((_parent, _args, context, resolveInfo) => {
         return joinMonster.default(resolveInfo, context, async sql =>
