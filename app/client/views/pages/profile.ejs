@@ -5,9 +5,14 @@
 	<title>Profile</title>
 </head>
 <body>
+	<h1>Profile</h1>
+	<% if (typeof user !== "undefined") { %>
+		<% if (user.email) { %>
+			<h2><%= user.email %></h2>
+		<% } %>
+	<% } %>
 	<form method="post" action="/action/logout">
 		<input type="submit" value="log out">
 	</form>
-	Profile
 </body>
 </html>
