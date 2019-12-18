@@ -1,0 +1,30 @@
+version: "3"
+services:
+  app:
+    build: app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app/server:/usr/src/app/server
+      - ./app/client:/usr/src/app/client
+    env_file:
+      - app/app.env
+    depends_on:
+      - db
+      - simulator
+  simulator:
+    build: simulator
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./simulator/src:/usr/src/app/src
+    network_mode: host
+    depends_on:
+      - db
+    env_file:
+      - simulator/sim.env
+  db:
+    container_name: db
+    build: db
+    ports:
+      - "5432:5432"
