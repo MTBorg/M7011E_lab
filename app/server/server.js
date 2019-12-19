@@ -19,7 +19,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../client/views"));
 
 app.use("/js", express.static(path.join(__dirname, "../client/js")));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -31,27 +31,17 @@ app.get("/login", authenticateLoggedOut, (req, res) => {
 });
 
 app.get("/profile", authenticateRequest, async (req, res) => {
-  const query = `
-  {
-		me{
-			account{
-				email
-			}
-		}
-  }
-  `;
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   try {
-    const response = await fetch(API_ADDRESS, {
-      method: "POST",
-      headers: { "content-type": "application/json", authToken },
-      body: JSON.stringify({ query })
+    const response = await fetch("http://localhost:8080/api/get_image", {
+      method: "GET",
+      headers: { "Content-type": "image/jpeg", authToken }
     });
-    const json = await response.json();
-    const { email } = json.data.me.account;
-
-    res.render("pages/profile", { user: { email } });
+    const image = await response.buffer();
+    res.render("pages/profile", {
+      user: { email: "iauhwdiuah", image }
+    });
   } catch (error) {
     console.log(error);
     res.render("partials/error");

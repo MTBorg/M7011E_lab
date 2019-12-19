@@ -81,7 +81,7 @@ describe("auth", () => {
         const res = authenticateIsMe(() => {});
         const args = { id: 2 };
         const context = {
-          user: { id: 3 }
+          user: { accountId: 3 }
         };
         expect(res(null, args, context)).to.be.an("error");
       });
@@ -90,7 +90,7 @@ describe("auth", () => {
         const spy = sinon.spy();
         const args = { id: 2 };
         const context = {
-          user: { id: 3 }
+          user: { accountId: 3 }
         };
         authenticateIsMe(spy)(null, args, context, null);
         expect(spy).to.not.have.been.called;
