@@ -26,6 +26,7 @@ const {
   authenticateIsMe,
   authenticateIsManager
 } = require("./auth.js");
+const { updateEmail } = require("./credentials.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -333,6 +334,15 @@ const mutationType = new GraphQLObjectType({
       resolve(_obj, args) {
         return registerManager(args.email, args.password, args.managerPassword);
       }
+    },
+    updateEmail: {
+      type: GraphQLString,
+      args: {
+        email: { type: GraphQLNonNull(GraphQLString) }
+      },
+      resolve: authenticateLoggedIn((_obj, args, context) =>
+        updateEmail(context.user.accountId, args.email)
+      )
     }
   }
 });
