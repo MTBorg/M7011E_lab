@@ -6,7 +6,8 @@ const {
   GraphQLList,
   GraphQLInt,
   GraphQLNonNull,
-  GraphQLUnionType
+  GraphQLUnionType,
+  GraphQLBoolean
 } = require("graphql");
 const joinMonster = require("join-monster");
 const { registerProsumer, registerManager } = require("./registration.js");
@@ -26,7 +27,11 @@ const {
   authenticateIsMe,
   authenticateIsManager
 } = require("./auth.js");
-const { updateEmail, updatePassword } = require("./credentials.js");
+const {
+  updateEmail,
+  updatePassword,
+  deleteAccount
+} = require("./credentials.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -351,6 +356,12 @@ const mutationType = new GraphQLObjectType({
       },
       resolve: authenticateLoggedIn((_obj, args, context) =>
         updatePassword(context.user.accountId, args.password)
+      )
+    },
+    deleteAccount: {
+      type: GraphQLBoolean,
+      resolve: authenticateLoggedIn((_obj, args, context) =>
+        deleteAccount(context.user.accountId)
       )
     }
   }
