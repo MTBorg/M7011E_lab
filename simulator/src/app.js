@@ -5,9 +5,6 @@ const schema = require("./schema.js");
 const { startSimulation } = require("./simulator.js");
 const { authMiddleWare } = require("./auth.js");
 const bodyParser = require("body-parser");
-const schema = require("./schema.js");
-const { startSimulation } = require("./simulator.js");
-const { authMiddleWare } = require("./auth.js");
 const { getImage } = require("./get_picture.js");
 const { pool } = require("./db.js");
 
@@ -32,7 +29,6 @@ app.use(
     graphiql: true
   }))
 );
-const port = 8080;
 
 app.get("/api/get_image", async (req, res) => {
   if (req.user != null) {
