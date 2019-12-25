@@ -38,9 +38,51 @@ async function updatePassword(accountId, password) {
   }
 }
 
+async function deleteAccount(accountId) {
+  const client = await pool.connect();
+  let status = false;
+  try {
+    client.query("BEGIN");
+    const deleteProsumerPromise = client.query(
+      `DELETE FROM prosumers WHERE account_id=$1`,
+      [accountId]
+    );
+    const deleteManagerPromise = client.query(
+      "DELETE FROM managers WHERE account_id=$1",
+      [accountId]
+    );
+
+    const [prosumerResponse, managerResponse] = await Promise.all([
+      deleteProsumerPromise,
+      deleteManagerPromise
+    ]);
+
+    const accountResponse = await client.query(
+      "DELETE FROM accounts WHERE id=$1",
+      [accountId]
+    );
+    await client.query("COMMIT");
+
+    // If any of the queries delete any number of rows the action is considered
+    // successful
+    status =
+      prosumerResponse.rowCount !== 0 ||
+      managerResponse.rowCount !== 0 ||
+      accountResponse.rowCount !== 0;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.log(`Failed to delete user: ${error}`);
+    status = false;
+  } finally {
+    client.release();
+  }
+  return status;
+}
+
 module.exports = {
   updateEmail,
   updatePassword,
+  deleteAccount,
   UPDATE_EMAIL_QUERY,
   UPDATE_PASSWORD_QUERY
 };
