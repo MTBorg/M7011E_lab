@@ -80,9 +80,6 @@ async function logInUser(email, password) {
       const res = await pool.query("SELECT id FROM accounts WHERE email=$1", [
         email
       ]);
-      if (res.rows.length === 0) {
-        return null;
-      }
       const { id } = res.rows[0];
       if (await checkAccountCredentials(id, password)) {
         const isAdmin = await userIsManager(email);
