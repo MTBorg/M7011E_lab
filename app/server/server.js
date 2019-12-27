@@ -72,7 +72,7 @@ app.get("/profile", authenticateRequest, async (req, res) => {
   }
 });
 
-app.get("/dashboard", (req, res) => {
+app.get("/dashboard", authenticateRequest, (req, res) => {
   res.render("pages/prosumerDashboard");
 });
 
