@@ -17,7 +17,6 @@ CREATE TABLE accounts (
 	id SERIAL,
 	email TEXT NOT NULL UNIQUE,
 	password_hash TEXT NOT NULL,
-	image BYTEA,
 	PRIMARY KEY (id)
 );
 ALTER TABLE accounts OWNER TO gle;

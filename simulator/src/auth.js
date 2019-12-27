@@ -33,7 +33,7 @@ const authenticateLoggedIn = next => (parent, args, context, resolveInfo) => {
 };
 
 const authenticateIsMe = next => (parent, args, context, resolveInfo) => {
-  if (context.user.accountId === args.accountId) {
+  if (context.user.id === args.id) {
     return next(parent, args, context, resolveInfo);
   }
   return new Error("Not authorized: access to resource denied");

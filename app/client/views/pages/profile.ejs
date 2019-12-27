@@ -3,7 +3,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Profile</title>
-	<script src="../../js/profile/upload_picture.js" type="text/javascript"></script>
 </head>
 <body>
 	<h1>Profile</h1>
@@ -12,15 +11,6 @@
 			<h2><%= user.email %></h2>
 		<% } %>
 	<% } %>
-	<img style="max-height:10000;max-width:1000px" id="photo" src=<%= user.image%> alt="Profile picture">
-	<div>
-		<h3>Upload picture</h3>
-		<form 
-		onsubmit="uploadImageFormSubmit(event)">
-			<input type="file" accept="image/jpeg"><br>
-			<input type="submit" value="Upload">
-		</form>
-	</div>
 	<form method="post" action="/action/logout">
 		<input type="submit" value="log out">
 	</form>
