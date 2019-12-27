@@ -61,35 +61,3 @@ async function updatePassword(event) {
     alert(`Failed to update password: ${error}`);
   }
 }
-
-async function deleteAccount() {
-  try {
-    const authToken = getCookie("authToken", document.cookie);
-    const response = await fetch(API_ADDRESS, {
-      method: "POST",
-      headers: { "content-type": "application/json", authToken },
-      body: JSON.stringify({
-        query: `
-				mutation{
-					deleteAccount
-				}
-			`
-      })
-    });
-    const result = await response.json();
-
-    if (result.errors != null) {
-      alert("Failed to delete account");
-    } else {
-      // Clear the authentication cookie
-      const expirationDate = new Date();
-      expirationDate.setTime(expirationDate.getTime() - 1);
-      document.cookie = `authToken=; expires=${expirationDate.toGMTString()}`;
-
-      alert("Successfully deleted account");
-      window.location.replace("/");
-    }
-  } catch (error) {
-    alert(`Failed to delete account: ${error}`);
-  }
-}
