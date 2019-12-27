@@ -5,8 +5,7 @@ const {
   GraphQLFloat,
   GraphQLList,
   GraphQLInt,
-  GraphQLNonNull,
-  GraphQLUnionType
+  GraphQLNonNull
 } = require("graphql");
 const joinMonster = require("join-monster");
 const { registerProsumer, registerManager } = require("./registration.js");
@@ -150,65 +149,6 @@ powerPlantType._typeConfig = {
   uniqueKey: "id"
 };
 
-const managerType = new GraphQLObjectType({
-  name: "manager",
-  fields: {
-    id: {
-      type: GraphQLInt,
-      sqlColumn: "id"
-    },
-    account: {
-      type: accountType,
-      sqlColumn: "account_id",
-      sqlJoin: (managerTable, accountTable) =>
-        `${managerTable}.account_id = ${accountTable}.id`
-    }
-  }
-});
-managerType._typeConfig = {
-  sqlTable: "managers",
-  uniqueKey: "id"
-};
-
-const userUnionType = new GraphQLUnionType({
-  name: "user",
-  types: [prosumerType, managerType],
-  resolveType: obj => obj.$type
-});
-userUnionType._typeConfig = {
-  alwaysFetch: "$type",
-  sqlTable: `
-	(
-		SELECT 
-			id, 
-			account_id,
-			mean_day_wind_speed,
-			current_wind_speed,
-			current_consumption,
-			current_production,
-			ratio_excess_market,
-			ratio_deficit_market,
-			battery_id,
-			blackout,
-			'prosumer' as "$type"
-		FROM prosumers
-		UNION
-		SELECT 
-			id, 
-			account_id,
-			NULL as mean_day_wind_speed,
-			NULL as current_wind_speed,
-			NULL as current_consumption,
-			NULL as current_production,
-			NULL as ratio_excess_market,
-			NULL as ratio_deficit_market,
-			NULL as battery_id,
-			NULL as blackout,
-			'manager' as "$type"
-		FROM managers)`,
-  uniqueKey: "account_id"
-};
-
 const queryType = new GraphQLObjectType({
   name: "Query",
   fields: {
@@ -250,11 +190,11 @@ const queryType = new GraphQLObjectType({
       )
     },
     me: {
-      type: userUnionType,
-      where: (users, _args, context) =>
-        context.user.accountId
-          ? `${users}.account_id = ${context.user.accountId}`
-          : null,
+      type: prosumerType,
+      where: (prosumers, _args, context) => {
+        if (context.user.accountId)
+          return `${prosumers}.account_id = ${context.user.accountId}`;
+      },
       resolve: authenticateLoggedIn((_parent, _args, context, resolveInfo) => {
         return joinMonster.default(resolveInfo, context, async sql =>
           pool.query(sql)
