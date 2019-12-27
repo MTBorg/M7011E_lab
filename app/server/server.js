@@ -41,23 +41,7 @@ app.get("/profile", authenticateRequest, async (req, res) => {
     const accountQuery = fetch(API_ADDRESS, {
       method: "POST",
       headers: { "content-type": "application/json", authToken },
-      body: JSON.stringify({
-        query: `
-					{
-						me{
-							... on prosumer{
-								account{
-									email
-								}
-							},
-							... on manager{
-								account{
-									email
-								}
-							}
-						}
-					}`
-      })
+      body: JSON.stringify({ query: "{me{account{email}}}" })
     });
     const values = await Promise.all([imageQuery, accountQuery]);
     const image = await values[0].buffer();
