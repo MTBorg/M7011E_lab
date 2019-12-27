@@ -1,7 +1,4 @@
-const bcrypt = require("bcryptjs");
 const { pool } = require("./db.js");
-
-const SALT_ROUNDS = 10;
 
 const API_ADDRESS = "http://localhost:8080/graphql";
 
@@ -22,24 +19,4 @@ async function updateEmail(accountId, email) {
   }
 }
 
-async function updatePassword(accountId, password) {
-  try {
-    const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-    const hash = bcrypt.hashSync(password, salt);
-
-    const res = await pool.query(
-      `
-		UPDATE accounts
-		SET password_hash=$1
-		WHERE id=$2
-		RETURNING password_hash`,
-      [hash, accountId]
-    );
-    return res.rows[0].password_hash;
-  } catch (error) {
-    console.log(`Failed to update password: ${error}`);
-    return new Error(error);
-  }
-}
-
-module.exports = { updateEmail, updatePassword };
+module.exports = { updateEmail };
