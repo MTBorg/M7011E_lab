@@ -34,21 +34,13 @@ app.get("/profile", authenticateRequest, async (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   try {
-    const imageQuery = fetch("http://localhost:8080/api/get_image", {
+    const response = await fetch("http://localhost:8080/api/get_image", {
       method: "GET",
       headers: { "Content-type": "image/jpeg", authToken }
     });
-    const accountQuery = fetch(API_ADDRESS, {
-      method: "POST",
-      headers: { "content-type": "application/json", authToken },
-      body: JSON.stringify({ query: "{me{account{email}}}" })
-    });
-    const values = await Promise.all([imageQuery, accountQuery]);
-    const image = await values[0].buffer();
-    const accountResponse = await values[1].json();
-    const { email } = accountResponse.data.me.account;
+    const image = await response.buffer();
     res.render("pages/profile", {
-      user: { email, image }
+      user: { email: "iauhwdiuah", image }
     });
   } catch (error) {
     console.log(error);
