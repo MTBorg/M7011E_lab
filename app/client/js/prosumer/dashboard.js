@@ -1,21 +1,11 @@
-// Gets all of the prosumer fields aswell as the current electricity pricing
-const QUERY = `{
-	prosumer(id: 1) {
-		... prosumerFields
-	}
-	pricing
-}
-${prosumerFields}
-`;
-
 document.addEventListener("DOMContentLoaded", () => {
   pollFunc(updateData, 10000); // update prosumer data of the dashboard every 10s
 });
 
 async function updateData() {
   const data = await getDashboardData();
-  const prosumer = data.prosumer;
-  const battery = data.prosumer.battery;
+  const prosumer = data.me;
+  const battery = data.me.battery;
   const pricing = data.pricing;
 
   document.getElementById(
@@ -45,17 +35,34 @@ async function updateData() {
  * @returns an object with subfields prosumer and pricing
  */
 async function getDashboardData() {
+  // Gets all of the prosumer fields aswell as the current electricity pricing
+  const QUERY_PROSUMER_DATA = `{
+		me {
+			... on prosumer {
+				... prosumerFields
+			}
+		}
+		pricing
+	}
+	${prosumerFields}
+	`;
+  const authToken = getCookie("authToken", document.cookie);
   let prosumerData = null;
-  await fetch(API_ADDRESS, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      query: QUERY
+  try {
+    await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authToken
+      },
+      body: JSON.stringify({
+        query: QUERY_PROSUMER_DATA
+      })
     })
-  })
-    .then(res => res.json())
-    .then(res => (prosumerData = res.data));
+      .then(res => res.json())
+      .then(res => (prosumerData = res.data));
+  } catch (err) {
+    console.error(`Failed to get prosumer data: ${err}`);
+  }
   return prosumerData;
 }
