@@ -12,10 +12,7 @@ services:
     depends_on:
       - db
       - simulator
-<<<<<<< HEAD
     network_mode: host
-=======
->>>>>>> Merge all compose files into one
   simulator:
     build: simulator
     ports:
