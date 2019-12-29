@@ -7,6 +7,33 @@
 	<script src="../../js/profile/update_credentials.js" type="text/javascript"></script>
 	<script src="../../js/profile/update_battery_max_capacity.js" type="text/javascript"></script>
 	<script src="../../js/util.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		window.setInterval(function(){
+			const authToken = getCookie("authToken", document.cookie);
+			fetch("http://localhost:8080/graphql", {
+				method: "POST",
+				headers: { "content-type": "application/json", authToken },
+				body: JSON.stringify({
+					query: `
+						{
+							me{
+								... on prosumer{
+									battery{
+										power
+									}
+								}
+							}
+						}`
+				})
+			})
+				.then(res => res.json())
+				.then(res => {
+					if(res.data.me.battery != null) 
+						document.getElementById("current-power").innerText = 
+							res.data.me.battery.power;
+				})
+		}, 2000);
+	</script>
 </head>
 <body>
 	<%- include("../partials/navbar") %>
@@ -51,7 +78,10 @@
 						</form>
 						<br>
 					</div>
-					<span>Currently available: <%= user.battery.power%></span><br>
+					<div>
+						<span>Currently available: </span>
+						<span id="current-power"><%= user.battery.power%></span><br>
+					</div>
 				</div>
 			<% } else{ %>
 				<span> No battery </span>
