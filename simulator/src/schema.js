@@ -34,6 +34,7 @@ const {
   deleteProsumerAccount
 } = require("./credentials.js");
 const { blockProsumer } = require("./manager.js");
+const { updateBatteryMaxCapacity } = require("./battery.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -390,6 +391,15 @@ const mutationType = new GraphQLObjectType({
         authenticateIsManager((_obj, args, context) =>
           blockProsumer(args.prosumerId)
         )
+      )
+    },
+    updateBatteryMaxCapacity: {
+      type: GraphQLFloat,
+      args: {
+        maxCapacity: { type: GraphQLNonNull(GraphQLFloat) }
+      },
+      resolve: authenticateLoggedIn((_obj, args, context) =>
+        updateBatteryMaxCapacity(context.user.accountId, args.maxCapacity)
       )
     }
   }

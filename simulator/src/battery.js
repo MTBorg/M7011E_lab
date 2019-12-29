@@ -90,9 +90,31 @@ async function useBatteryPower(ownerId, amount) {
   return Number(usedAmount);
 }
 
+async function updateBatteryMaxCapacity(accountId, maxCapacity) {
+  try {
+    let response = await pool.query(
+      `
+		UPDATE batteries
+		SET max_capacity=$1
+		WHERE id in (
+			SELECT battery_id as id
+			FROM prosumers
+			WHERE account_id=$2
+		)
+		RETURNING max_capacity`,
+      [maxCapacity, accountId]
+    );
+    return response.rows[0].max_capacity;
+  } catch (error) {
+    console.log(`Failed to update battery max capacity: ${error}`);
+    return error;
+  }
+}
+
 module.exports = {
   newBattery,
   chargeBattery,
   useBatteryPower,
-  useBatteryPowerQuery
+  useBatteryPowerQuery,
+  updateBatteryMaxCapacity
 };

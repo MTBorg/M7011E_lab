@@ -54,6 +54,10 @@ app.get("/profile", authenticateRequest, async (req, res) => {
 								account{
 									email
 								}
+								battery{
+									maxCapacity
+									power
+								}
 							},
 							... on manager{
 								account{
@@ -68,8 +72,9 @@ app.get("/profile", authenticateRequest, async (req, res) => {
     const image = await values[0].buffer();
     const accountResponse = await values[1].json();
     const { email } = accountResponse.data.me.account;
+    const battery = accountResponse.data.me.battery;
     res.render("pages/profile", {
-      user: { manager: user.manager, email, image }
+			user: { manager: user.manager, email, image, battery }
     });
   } catch (error) {
     console.log(error);
