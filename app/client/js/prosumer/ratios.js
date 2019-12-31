@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     "displayDeficitMarketRatio"
   ).innerText = `Market: ${ratioDeficitMarket}%`;
 
-  // update labels with new
+  // update labels when slider is moved
   document.getElementById("ratioExcess").addEventListener("input", function() {
     document.getElementById(
       "displayExcessBatteryRatio"
@@ -56,59 +56,79 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function getRatios() {
   const QUERY_GET_RATIOS = `{
-		prosumer(id: 1) {
-			ratioExcessMarket,
-			ratioDeficitMarket
+		me {
+			... on prosumer {
+				ratioExcessMarket,
+				ratioDeficitMarket
+			}
 		}
 	}`;
+  const authToken = getCookie("authToken", document.cookie);
 
   let prosumerRatios = null;
-  await fetch(API_ADDRESS, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      query: QUERY_GET_RATIOS
+  try {
+    await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authToken
+      },
+      body: JSON.stringify({
+        query: QUERY_GET_RATIOS
+      })
     })
-  })
-    .then(res => res.json())
-    .then(res => (prosumerRatios = res.data.prosumer));
+      .then(res => res.json())
+      .then(res => (prosumerRatios = res.data.me));
+  } catch (err) {
+    console.error(`Failed to get prosumer ratios: ${err}`);
+  }
   return prosumerRatios;
 }
 
 function setRatioExcess(ratio) {
   const QUERY_SET_RATIO_EXCESS = `
-		mutation {
-			setRatioExcessMarket(id: 1, ratio: ${ratio})
-		}
+	mutation {
+		setRatioExcessMarket(ratio: ${ratio})
+	}
 	`;
+  const authToken = getCookie("authToken", document.cookie);
 
-  fetch(API_ADDRESS, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      query: QUERY_SET_RATIO_EXCESS
-    })
-  });
+  try {
+    fetch(API_ADDRESS, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authToken
+      },
+      body: JSON.stringify({
+        query: QUERY_SET_RATIO_EXCESS
+      })
+    });
+  } catch (err) {
+    console.error(`Failed to set excess ratio: ${err}`);
+  }
 }
 
 function setRatioDeficit(ratio) {
   const QUERY_SET_RATIO_DEFICIT = `
 		mutation {
-			setRatioDeficitMarket(id: 1, ratio: ${ratio})
+			setRatioDeficitMarket(ratio: ${ratio})
 		}
 	`;
+  const authToken = getCookie("authToken", document.cookie);
 
-  fetch(API_ADDRESS, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      query: QUERY_SET_RATIO_DEFICIT
-    })
-  });
+  try {
+    fetch(API_ADDRESS, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authToken
+      },
+      body: JSON.stringify({
+        query: QUERY_SET_RATIO_DEFICIT
+      })
+    });
+  } catch (err) {
+    console.error(`Failed to set defict ratio: ${err}`);
+  }
 }

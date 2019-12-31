@@ -9,11 +9,11 @@ SELECT ratio_deficit_market FROM prosumers WHERE id = $1
 `;
 
 const setDeficitRatioQuery = `
-UPDATE prosumers SET ratio_deficit_market = $2 WHERE id = $1
+UPDATE prosumers SET ratio_deficit_market = $2 WHERE id = (SELECT id FROM prosumers WHERE account_id = $1)
 `;
 
 const setExcessRatioQuery = `
-UPDATE prosumers SET ratio_excess_market = $2 WHERE id = $1
+UPDATE prosumers SET ratio_excess_market = $2 WHERE id = (SELECT id FROM prosumers WHERE account_id = $1)
 `;
 
 /**
@@ -32,9 +32,9 @@ async function excessRatio(prosumerId) {
   return ratioExcessMarket;
 }
 
-async function setExcessRatio(prosumerId, ratio) {
+async function setExcessRatio(accountId, ratio) {
   try {
-    await pool.query(setExcessRatioQuery, [prosumerId, ratio]);
+    await pool.query(setExcessRatioQuery, [accountId, ratio]);
   } catch (err) {
     console.error(err);
   }
@@ -57,9 +57,9 @@ async function deficitRatio(prosumerId) {
   return ratioDeficitMarket;
 }
 
-async function setDeficitRatio(prosumerId, ratio) {
+async function setDeficitRatio(accountId, ratio) {
   try {
-    await pool.query(setDeficitRatioQuery, [prosumerId, ratio]);
+    await pool.query(setDeficitRatioQuery, [accountId, ratio]);
   } catch (err) {
     console.error(err);
   }

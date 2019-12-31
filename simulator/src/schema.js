@@ -292,21 +292,19 @@ const mutationType = new GraphQLObjectType({
     setRatioDeficitMarket: {
       type: GraphQLFloat,
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
         ratio: { type: GraphQLFloat }
       },
-      resolve: authenticateLoggedIn(
-        authenticateIsMe((_obj, args) => setDeficitRatio(args.id, args.ratio))
+      resolve: authenticateLoggedIn((_obj, args, context) =>
+        setDeficitRatio(context.user.accountId, args.ratio)
       )
     },
     setRatioExcessMarket: {
       type: GraphQLFloat,
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
         ratio: { type: GraphQLFloat }
       },
-      resolve: authenticateLoggedIn(
-        authenticateIsMe((_obj, args) => setExcessRatio(args.id, args.ratio))
+      resolve: authenticateLoggedIn((_obj, args, context) =>
+        setExcessRatio(context.user.accountId, args.ratio)
       )
     },
     login: {
