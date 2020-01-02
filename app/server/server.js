@@ -86,7 +86,11 @@ app.get("/dashboard", authenticateRequest, (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
-  res.render("pages/prosumerDashboard", { user });
+  if (user.manager) {
+    res.render("pages/managerDashboard");
+  } else {
+    res.render("pages/prosumerDashboard");
+  }
 });
 
 app.get("/register", authenticateLoggedOut, (req, res) => {
