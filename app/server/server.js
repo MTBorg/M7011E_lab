@@ -75,8 +75,32 @@ app.get("/profile", authenticateRequest, async (req, res) => {
   }
 });
 
-app.get("/dashboard", authenticateRequest, (req, res) => {
-  res.render("pages/prosumerDashboard");
+app.get("/dashboard", authenticateRequest, async (req, res) => {
+  const authToken = getCookie("authToken", req.headers.cookie);
+  let isManager = null;
+  try {
+    await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: { "content-type": "application/json", authToken },
+      body: JSON.stringify({
+        query: `
+				{
+					isManager
+				}`
+      })
+    })
+      .then(res => res.json())
+      .then(res => (isManager = res.data.isManager));
+  } catch (error) {
+    console.log(error);
+    res.render("partials/error");
+  }
+
+  if (isManager) {
+    res.render("pages/managerDashboard");
+  } else {
+    res.render("pages/prosumerDashboard");
+  }
 });
 
 app.get("/register", authenticateLoggedOut, (req, res) => {
