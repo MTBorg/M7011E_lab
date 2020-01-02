@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+		<script type="text/javascript" src="/js/APIAddress.js"></script>
+		<script type="text/javascript" src="/js/util.js"></script>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        text-align: center;
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div>
+      <h1>Dashboard</h1>
+      <div>
+				<h2>Power plant</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Production (kW)</th>
+              <th>Operations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="status"></td>
+              <td id="production"></td>
+              <td id="operations"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
