@@ -267,6 +267,12 @@ const queryType = new GraphQLObjectType({
           pool.query(sql)
         );
       })
+    },
+    isManager: {
+      type: GraphQLBoolean,
+      resolve: authenticateLoggedIn(
+        (_parent, _args, context) => context.user.manager
+      )
     }
   }
 });
