@@ -43,6 +43,7 @@ ALTER TABLE prosumers OWNER TO gle;
 CREATE TABLE managers(
 	id SERIAL,
 	account_id INT NOT NULL,
+	ratio_production_market NUMERIC DEFAULT 0.5,
 	PRIMARY KEY (id),
 	FOREIGN KEY (account_id) REFERENCES accounts (id) 
 );
