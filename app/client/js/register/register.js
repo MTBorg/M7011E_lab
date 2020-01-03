@@ -27,7 +27,6 @@ function submitRegisterForm(event, form) {
   })
     .then(res => res.json())
     .then(res => {
-      console.log(res);
       if (res.errors != null) {
         alert(`Failed to register: ${res.errors[0].message}`);
         return;

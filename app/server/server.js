@@ -23,7 +23,10 @@ app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.render("pages/index");
+  const cookies = req.headers.cookie;
+  const authToken = getCookie("authToken", cookies);
+  const user = authToken != null && authToken != "undefined" ? {} : null;
+  res.render("pages/index", { user });
 });
 
 app.get("/login", authenticateLoggedOut, (req, res) => {

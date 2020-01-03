@@ -1,0 +1,74 @@
+<script>
+	function logoutUser(){
+		// Clear the authentication cookie
+		const expirationDate = new Date();
+		expirationDate.setTime(expirationDate.getTime() - 1);
+		document.cookie = `authToken=; expires=${expirationDate.toGMTString()}`;
+
+		window.location.replace("/");
+	}
+</script>
+<nav>
+	<style>
+		body{
+			margin: 0;
+			padding: 0;
+		}
+
+		nav{
+			width: 100%;
+			background-color: green;
+			position: sticky;
+			position: -webkit-sticky;
+			height: 50px;
+			margin-bottom: 10px;
+			overflow: hidden;
+		}
+
+		nav ul{
+			list-style-type: none;
+			margin-top: 0;
+			padding-left: 0;
+			height: 100%;
+		}
+
+		nav ul li {
+			display: inline-block;
+			height: 100%;
+			padding: 10px;
+		}
+
+		nav ul li:first-child{
+			padding-left: 30px;
+			padding-right: 30px;
+		}
+
+		nav ul li a {
+			display: block;
+			text-decoration: none;
+			text-align: center;
+			vertical-align: middle;
+			color: black;
+			height: 100%;
+			font-family: arial, "Sans-serif";
+			font-size: 1.5em;
+		}
+
+		.nav-right{
+			float:right;
+		}
+
+		nav ul li:hover {
+			background: white;
+		}
+	</style>
+	<ul>
+		<li><a href="/"> GLE </a></li>
+		<% if(typeof user !== "undefined" && user != null) { %>
+			<li class="nav-right"><a onclick="logoutUser()">Logout</a></li>
+		<% }else{ %>
+			<li class="nav-right"><a href="/register">Register</a></li>
+			<li class="nav-right"><a href="/login">Log in</a></li>
+		<% } %>
+	</ul>
+</nav>
