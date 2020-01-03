@@ -28,6 +28,10 @@ function submitRegisterForm(event, form) {
     .then(res => res.json())
     .then(res => {
       console.log(res);
+      if (res.errors != null) {
+        alert(`Failed to register: ${res.errors[0].message}`);
+        return;
+      }
       let token = null;
       if (managerChecked) {
         token = res.data.registerManager || null;
@@ -38,7 +42,7 @@ function submitRegisterForm(event, form) {
         document.cookie = `authToken=${token}`;
         window.location.replace("/profile");
       } else {
-        alert("Failed to register");
+        alert("Failed to register: Cookie not set");
       }
     })
     .catch(e => alert(`Failed to register: ${e}`));

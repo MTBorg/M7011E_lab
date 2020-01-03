@@ -96,10 +96,14 @@ async function registerProsumer(email, password) {
   } catch (error) {
     await client.query("ROLLBACK");
     console.log(`Failed to register prosumer: ${error}`);
+    // Unique constraint violation code
+    if (error.code == 23505) {
+      return new Error("Email already exists");
+    }
+    return new Error("Unknown error");
   } finally {
     client.release();
   }
-  return null;
 }
 
 module.exports = {
