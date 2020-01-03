@@ -4,12 +4,15 @@ async function getRatios() {
 			... on prosumer {
 				ratioExcessMarket,
 				ratioDeficitMarket
+			},
+			... on manager {
+				ratioProductionMarket
 			}
 		}
 	}`;
   const authToken = getCookie("authToken", document.cookie);
 
-  let prosumerRatios = null;
+  let ratios = null;
   try {
     await fetch(API_ADDRESS, {
       method: "POST",
@@ -22,11 +25,11 @@ async function getRatios() {
       })
     })
       .then(res => res.json())
-      .then(res => (prosumerRatios = res.data.me));
+      .then(res => (ratios = res.data.me));
   } catch (err) {
-    console.error(`Failed to get prosumer ratios: ${err}`);
+    console.error(`Failed to get ratios: ${err}`);
   }
-  return prosumerRatios;
+  return ratios;
 }
 
 function setRatioExcess(ratio) {
@@ -74,5 +77,29 @@ function setRatioDeficit(ratio) {
     });
   } catch (err) {
     console.error(`Failed to set defict ratio: ${err}`);
+  }
+}
+
+function setRatioProd(ratio) {
+  const QUERY_SET_RATIO_PROD = `
+		mutation {
+			setRatioProdMarket(ratio: ${ratio})
+		}
+	`;
+  const authToken = getCookie("authToken", document.cookie);
+
+  try {
+    fetch(API_ADDRESS, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authToken
+      },
+      body: JSON.stringify({
+        query: QUERY_SET_RATIO_PROD
+      })
+    });
+  } catch (err) {
+    console.error(`Failed to set manager production ratio: ${err}`);
   }
 }

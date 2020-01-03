@@ -3,6 +3,8 @@
   <head>
 		<script type="text/javascript" src="/js/APIAddress.js"></script>
 		<script type="text/javascript" src="/js/util.js"></script>
+		<script type="text/javascript" src="/js/dashboard/ratios.js"></script>
+		<script type="text/javascript" src="/js/dashboard/managerRatios.js"></script>
     <style>
       table,
       th,
@@ -39,7 +41,15 @@
               <td id="operations"></td>
             </tr>
           </tbody>
-        </table>
+				</table>
+				<div>
+					<h2>
+						Production ratio
+					</h2>
+					<label id="displayProdBatteryRatio" for="ratioProd"></label>
+					<%- include("../partials/slider", {id:"ratioProd"}) %>
+					<label id="displayProdMarketRatio" for="ratioProd"></label>
+				</div>
       </div>
     </div>
   </body>
