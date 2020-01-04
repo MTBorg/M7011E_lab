@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+	<h1>Prosumer overview</h1>
+	<ul>
+		<% prosumers.forEach(prosumer => { %>
+			<li>
+				<a 
+					href=<%= `/prosumer-summary/${prosumer.id}` %>
+				><%= prosumer.id %> - <%= prosumer.account.email %></a>
+			</li>
+		<% }) %>
+	</ul>
+</body>
+</html>

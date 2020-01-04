@@ -80,6 +80,65 @@ app.get("/register", authenticateLoggedOut, (req, res) => {
   res.render("pages/register");
 });
 
+app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
+  const cookies = req.headers.cookie;
+  const authToken = getCookie("authToken", cookies);
+  try {
+    const response = await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: { "content-type": "application/json", authToken },
+      body: JSON.stringify({
+        query: `
+					{
+						prosumers{
+							id
+							account{
+								email
+							}
+						}
+					}`
+      })
+    });
+    const json = await response.json();
+    const prosumers = json.data.prosumers;
+    res.render("pages/prosumerOverview", { prosumers });
+  } catch (error) {
+    console.log(error);
+    res.render("partials/error");
+  }
+});
+
+app.get("/prosumer-summary/:prosumerid", async (req, res) => {
+  try {
+    if (req.params.prosumerid == null) {
+      throw new Error("null prosumerid parameter");
+    }
+
+    // TODO: This should use some form of token
+    const response = await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        query: `
+					{
+						prosumer(id:${req.params.prosumerid}){
+							id
+							account{
+								email
+							}
+						}
+					}`
+      })
+    });
+    const json = await response.json();
+    const prosumer = json.data.prosumer;
+    res.render("pages/prosumerSummary", { prosumer });
+  } catch (error) {
+    console.log(error);
+    res.render("partials/error");
+  }
+});
+
 app.post("/action/logout", (req, res) => {
   logoutUser(req, res);
 });
