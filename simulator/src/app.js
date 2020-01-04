@@ -48,6 +48,7 @@ app.get("/api/get_image", async (req, res) => {
 app.get("/api/get_prosumer_image/:prosumerid", async (req, res) => {
   if (req.user != null) {
     if (req.user.manager) {
+      // console.log(req.params);
       const image = await getProsumerImage(req.params.prosumerid);
       res.writeHead(200, { "Content-type": "image/jpeg" });
       res.end(image);

@@ -10,7 +10,7 @@
 		<% prosumers.forEach(prosumer => { %>
 			<li>
 				<a 
-					href=<%= `/prosumer-summary/${prosumer.id}` %>
+					href=<%=`/prosumer-summary/${prosumer.id}`%>
 				><%= prosumer.id %> - <%= prosumer.account.email %></a>
 			</li>
 		<% }) %>

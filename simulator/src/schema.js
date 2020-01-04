@@ -30,7 +30,8 @@ const {
 const {
   updateEmail,
   updatePassword,
-  deleteAccount
+  deleteAccount,
+  deleteProsumerAccount
 } = require("./credentials.js");
 
 function joinMonsterQuery(resolveInfo) {
@@ -360,6 +361,17 @@ const mutationType = new GraphQLObjectType({
       type: GraphQLBoolean,
       resolve: authenticateLoggedIn((_obj, args, context) =>
         deleteAccount(context.user.accountId)
+      )
+    },
+    deleteProsumerAccount: {
+      type: GraphQLBoolean,
+      args: {
+        prosumerId: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: authenticateLoggedIn(
+        authenticateIsManager((_obj, args, context) =>
+          deleteProsumerAccount(args.prosumerId)
+        )
       )
     }
   }

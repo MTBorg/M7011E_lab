@@ -6,12 +6,12 @@
 	<script type="text/javascript" src="/js/APIAddress.js"></script>
 	<script type="text/javascript" src="/js/util.js"></script>
 	<script type="text/javascript" src="/js/fragments/prosumerFields.js"></script>
-		<script 
-			type="text/javascript" 
-			src="/js/prosumerSummary/prosumerStatsTable.js"
-			prosumerId=<%= prosumer.id %>
-		>
-	</script>
+	<script 
+		type="text/javascript" 
+		src="/js/prosumerSummary/prosumerStatsTable.js"
+		prosumerId=<%= prosumer.id %>
+	></script>
+	<script type="text/javascript" src="/js/prosumerSummary/deleteAccount.js"></script>
 </head>
 <body>
 	<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
@@ -19,6 +19,6 @@
 		src=<%= typeof image !== "undefined" && image != "" ? image : "#"%>
 	>
 	<%- include("../partials/prosumerStatsTable") %>
-	<input onclick=deleteAccount() type="button" value="Delete account" style="background-color:red">
+	<input onclick=<%=`deleteProsumerAccount(${prosumer.id})`%> type="button" value="Delete account" style="background-color:red">
 </body>
 </html>
