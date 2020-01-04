@@ -10,4 +10,22 @@ async function getImage(accountId) {
   }
 }
 
-module.exports = { getImage };
+async function getProsumerImage(prosumerId) {
+  const query = `
+		SELECT image
+		FROM accounts 
+		WHERE id IN (
+			SELECT account_id as id
+			FROM prosumers
+			WHERE id=$1
+		)
+		`;
+  try {
+    const res = await pool.query(query, [prosumerId]);
+    return res.rows[0].image;
+  } catch (error) {
+    console.log(`Failed to retrieve image: ${error};`);
+  }
+}
+
+module.exports = { getImage, getProsumerImage };

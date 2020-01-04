@@ -15,6 +15,10 @@
 </head>
 <body>
 	<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
+	<img style="max-height:10000;max-width:1000px" id="image" 
+		src=<%= typeof image !== "undefined" && image != "" ? image : "#"%>
+	>
 	<%- include("../partials/prosumerStatsTable") %>
+	<input onclick=deleteAccount() type="button" value="Delete account" style="background-color:red">
 </body>
 </html>

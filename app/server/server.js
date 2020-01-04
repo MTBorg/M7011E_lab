@@ -114,8 +114,19 @@ app.get("/prosumer-summary/:prosumerid", async (req, res) => {
       throw new Error("null prosumerid parameter");
     }
 
+    const cookies = req.headers.cookie;
+    const authToken = getCookie("authToken", cookies);
+
+    const imageQuery = fetch(
+      `http://localhost:8080/api/get_prosumer_image/${req.params.prosumerid}`,
+      {
+        method: "GET",
+        headers: { "Content-type": "image/jpeg", authToken }
+      }
+    );
+
     // TODO: This should use some form of token
-    const response = await fetch(API_ADDRESS, {
+    const prosumerQuery = fetch(API_ADDRESS, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -130,9 +141,11 @@ app.get("/prosumer-summary/:prosumerid", async (req, res) => {
 					}`
       })
     });
-    const json = await response.json();
-    const prosumer = json.data.prosumer;
-    res.render("pages/prosumerSummary", { prosumer });
+    const values = await Promise.all([imageQuery, prosumerQuery]);
+    const image = await values[0].buffer();
+    const prosumerJson = await values[1].json();
+    const prosumer = prosumerJson.data.prosumer;
+    res.render("pages/prosumerSummary", { prosumer, image });
   } catch (error) {
     console.log(error);
     res.render("partials/error");

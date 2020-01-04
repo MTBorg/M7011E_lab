@@ -5,7 +5,7 @@ const schema = require("./schema.js");
 const { startSimulation } = require("./simulator.js");
 const { authMiddleWare } = require("./auth.js");
 const bodyParser = require("body-parser");
-const { getImage } = require("./get_picture.js");
+const { getImage, getProsumerImage } = require("./get_picture.js");
 const { pool } = require("./db.js");
 
 const app = express();
@@ -40,6 +40,22 @@ app.get("/api/get_image", async (req, res) => {
     const image = await getImage(req.user.accountId);
     res.writeHead(200, { "Content-type": "image/jpeg" });
     res.end(image);
+  } else {
+    res.status(401).json({ error: "Not authorized: no token" });
+  }
+});
+
+app.get("/api/get_prosumer_image/:prosumerid", async (req, res) => {
+  if (req.user != null) {
+    if (req.user.manager) {
+      const image = await getProsumerImage(req.params.prosumerid);
+      res.writeHead(200, { "Content-type": "image/jpeg" });
+      res.end(image);
+    } else {
+      res
+        .status(401)
+        .json({ error: "Not authorized: insufficient role permission" });
+    }
   } else {
     res.status(401).json({ error: "Not authorized: no token" });
   }
