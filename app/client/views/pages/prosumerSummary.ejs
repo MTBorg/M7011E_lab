@@ -16,6 +16,7 @@
 		prosumerId=<%=prosumer.id%> ></script>
 </head>
 <body>
+	<%- include("../partials/navbar") %>
 	<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
 	<img style="max-height:10000;max-width:1000px" id="image" 
 		src=<%= typeof image !== "undefined" && image != "" ? image : "#"%>

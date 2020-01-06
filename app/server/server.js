@@ -12,7 +12,8 @@ const API_ADDRESS = process.env.API_ADDRESS || "http://localhost:8080/graphql";
 const {
   authenticateRequest,
   authenticateLoggedOut,
-  logoutUser
+  logoutUser,
+  parseAuthToken
 } = require("./auth.js");
 
 app.set("view engine", "ejs");
@@ -25,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
-  const user = authToken != null && authToken != "undefined" ? {} : null;
+  const user = authToken ? parseAuthToken(authToken) : null;
   res.render("pages/index", { user });
 });
 
@@ -36,6 +37,7 @@ app.get("/login", authenticateLoggedOut, (req, res) => {
 app.get("/profile", authenticateRequest, async (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
+  const user = authToken ? parseAuthToken(authToken) : null;
   try {
     const imageQuery = fetch("http://localhost:8080/api/get_image", {
       method: "GET",
@@ -67,7 +69,7 @@ app.get("/profile", authenticateRequest, async (req, res) => {
     const accountResponse = await values[1].json();
     const { email } = accountResponse.data.me.account;
     res.render("pages/profile", {
-      user: { email, image }
+      user: { manager: user.manager, email, image }
     });
   } catch (error) {
     console.log(error);
@@ -76,7 +78,10 @@ app.get("/profile", authenticateRequest, async (req, res) => {
 });
 
 app.get("/dashboard", authenticateRequest, (req, res) => {
-  res.render("pages/prosumerDashboard");
+  const cookies = req.headers.cookie;
+  const authToken = getCookie("authToken", cookies);
+  const user = authToken ? parseAuthToken(authToken) : null;
+  res.render("pages/prosumerDashboard", { user });
 });
 
 app.get("/register", authenticateLoggedOut, (req, res) => {
@@ -86,6 +91,7 @@ app.get("/register", authenticateLoggedOut, (req, res) => {
 app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
+  const user = authToken ? parseAuthToken(authToken) : null;
   try {
     const response = await fetch(API_ADDRESS, {
       method: "POST",
@@ -104,7 +110,7 @@ app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
     });
     const json = await response.json();
     const prosumers = json.data.prosumers;
-    res.render("pages/prosumerOverview", { prosumers });
+    res.render("pages/prosumerOverview", { prosumers, user });
   } catch (error) {
     console.log(error);
     res.render("partials/error");
@@ -112,6 +118,9 @@ app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
 });
 
 app.get("/prosumer-summary/:prosumerid", async (req, res) => {
+  const cookies = req.headers.cookie;
+  const authToken = getCookie("authToken", cookies);
+  const user = authToken ? parseAuthToken(authToken) : null;
   try {
     if (req.params.prosumerid == null) {
       throw new Error("null prosumerid parameter");
@@ -148,7 +157,7 @@ app.get("/prosumer-summary/:prosumerid", async (req, res) => {
     const image = await values[0].buffer();
     const prosumerJson = await values[1].json();
     const prosumer = prosumerJson.data.prosumer;
-    res.render("pages/prosumerSummary", { prosumer, image });
+    res.render("pages/prosumerSummary", { user, prosumer, image });
   } catch (error) {
     console.log(error);
     res.render("partials/error");
