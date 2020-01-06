@@ -65,6 +65,11 @@
 	<ul>
 		<li><a href="/"> GLE </a></li>
 		<% if(typeof user !== "undefined" && user != null) { %>
+			<li class="nav-right"><a href="/dashboard">Dashboard</a></li>
+			<li class="nav-right"><a href="/profile">Profile</a></li>
+			<% if(user.manager != null && user.manager){ %>
+				<li class="nav-right"><a href="/prosumer-overview">Prosumers</a></li>
+			<% } %>
 			<li class="nav-right"><a onclick="logoutUser()">Logout</a></li>
 		<% }else{ %>
 			<li class="nav-right"><a href="/register">Register</a></li>
