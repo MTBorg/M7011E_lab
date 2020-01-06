@@ -1,21 +1,24 @@
 /**
- * Fetches the prosumer data which will be displayed on the dashboard
- * @returns an object with subfields prosumer and pricing
+ * Fetches data of a prosumer or manager
+ * @returns an object with attributes me and pricing
  */
-async function getDashboardData() {
-  // Gets all of the prosumer fields aswell as the current electricity pricing
-  const QUERY_PROSUMER_DATA = `{
+async function getData() {
+  const GET_DATA_QUERY = `{
 		me {
 			... on prosumer {
 				... prosumerFields
+			},
+			... on manager {
+				... managerFields
 			}
 		}
 		pricing
 	}
-	${prosumerFields}
+	${prosumerFields},
+	${managerFields}
 	`;
   const authToken = getCookie("authToken", document.cookie);
-  let prosumerData = null;
+  let data = null;
   try {
     await fetch(API_ADDRESS, {
       method: "POST",
@@ -24,13 +27,13 @@ async function getDashboardData() {
         authToken
       },
       body: JSON.stringify({
-        query: QUERY_PROSUMER_DATA
+        query: GET_DATA_QUERY
       })
     })
       .then(res => res.json())
-      .then(res => (prosumerData = res.data));
+      .then(res => (data = res.data));
   } catch (err) {
-    console.error(`Failed to get prosumer data: ${err}`);
+    console.error(`Failed to get user data: ${err}`);
   }
-  return prosumerData;
+  return data;
 }
