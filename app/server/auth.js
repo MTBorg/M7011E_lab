@@ -49,8 +49,13 @@ function logoutUser(req, res) {
   }
 }
 
+function parseAuthToken(authToken) {
+  return jwt.verify(authToken, privateKey, { algorithm: JWT_ALGORITHM });
+}
+
 module.exports = {
   authenticateRequest,
   authenticateLoggedOut,
-  logoutUser
+  logoutUser,
+  parseAuthToken
 };
