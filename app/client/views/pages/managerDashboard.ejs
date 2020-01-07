@@ -3,8 +3,11 @@
   <head>
 		<script type="text/javascript" src="/js/APIAddress.js"></script>
 		<script type="text/javascript" src="/js/util.js"></script>
+		<script type="text/javascript" src="/js/fragments/fragments.js"></script>
+		<script type="text/javascript" src="/js/dashboard/data.js"></script>
 		<script type="text/javascript" src="/js/dashboard/ratios.js"></script>
 		<script type="text/javascript" src="/js/dashboard/manager/displayRatios.js"></script>
+		<script type="text/javascript" src="/js/dashboard/manager/powerPlant.js"></script>		
     <style>
       table,
       th,
@@ -31,14 +34,18 @@
             <tr>
               <th>Status</th>
               <th>Production (kW)</th>
-              <th>Operations</th>
+							<th>Operations</th>
+							<th>Battery (kW)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td id="status"></td>
               <td id="production"></td>
-              <td id="operations"></td>
+							<td id="operations">
+								<input id="operationButton" onclick="changePowerPlantStatus(event, this)" type="button">
+							</td>
+							<td id="battery"></td>
             </tr>
           </tbody>
 				</table>
