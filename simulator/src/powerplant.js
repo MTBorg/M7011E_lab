@@ -5,24 +5,26 @@ const POWERPLANT_STARTUP_TIME = 30 * 1000;
 // TODO: Use some accurrate value
 const POWERPLANT_OUTPUT = 1500;
 
-const POWERPLANT_STATUS_QUERY = "SELECT status FROM power_plants WHERE id=$1";
+const POWERPLANT_STATUS_QUERY =
+  "SELECT status FROM power_plants WHERE id=(SELECT power_plant_id FROM managers WHERE account_id=$1)";
 const POWERPLANT_STOP_QUERY =
-  "UPDATE power_plants SET status=$1 WHERE id=$2 RETURNING status";
-const POWERPLANT_UPDATE_QUERY = "UPDATE power_plants SET status=$1 WHERE id=$2";
+  "UPDATE power_plants SET status=$1 WHERE id=(SELECT power_plant_id FROM managers WHERE account_id=$2) RETURNING status";
+const POWERPLANT_UPDATE_QUERY =
+  "UPDATE power_plants SET status=$1 WHERE id=(SELECT power_plant_id FROM managers WHERE account_id=$2)";
 
-function startPowerPlant(id) {
+function startPowerPlant(accountId) {
   setTimeout(() => {
     try {
-      pool.query(POWERPLANT_UPDATE_QUERY, ["started", id]);
+      pool.query(POWERPLANT_UPDATE_QUERY, ["started", accountId]);
     } catch (e) {
       console.error(e);
     }
   }, POWERPLANT_STARTUP_TIME);
 }
 
-async function getCurrentProduction(id) {
+async function getCurrentProduction(accountId) {
   try {
-    const statusRes = await pool.query(POWERPLANT_STATUS_QUERY, [id]);
+    const statusRes = await pool.query(POWERPLANT_STATUS_QUERY, [accountId]);
     if (statusRes.rows[0].status === "started") {
       return POWERPLANT_OUTPUT;
     }
@@ -37,17 +39,17 @@ async function getCurrentProduction(id) {
  *
  * Starts the power plant only if it is stopped, otherwise does nothing.
  *
- * @param {Number} id The id of the power plant to start
+ * @param {Number} id The account id of the power plants manager
  *
  * @return The new status of the power plant
  * */
-async function startRequestPowerPlant(id) {
+async function startRequestPowerPlant(accountId) {
   try {
-    const statusRes = await pool.query(POWERPLANT_STATUS_QUERY, [id]);
+    const statusRes = await pool.query(POWERPLANT_STATUS_QUERY, [accountId]);
     const { status } = statusRes.rows[0];
     if (status === "stopped") {
-      pool.query(POWERPLANT_UPDATE_QUERY, ["starting", id]);
-      startPowerPlant(id);
+      pool.query(POWERPLANT_UPDATE_QUERY, ["starting", accountId]);
+      startPowerPlant(accountId);
       return "starting";
     }
     return status;
@@ -60,13 +62,13 @@ async function startRequestPowerPlant(id) {
 /**
  * Stop a power plant.
  *
- * @param {Number} id The id of the power plant to stop
+ * @param {Number} accountId The account id of the power plants manager
  *
  * @return The new status of the power plant
  * */
-async function stopPowerPlant(id) {
-  return (await pool.query(POWERPLANT_STOP_QUERY, ["stopped", id])).rows[0]
-    .status;
+async function stopPowerPlant(accountId) {
+  return (await pool.query(POWERPLANT_STOP_QUERY, ["stopped", accountId]))
+    .rows[0].status;
 }
 
 module.exports = {

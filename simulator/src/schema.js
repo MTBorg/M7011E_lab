@@ -155,8 +155,8 @@ const powerPlantType = new GraphQLObjectType({
     },
     currentProduction: {
       type: GraphQLFloat,
-      resolve(powerplant) {
-        return getCurrentProduction(powerplant.id);
+      resolve(_obj, _args, context) {
+        return getCurrentProduction(context.user.accountId);
       }
     }
   })
@@ -308,19 +308,15 @@ const mutationType = new GraphQLObjectType({
   fields: {
     startPowerPlant: {
       type: GraphQLString,
-      args: {
-        id: { type: GraphQLNonNull(GraphQLInt) }
-      },
-      resolve: authenticateLoggedIn((_obj, args) =>
-        startRequestPowerPlant(args.id)
+      resolve: authenticateIsManager((_obj, _args, context) =>
+        startRequestPowerPlant(context.user.accountId)
       )
     },
     stopPowerPlant: {
       type: GraphQLString,
-      args: {
-        id: { type: GraphQLNonNull(GraphQLInt) }
-      },
-      resolve: authenticateLoggedIn((_obj, args) => stopPowerPlant(args.id))
+      resolve: authenticateIsManager((_obj, _args, context) =>
+        stopPowerPlant(context.user.accountId)
+      )
     },
     setRatioProdMarket: {
       type: GraphQLFloat,
