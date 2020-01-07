@@ -183,6 +183,12 @@ const managerType = new GraphQLObjectType({
     ratioProductionMarket: {
       type: GraphQLFloat,
       sqlColumn: "ratio_production_market"
+    },
+    powerplant: {
+      type: powerPlantType,
+      sqlColumn: "power_plant_id",
+      sqlJoin: (managerTable, powerPlantsTable) =>
+        `${managerTable}.power_plant_id = ${powerPlantsTable}.id`
     }
   }
 });
@@ -213,6 +219,7 @@ userUnionType._typeConfig = {
 			battery_id,
 			blackout,
 			NULL as ratio_production_market,
+			NULL as power_plant_id,
 			'prosumer' as "$type"
 		FROM prosumers
 		UNION
@@ -229,6 +236,7 @@ userUnionType._typeConfig = {
 			NULL as battery_id,
 			NULL as blackout,
 			ratio_production_market,
+			power_plant_id,
 			'manager' as "$type"
 		FROM managers)`,
   uniqueKey: "account_id"
