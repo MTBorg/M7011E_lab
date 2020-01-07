@@ -40,15 +40,6 @@ CREATE TABLE prosumers (
 );
 ALTER TABLE prosumers OWNER TO gle;
 
-CREATE TABLE managers(
-	id SERIAL,
-	account_id INT NOT NULL,
-	ratio_production_market NUMERIC DEFAULT 0.5,
-	PRIMARY KEY (id),
-	FOREIGN KEY (account_id) REFERENCES accounts (id) 
-);
-ALTER TABLE managers OWNER TO gle;
-
 CREATE TYPE power_plant_status as ENUM('stopped', 'started', 'starting');
 CREATE TABLE power_plants (
 	id SERIAL,
@@ -58,3 +49,14 @@ CREATE TABLE power_plants (
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)
 );
 ALTER TABLE power_plants OWNER TO gle;
+
+CREATE TABLE managers(
+	id SERIAL,
+	account_id INT NOT NULL,
+	power_plant_id INT NOT NULL DEFAULT 1,
+	ratio_production_market NUMERIC DEFAULT 0.5,
+	PRIMARY KEY (id),
+	FOREIGN KEY (account_id) REFERENCES accounts (id),
+	FOREIGN KEY (power_plant_id) REFERENCES power_plants (id)
+);
+ALTER TABLE managers OWNER TO gle;
