@@ -1,0 +1,35 @@
+async function blockProsumer(prosumerId) {
+  const authToken = getCookie("authToken", document.cookie);
+  console.log("BLOCKING");
+
+  try {
+    let response = await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authToken
+      },
+      body: JSON.stringify({
+        query: `
+				mutation {
+					blockProsumer(prosumerId:${prosumerId})
+				}
+				`
+      })
+    });
+    const json = await response.json();
+    console.log(json);
+    if (json.data.blockProsumer != null) {
+      if (json.data.blockProsumer) {
+        document.getElementById(`blocked-status-${prosumerId}`).innerText =
+          "Blocked";
+      } else {
+        document.getElementById(`blocked-status-${prosumerId}`).innerText =
+          "Not blocked";
+        alert("Failed to block prosumer");
+      }
+    }
+  } catch {
+    alert("Failed to block prosumer");
+  }
+}

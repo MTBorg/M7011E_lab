@@ -32,6 +32,7 @@ CREATE TABLE prosumers (
 	ratio_excess_market NUMERIC DEFAULT 0.0,
 	ratio_deficit_market NUMERIC DEFAULT 0.0,
 	battery_id INTEGER NOT NULL,
+	blocked BOOLEAN DEFAULT false,
 	blackout BOOLEAN DEFAULT false,
 	PRIMARY KEY (id),
 	FOREIGN KEY (account_id) REFERENCES accounts(id),

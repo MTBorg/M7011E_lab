@@ -3,6 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
+	<script type="text/javascript" src="/js/util.js"></script>
+	<script type="text/javascript" src="/js/APIAddress.js"></script>
+	<script type="text/javascript" src="/js/prosumerOverview/blockProsumer.js"></script>
 </head>
 <body>
 	<h1>Prosumer overview</h1>
@@ -12,6 +15,8 @@
 				<a 
 					href=<%=`/prosumer-summary/${prosumer.id}`%>
 				><%= prosumer.id %> - <%= prosumer.account.email %></a>
+				<button onclick=<%= `blockProsumer(${prosumer.id})` %>>Block</button>
+				<span id=<%= `blocked-status-${prosumer.id}` %>><%=prosumer.blocked ? "Blocked" : "Not blocked" %></span>
 			</li>
 		<% }) %>
 	</ul>

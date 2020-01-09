@@ -33,6 +33,7 @@ const {
   deleteAccount,
   deleteProsumerAccount
 } = require("./credentials.js");
+const { blockProsumer } = require("./manager.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -105,6 +106,10 @@ const prosumerType = new GraphQLObjectType({
     ratioDeficitMarket: {
       type: GraphQLFloat,
       sqlColumn: "ratio_deficit_market"
+    },
+    blocked: {
+      type: GraphQLBoolean,
+      sqlColumn: "blocked"
     },
     battery: {
       type: batteryType,
@@ -195,6 +200,7 @@ userUnionType._typeConfig = {
 			current_production,
 			ratio_excess_market,
 			ratio_deficit_market,
+			blocked,
 			battery_id,
 			blackout,
 			'prosumer' as "$type"
@@ -209,6 +215,7 @@ userUnionType._typeConfig = {
 			NULL as current_production,
 			NULL as ratio_excess_market,
 			NULL as ratio_deficit_market,
+			NULL as blocked,
 			NULL as battery_id,
 			NULL as blackout,
 			'manager' as "$type"
@@ -371,6 +378,17 @@ const mutationType = new GraphQLObjectType({
       resolve: authenticateLoggedIn(
         authenticateIsManager((_obj, args, context) =>
           deleteProsumerAccount(args.prosumerId)
+        )
+      )
+    },
+    blockProsumer: {
+      type: GraphQLBoolean,
+      args: {
+        prosumerId: { type: GraphQLNonNull(GraphQLInt) }
+      },
+      resolve: authenticateLoggedIn(
+        authenticateIsManager((_obj, args, context) =>
+          blockProsumer(args.prosumerId)
         )
       )
     }

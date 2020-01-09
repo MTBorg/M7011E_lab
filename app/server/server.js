@@ -95,6 +95,7 @@ app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
 					{
 						prosumers{
 							id
+							blocked
 							account{
 								email
 							}
