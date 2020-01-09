@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function updateData() {
-  const data = await getDashboardData();
+  const data = await getData();
   const prosumer = data.me;
   const battery = data.me.battery;
   const pricing = data.pricing;
