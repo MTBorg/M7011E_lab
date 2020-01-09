@@ -33,13 +33,14 @@ async function updateProsumerTick(prosumerId) {
   pool
     .query(
       `
-			SELECT mean_day_wind_speed, blackout FROM prosumers WHERE id=$1
+			SELECT mean_day_wind_speed, blackout, blocked FROM prosumers WHERE id=$1
 		`,
       [prosumerId]
     )
     .then(async res => {
       const currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
       const currBlackout = res.rows[0].blackout;
+      const blocked = res.rows[0].blocked;
       const produced = turbineOutput(currWind);
       const consumed = randomProsumerConsumption();
       // Handle diffrences in production and consumption
@@ -58,7 +59,7 @@ async function updateProsumerTick(prosumerId) {
         }
 
         // TODO: Handle balance for prosumers etc
-        await sellToMarket(marketAmount);
+        if (!blocked) await sellToMarket(marketAmount);
       } else if (consumed > produced) {
         const deficit = consumed - produced;
         const ratioDeficitMarket = await deficitRatio(prosumerId);
