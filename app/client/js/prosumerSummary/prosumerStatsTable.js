@@ -20,6 +20,10 @@ async function updateData() {
     "consumption"
   ).innerHTML = prosumer.currentConsumption.toFixed(2);
 
+  document.getElementById("block-status").innerText = prosumer.blocked
+    ? "Blocked from selling"
+    : "";
+
   const netProd = prosumer.currentProduction - prosumer.currentConsumption;
   document.getElementById("netProduction").innerHTML = netProd.toFixed(2);
 

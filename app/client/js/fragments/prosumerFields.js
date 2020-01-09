@@ -6,6 +6,7 @@ fragment prosumerFields on prosumer {
 	currentConsumption,
 	ratioExcessMarket,
 	ratioDeficitMarket,
+	blocked,
 	battery {
 		power,
 		maxCapacity

@@ -1,6 +1,5 @@
 async function blockProsumer(prosumerId) {
   const authToken = getCookie("authToken", document.cookie);
-  console.log("BLOCKING");
 
   try {
     let response = await fetch(API_ADDRESS, {
@@ -18,7 +17,6 @@ async function blockProsumer(prosumerId) {
       })
     });
     const json = await response.json();
-    console.log(json);
     if (json.data.blockProsumer != null) {
       if (json.data.blockProsumer) {
         document.getElementById(`blocked-status-${prosumerId}`).innerText =
