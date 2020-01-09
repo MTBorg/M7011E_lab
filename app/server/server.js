@@ -87,9 +87,9 @@ app.get("/dashboard", authenticateRequest, (req, res) => {
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
   if (user.manager) {
-    res.render("pages/managerDashboard");
+    res.render("pages/managerDashboard", { user });
   } else {
-    res.render("pages/prosumerDashboard");
+    res.render("pages/prosumerDashboard", { user });
   }
 });
 
