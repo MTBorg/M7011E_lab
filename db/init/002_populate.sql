@@ -39,10 +39,11 @@ INSERT INTO prosumers (account_id, mean_day_wind_speed, battery_id, ratio_excess
 	(9, 6, 9, 0.3, 0.2),
 	(10, 12, 10, 0.3, 0.2);
 
-
 WITH new_power_bat AS (
 	INSERT INTO batteries (max_capacity, power) VALUES(5000, 0) RETURNING id
 ), new_power_plant AS (
 	INSERT INTO power_plants (battery_id, status) VALUES((SELECT id FROM new_power_bat), 'stopped') RETURNING id
 )
 INSERT INTO managers (account_id, power_plant_id) VALUES (11, (SELECT id FROM new_power_plant));
+
+INSERT INTO prices (price) VALUES (0.9);

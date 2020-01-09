@@ -14,7 +14,7 @@ const { registerProsumer, registerManager } = require("./registration.js");
 const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
 const { pool } = require("./db.js");
-const { getPricing } = require("./pricing.js");
+const { getSimPricing, getPricing } = require("./pricing.js");
 const {
   startRequestPowerPlant,
   stopPowerPlant,
@@ -251,6 +251,10 @@ const queryType = new GraphQLObjectType({
       resolve() {
         return true;
       }
+    },
+    simPricing: {
+      type: GraphQLFloat,
+      resolve: authenticateIsManager(() => getSimPricing())
     },
     pricing: {
       type: GraphQLFloat,

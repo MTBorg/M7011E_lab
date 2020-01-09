@@ -60,3 +60,9 @@ CREATE TABLE managers(
 	FOREIGN KEY (power_plant_id) REFERENCES power_plants (id)
 );
 ALTER TABLE managers OWNER TO gle;
+
+CREATE TABLE prices(
+	price NUMERIC NOT NULL,
+	PRIMARY KEY (price)
+);
+ALTER TABLE prices OWNER TO gle;
