@@ -155,10 +155,6 @@ app.get("/prosumer-summary/:prosumerid", async (req, res) => {
   }
 });
 
-app.post("/action/logout", (req, res) => {
-  logoutUser(req, res);
-});
-
 app.listen(process.env.SERVER_PORT, () => {
   console.log(
     `Web app running on http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`
