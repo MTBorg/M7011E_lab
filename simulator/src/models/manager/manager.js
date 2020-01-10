@@ -1,4 +1,5 @@
-const { pool } = require("./db");
+const { pool } = require("../../db");
+
 const BLOCK_TIME = 10000;
 
 async function blockProsumer(prosumerId) {
@@ -14,7 +15,7 @@ async function blockProsumer(prosumerId) {
     return false;
   }
   setTimeout(async () => {
-    let response = await pool.query(
+    const response = await pool.query(
       `
 		UPDATE prosumers
 		SET blocked=false

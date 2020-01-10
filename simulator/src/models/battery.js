@@ -1,4 +1,4 @@
-const { pool } = require("./db");
+const { pool } = require("../db");
 
 const newBatteryQuery = `
 	WITH new_bat AS (
@@ -92,7 +92,7 @@ async function useBatteryPower(ownerId, amount) {
 
 async function updateBatteryMaxCapacity(accountId, maxCapacity) {
   try {
-    let response = await pool.query(
+    const response = await pool.query(
       `
 		UPDATE batteries
 		SET max_capacity=$1

@@ -1,4 +1,4 @@
-const { pool } = require("./db.js");
+const { pool } = require("../db.js");
 
 const excessRatioQuery = `
 SELECT ratio_excess_market FROM prosumers WHERE id = $1

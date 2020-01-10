@@ -1,13 +1,13 @@
 const sinon = require("sinon");
 const { expect } = require("chai");
-const { pool } = require("../src/db");
+const { pool } = require("../src/db.js");
 const {
   sellToMarket,
   buyFromMarket,
   sellQuery,
   buyQuery,
   buyBeforeQuery
-} = require("../src/market");
+} = require("../src/models/market.js");
 
 describe("sellToMarket", async () => {
   let poolStub;

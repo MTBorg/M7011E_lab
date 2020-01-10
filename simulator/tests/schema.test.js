@@ -1,7 +1,7 @@
 const EasyGraphQLTester = require("easygraphql-tester");
 const { expect } = require("chai");
 
-const schema = require("../src/schema.js");
+const schema = require("../src/api/schema.js");
 
 const tester = new EasyGraphQLTester(schema);
 

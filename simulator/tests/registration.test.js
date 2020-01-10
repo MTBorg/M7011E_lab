@@ -11,7 +11,7 @@ const {
   prosumerRegistrationAccountsQuery,
   prosumerRegistrationBatteryQuery,
   managerRegistrationAccountsQuery
-} = require("../src/registration");
+} = require("../src/api/registration.js");
 const { pool } = require("../src/db");
 
 const { expect } = chai;
@@ -59,7 +59,7 @@ describe("registration", () => {
       });
 
       it("should return a token containing an account id and manager flag set to true when succesful", async () => {
-        const mockModule = rewire("../src/registration");
+        const mockModule = rewire("../src/api/registration.js");
         mockModule.__set__({
           bcrypt: {
             genSaltSync: () => "salt",
@@ -129,7 +129,7 @@ describe("registration", () => {
       });
 
       it("should return a token containing an account id and manager flag set to false when succesful", async () => {
-        const mockModule = rewire("../src/registration");
+        const mockModule = rewire("../src/api/registration.js");
         mockModule.__set__({
           bcrypt: {
             genSaltSync: () => "salt",

@@ -14,7 +14,7 @@ const {
   setManagerProdRatioQuery,
   managerProdRatio,
   managerProdRatioQuery
-} = require("../src/ratio");
+} = require("../src/models/ratio.js");
 
 describe("Ratios", () => {
   let poolStub;

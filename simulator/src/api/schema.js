@@ -11,20 +11,22 @@ const {
 } = require("graphql");
 const joinMonster = require("join-monster");
 const { registerProsumer, registerManager } = require("./registration.js");
-const { getHouseholdConsumption } = require("./consumption");
-const { currWindSpeed } = require("./windspeed");
-const { pool } = require("./db.js");
-const { getSimPricing, getPricing, setPricing } = require("./pricing.js");
+const { pool } = require("../db.js");
+const {
+  getSimPricing,
+  getPricing,
+  setPricing
+} = require("../models/manager/pricing.js");
 const {
   startRequestPowerPlant,
   stopPowerPlant,
   getCurrentProduction
-} = require("./powerplant");
+} = require("../models/manager/powerplant.js");
 const {
   setDeficitRatio,
   setExcessRatio,
   setManagerProdRatio
-} = require("./ratio");
+} = require("../models/ratio");
 const {
   authenticateLoggedIn,
   logInUser,
@@ -37,8 +39,8 @@ const {
   deleteAccount,
   deleteProsumerAccount
 } = require("./credentials.js");
-const { blockProsumer } = require("./manager.js");
-const { updateBatteryMaxCapacity } = require("./battery.js");
+const { blockProsumer } = require("../models/manager/manager.js");
+const { updateBatteryMaxCapacity } = require("../models/battery.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {

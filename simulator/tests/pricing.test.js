@@ -8,7 +8,7 @@ const {
   PROSUMERS_QUERY,
   GET_PRICE_QUERY,
   getPricing
-} = require("../src/pricing");
+} = require("../src/models/manager/pricing");
 
 describe("pricing", async () => {
   afterEach(() => {
@@ -17,8 +17,8 @@ describe("pricing", async () => {
 
   describe("simulation pricing", async () => {
     it("should return at least the starting price", async () => {
-      const mockModule = proxyquire("../src/pricing", {
-        "./windturbine": {
+      const mockModule = proxyquire("../src/models/manager/pricing", {
+        "../prosumer/windturbine.js": {
           turbineOutput: () => 1000000
         }
       });
@@ -61,8 +61,8 @@ describe("pricing", async () => {
         }
       ];
 
-      const mockModule = proxyquire("../src/pricing", {
-        "./windturbine": {
+      const mockModule = proxyquire("../src/models/manager/pricing", {
+        "../prosumer/windturbine": {
           turbineOutput: () => 10
         }
       });

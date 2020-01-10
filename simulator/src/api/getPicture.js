@@ -1,4 +1,4 @@
-const { pool } = require("./db.js");
+const { pool } = require("../db.js");
 
 async function getImage(accountId) {
   const query = "SELECT image FROM accounts WHERE id=$1";

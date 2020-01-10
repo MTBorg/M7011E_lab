@@ -1,4 +1,4 @@
-const { pool } = require("./db");
+const { pool } = require("../../db.js");
 
 const blackoutQuery = `
 UPDATE prosumers SET blackout = $2 WHERE id = $1

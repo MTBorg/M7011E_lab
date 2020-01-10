@@ -11,8 +11,8 @@ const {
   authenticateLoggedIn,
   authenticateIsMe,
   authenticateIsManager
-} = require("../src/auth");
-const { pool } = require("../src/db");
+} = require("../src/api/auth.js");
+const { pool } = require("../src/db.js");
 
 const { expect } = chai;
 chai.use(sinonChai);
@@ -160,7 +160,7 @@ describe("auth", () => {
       });
 
       it("Should return null when user credentials are invalid", async () => {
-        const mockModule = rewire("../src/auth");
+        const mockModule = rewire("../src/api/auth.js");
         mockModule.__set__({
           checkAccountCredentials: () => false
         });
@@ -180,7 +180,7 @@ describe("auth", () => {
         });
 
         it("should return a token with the account id and manager flag set to true", async () => {
-          const mockModule = rewire("../src/auth");
+          const mockModule = rewire("../src/api/auth.js");
           mockModule.__set__({
             checkAccountCredentials: () => true,
             userIsManager: () => true,
@@ -202,7 +202,7 @@ describe("auth", () => {
         });
 
         it("should return a token with the account id and manager flag set to false", async () => {
-          const mockModule = rewire("../src/auth");
+          const mockModule = rewire("../src/api/auth.js");
           mockModule.__set__({
             checkAccountCredentials: () => true,
             userIsManager: () => false,

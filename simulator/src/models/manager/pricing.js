@@ -1,5 +1,5 @@
-const { pool } = require("./db.js");
-const { turbineOutput } = require("./windturbine");
+const { pool } = require("../../db.js");
+const { turbineOutput } = require("../prosumer/windturbine");
 
 // Price in SEK
 const START_PRICE = 0.5;

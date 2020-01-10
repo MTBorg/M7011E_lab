@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const { pool } = require("./db.js");
+const { pool } = require("../db.js");
 
 const privateKey = process.env.SECRET || "secret";
 const SALT_ROUNDS = 10;

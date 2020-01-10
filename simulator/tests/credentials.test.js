@@ -11,7 +11,7 @@ const {
   updateEmail,
   UPDATE_EMAIL_QUERY,
   UPDATE_PASSWORD_QUERY
-} = require("../src/credentials");
+} = require("../src/api/credentials.js");
 
 describe("credentials", () => {
   describe("updating email", () => {
@@ -52,7 +52,7 @@ describe("credentials", () => {
     it("should return the new password_hash when successfull", async () => {
       const accountId = 5;
       const hash = "hash";
-      const mockModule = rewire("../src/credentials");
+      const mockModule = rewire("../src/api/credentials.js");
       mockModule.__set__({
         bcrypt: {
           genSaltSync: () => {},
@@ -74,7 +74,7 @@ describe("credentials", () => {
     it("should return an error when unsuccessfull", async () => {
       const accountId = 5;
       const hash = "hash";
-      const mockModule = rewire("../src/credentials");
+      const mockModule = rewire("../src/api/credentials.js");
       mockModule.__set__({
         bcrypt: {
           genSaltSync: () => {},

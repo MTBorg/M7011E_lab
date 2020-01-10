@@ -1,4 +1,4 @@
-const { pool } = require("./db");
+const { pool } = require("../../db.js");
 
 // The time it takes to start up the power plant (in milliseconds)
 const POWERPLANT_STARTUP_TIME = 30 * 1000;

@@ -4,7 +4,7 @@ const {
   ratedOutputPower,
   cutInSpeed,
   cutOutSpeed
-} = require("../src/windturbine");
+} = require("../src/models/prosumer/windturbine.js");
 
 describe("turbineOutput", () => {
   it("Should not output power when the wind speed is less than the cut in speed", () => {

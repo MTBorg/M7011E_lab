@@ -1,4 +1,4 @@
-const { pool } = require("./db.js");
+const { pool } = require("../db.js");
 
 // NOTE: Needs to change if more power plants
 const sellQuery = `

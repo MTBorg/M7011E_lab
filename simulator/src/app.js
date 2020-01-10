@@ -1,11 +1,11 @@
 const express = require("express");
 const expressGraphQL = require("express-graphql");
 const cors = require("cors");
-const schema = require("./schema.js");
-const { startSimulation } = require("./simulator.js");
-const { authMiddleWare } = require("./auth.js");
 const bodyParser = require("body-parser");
-const { getImage, getProsumerImage } = require("./get_picture.js");
+const schema = require("./api/schema.js");
+const { startSimulation } = require("./simulator.js");
+const { authMiddleWare } = require("./api/auth.js");
+const { getImage, getProsumerImage } = require("./api/getPicture.js");
 const { pool } = require("./db.js");
 
 const app = express();

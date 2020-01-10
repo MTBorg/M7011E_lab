@@ -1,6 +1,6 @@
 const sinon = require("sinon");
 const { expect } = require("chai");
-const { pool } = require("../src/db");
+const { pool } = require("../src/db.js");
 const {
   getCurrentProduction,
   stopPowerPlant,
@@ -9,7 +9,7 @@ const {
   POWERPLANT_OUTPUT,
   POWERPLANT_STOP_QUERY,
   POWERPLANT_UPDATE_QUERY
-} = require("../src/powerplant");
+} = require("../src/models/manager/powerplant");
 
 describe("Power plant", async () => {
   afterEach(() => {

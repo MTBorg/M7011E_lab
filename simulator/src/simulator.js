@@ -1,12 +1,17 @@
 const { pool } = require("./db");
-const { randomProsumerConsumption } = require("./consumption.js");
-const { meanWindSpeed, currWindSpeed } = require("./windspeed.js");
-const { turbineOutput } = require("./windturbine.js");
-const { chargeBattery, useBatteryPower } = require("./battery.js");
-const { excessRatio, deficitRatio } = require("./ratio.js");
-const { sellToMarket, buyFromMarket } = require("./market.js");
-const { POWERPLANT_OUTPUT } = require("./powerplant");
-const { setBlackout } = require("./blackout");
+const {
+  randomProsumerConsumption
+} = require("./models/prosumer/consumption.js");
+const {
+  meanWindSpeed,
+  currWindSpeed
+} = require("./models/prosumer/windspeed.js");
+const { turbineOutput } = require("./models/prosumer/windturbine.js");
+const { chargeBattery, useBatteryPower } = require("./models/battery.js");
+const { excessRatio, deficitRatio } = require("./models/ratio.js");
+const { sellToMarket, buyFromMarket } = require("./models/market.js");
+const { POWERPLANT_OUTPUT } = require("./models/manager/powerplant.js");
+const { setBlackout } = require("./models/prosumer/blackout");
 
 /**
  * Update a prosumers's mean wind speed.
@@ -40,7 +45,7 @@ async function updateProsumerTick(prosumerId) {
     .then(async res => {
       const currWind = currWindSpeed(res.rows[0].mean_day_wind_speed);
       const currBlackout = res.rows[0].blackout;
-      const blocked = res.rows[0].blocked;
+      const { blocked } = res.rows[0];
       const produced = turbineOutput(currWind);
       const consumed = randomProsumerConsumption();
       // Handle diffrences in production and consumption

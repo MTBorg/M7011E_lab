@@ -1,7 +1,10 @@
 const sinon = require("sinon");
 const { expect } = require("chai");
 const { pool } = require("../src/db");
-const { useBatteryPower, useBatteryPowerQuery } = require("../src/battery");
+const {
+  useBatteryPower,
+  useBatteryPowerQuery
+} = require("../src/models/battery");
 
 describe("useBatteryPower", async () => {
   let poolStub;

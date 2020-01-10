@@ -1,5 +1,5 @@
 const gaussian = require("gaussian");
-const { pool } = require("./db");
+const { pool } = require("../../db.js");
 
 const consumptionMean = 32;
 const consumptionVariance = 10;

@@ -5,7 +5,7 @@ const gaussian = require("gaussian");
 
 describe("currWindSpeed", async () => {
   it("should not be able to return negative values", async () => {
-    const mockModule = proxyquire("../src/windspeed", {
+    const mockModule = proxyquire("../src/models/prosumer/windspeed", {
       gaussian: () => {
         return {
           ppf: () => -100
@@ -17,7 +17,7 @@ describe("currWindSpeed", async () => {
   });
 
   it("should not be able to return above the max speed limit", async () => {
-    const mockModule = proxyquire("../src/windspeed", {
+    const mockModule = proxyquire("../src/models/prosumer/windspeed", {
       gaussian: () => {
         return {
           ppf: () => 100
@@ -31,7 +31,7 @@ describe("currWindSpeed", async () => {
 
 describe("meanWindSpeed", async () => {
   it("should return a positive number", async () => {
-    const mockModule = proxyquire("../src/windspeed", {
+    const mockModule = proxyquire("../src/models/prosumer/windspeed", {
       gaussian: () => {
         return {
           ppf: () => 5.26

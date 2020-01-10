@@ -1,7 +1,9 @@
 const sinon = require("sinon");
 const { expect } = require("chai");
 const { pool } = require("../src/db");
-const { getHouseholdConsumption } = require("../src/consumption");
+const {
+  getHouseholdConsumption
+} = require("../src/models/prosumer/consumption");
 
 describe("getHouseholdConsumption", async () => {
   let poolStub; // stub for the database pool
