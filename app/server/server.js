@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const { getCookie } = require("./util.js");
 
 const API_ADDRESS = process.env.API_ADDRESS || "http://localhost:8080/graphql";
+const SERVER_PORT = process.env.SERVER_PORT || "3000";
 
 const {
   authenticateRequest,
@@ -193,8 +194,6 @@ app.get(
   }
 );
 
-app.listen(process.env.SERVER_PORT, () => {
-  console.log(
-    `Web app running on http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`
-  );
+app.listen(SERVER_PORT, () => {
+  console.log(`Web app running on http://localhost:${SERVER_PORT}`);
 });
