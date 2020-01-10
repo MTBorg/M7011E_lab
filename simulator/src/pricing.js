@@ -8,8 +8,12 @@ const PRICE_COEFFICIENT = 0.05;
 const PROSUMERS_QUERY =
   "SELECT current_consumption, current_wind_speed, ratio_excess_market, ratio_deficit_market FROM prosumers";
 
-const PRICE_QUERY = `
+const GET_PRICE_QUERY = `
 	SELECT price FROM prices;
+`;
+
+const SET_PRICE_QUERY = `
+	UPDATE prices SET price = $1
 `;
 
 /**
@@ -31,14 +35,29 @@ async function getSimPricing() {
 
 /**
  * Returns the electricity pricing set by the manager
+ * @returns the price
  */
 async function getPricing() {
   let price = null;
   try {
-    const response = await pool.query(PRICE_QUERY);
+    const response = await pool.query(GET_PRICE_QUERY);
     price = response.rows[0].price;
   } catch (err) {
     console.error(`Failed to get pricing: ${err}`);
+  }
+  return price;
+}
+
+/**
+ * Sets the manager electricity price
+ * @param {Number} price the new price
+ * @returns the price
+ */
+async function setPricing(price) {
+  try {
+    await pool.query(SET_PRICE_QUERY, [price]);
+  } catch (error) {
+    console.error(`Failed to set pricing: ${error}`);
   }
   return price;
 }
@@ -49,5 +68,6 @@ module.exports = {
   START_PRICE,
   PRICE_COEFFICIENT,
   PROSUMERS_QUERY,
-  PRICE_QUERY
+  GET_PRICE_QUERY,
+  setPricing
 };

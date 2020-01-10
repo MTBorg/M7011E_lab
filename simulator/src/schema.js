@@ -14,7 +14,7 @@ const { registerProsumer, registerManager } = require("./registration.js");
 const { getHouseholdConsumption } = require("./consumption");
 const { currWindSpeed } = require("./windspeed");
 const { pool } = require("./db.js");
-const { getSimPricing, getPricing } = require("./pricing.js");
+const { getSimPricing, getPricing, setPricing } = require("./pricing.js");
 const {
   startRequestPowerPlant,
   stopPowerPlant,
@@ -427,6 +427,15 @@ const mutationType = new GraphQLObjectType({
       },
       resolve: authenticateLoggedIn((_obj, args, context) =>
         updateBatteryMaxCapacity(context.user.accountId, args.maxCapacity)
+      )
+    },
+    setPricing: {
+      type: GraphQLFloat,
+      args: {
+        price: { type: GraphQLNonNull(GraphQLFloat) }
+      },
+      resolve: authenticateLoggedIn(
+        authenticateIsManager((_obj, args) => setPricing(args.price))
       )
     }
   }

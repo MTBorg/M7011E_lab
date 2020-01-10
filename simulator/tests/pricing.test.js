@@ -6,7 +6,7 @@ const {
   START_PRICE,
   PRICE_COEFFICIENT,
   PROSUMERS_QUERY,
-  PRICE_QUERY,
+  GET_PRICE_QUERY,
   getPricing
 } = require("../src/pricing");
 
@@ -82,7 +82,7 @@ describe("pricing", async () => {
     it("should return the correct price", async () => {
       sinon
         .stub(pool, "query")
-        .withArgs(PRICE_QUERY)
+        .withArgs(GET_PRICE_QUERY)
         .resolves({ rows: [{ price: 0.8 }] });
 
       expect(await getPricing()).to.equal(0.8);
