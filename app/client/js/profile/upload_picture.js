@@ -1,5 +1,3 @@
-const API_REST_ADDRESS = "http://localhost:8080/api";
-
 function uploadImageFormSubmit(event) {
   event.preventDefault();
 

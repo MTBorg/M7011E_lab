@@ -8,6 +8,8 @@ const bodyParser = require("body-parser");
 const { getCookie } = require("./util.js");
 
 const API_ADDRESS = process.env.API_ADDRESS || "http://localhost:8080/graphql";
+const API_REST_ADDRESS =
+  process.env.API_REST_ADDRESS || "http://localhost:8080/api";
 const SERVER_PORT = process.env.SERVER_PORT || "3000";
 
 const {
@@ -52,7 +54,7 @@ app.get("/profile", authenticateRequest, async (req, res) => {
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
   try {
-    const imageQuery = fetch("http://localhost:8080/api/get_image", {
+    const imageQuery = fetch(`${API_REST_ADDRESS}/get_image`, {
       method: "GET",
       headers: { "Content-type": "image/jpeg", authToken }
     });
@@ -95,7 +97,8 @@ app.get("/profile", authenticateRequest, async (req, res) => {
       ? accountResponse.data.me.powerplant
       : accountResponse.data.me;
     render(res, "pages/profile", {
-      user: { manager: user.manager, email, image, battery }
+      user: { manager: user.manager, email, image, battery },
+      API_REST_ADDRESS
     });
   } catch (error) {
     console.log(error);
@@ -164,18 +167,14 @@ app.get(
     try {
       if (req.params.prosumerid == null) {
         throw new Error("null prosumerid parameter");
-      }
+			}
 
-      const cookies = req.headers.cookie;
-      const authToken = getCookie("authToken", cookies);
-
-      const imageQuery = fetch(
-        `http://localhost:8080/api/get_prosumer_image/${req.params.prosumerid}`,
-        {
-          method: "GET",
-          headers: { "Content-type": "image/jpeg", authToken }
-        }
-      );
+    const imageQuery = fetch(
+      `${API_REST_ADDRESS}/get_prosumer_image/${req.params.prosumerid}`,
+      {
+        method: "GET",
+        headers: { "Content-type": "image/jpeg", authToken }
+      });
 
       // TODO: This should use some form of token
       const prosumerQuery = fetch(API_ADDRESS, {
