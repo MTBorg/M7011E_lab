@@ -95,7 +95,7 @@
         </div>
         <div>
           <span>Currently available: </span>
-          <span id="current-power"><%= user.battery.power%></span><br />
+          <span id="current-power"><%= user.battery.power.toFixed(2)%></span><br />
         </div>
       </div>
       <% } else{ %>

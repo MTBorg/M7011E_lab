@@ -100,6 +100,15 @@ async function updateBatteryMaxCapacity(accountId, maxCapacity) {
 			SELECT battery_id as id
 			FROM prosumers
 			WHERE account_id=$2
+			UNION
+			SELECT battery_id as id
+			FROM power_plants
+			INNER JOIN (
+				SELECT power_plant_id
+				FROM managers
+				WHERE account_id=$2
+			) m
+			ON power_plants.id = m.power_plant_id
 		)
 		RETURNING max_capacity`,
       [maxCapacity, accountId]

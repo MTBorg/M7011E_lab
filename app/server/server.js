@@ -60,6 +60,12 @@ app.get("/profile", authenticateRequest, async (req, res) => {
 								}
 							},
 							... on manager{
+								powerplant{
+									battery{
+										power
+										maxCapacity
+									}
+								}
 								account{
 									email
 								}
@@ -72,9 +78,11 @@ app.get("/profile", authenticateRequest, async (req, res) => {
     const image = await values[0].buffer();
     const accountResponse = await values[1].json();
     const { email } = accountResponse.data.me.account;
-    const battery = accountResponse.data.me.battery;
+    const { battery } = user.manager
+      ? accountResponse.data.me.powerplant
+      : accountResponse.data.me;
     res.render("pages/profile", {
-			user: { manager: user.manager, email, image, battery }
+      user: { manager: user.manager, email, image, battery }
     });
   } catch (error) {
     console.log(error);
@@ -119,7 +127,7 @@ app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
       })
     });
     const json = await response.json();
-    const prosumers = json.data.prosumers;
+    const { prosumers } = json.data;
     res.render("pages/prosumerOverview", { prosumers, user });
   } catch (error) {
     console.log(error);
@@ -166,7 +174,7 @@ app.get("/prosumer-summary/:prosumerid", async (req, res) => {
     const values = await Promise.all([imageQuery, prosumerQuery]);
     const image = await values[0].buffer();
     const prosumerJson = await values[1].json();
-    const prosumer = prosumerJson.data.prosumer;
+    const { prosumer } = prosumerJson.data;
     res.render("pages/prosumerSummary", { user, prosumer, image });
   } catch (error) {
     console.log(error);
