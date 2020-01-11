@@ -3,7 +3,7 @@ const { pool } = require("../../db.js");
 // The time it takes to start up the power plant (in milliseconds)
 const POWERPLANT_STARTUP_TIME = 30 * 1000;
 // TODO: Use some accurrate value
-const POWERPLANT_OUTPUT = 1500;
+const POWERPLANT_OUTPUT = 100;
 
 const POWERPLANT_STATUS_QUERY =
   "SELECT status FROM power_plants WHERE id=(SELECT power_plant_id FROM managers WHERE account_id=$1)";

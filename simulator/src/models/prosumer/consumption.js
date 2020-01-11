@@ -1,8 +1,10 @@
 const gaussian = require("gaussian");
 const { pool } = require("../../db.js");
 
-const consumptionMean = 32;
-const consumptionVariance = 10;
+// Consumption configs
+const consumptionMeanDay = 32; // [kWh]
+const consumptionMeanHour = consumptionMeanDay / 24; // [kW]
+const consumptionVariance = 1;
 
 function getNormalSample(mean, variance) {
   const distribution = gaussian(mean, variance);
@@ -11,7 +13,13 @@ function getNormalSample(mean, variance) {
 }
 
 function randomProsumerConsumption() {
-  return getNormalSample(consumptionMean, consumptionVariance);
+  while (true) {
+    const consumption = getNormalSample(
+      consumptionMeanHour,
+      consumptionVariance
+    );
+    if (consumption > 0) return consumption;
+  }
 }
 
 async function getHouseholdConsumption(id) {

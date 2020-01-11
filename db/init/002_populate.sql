@@ -40,7 +40,7 @@ INSERT INTO prosumers (account_id, mean_day_wind_speed, battery_id, ratio_excess
 	(10, 12, 10, 0.3, 0.2);
 
 WITH new_power_bat AS (
-	INSERT INTO batteries (max_capacity, power) VALUES(5000, 0) RETURNING id
+	INSERT INTO batteries (max_capacity) VALUES(2500) RETURNING id
 ), new_power_plant AS (
 	INSERT INTO power_plants (battery_id, status) VALUES((SELECT id FROM new_power_bat), 'stopped') RETURNING id
 )
