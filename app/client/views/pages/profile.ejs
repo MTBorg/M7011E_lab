@@ -31,15 +31,25 @@
 										power
 									}
 								}
+								... on manager{
+									powerplant{
+										battery{
+											power
+										}
+									}
+								}
 							}
 						}`
           })
         })
           .then(res => res.json())
           .then(res => {
-            if (res.data.me.battery != null)
-              document.getElementById("current-power").innerText =
-                res.data.me.battery.power;
+						document.getElementById("current-power").innerText =
+							res.data.me.battery != null 
+							? res.data.me.battery.power : 
+								res.data.me.powerplant.battery != null 
+								? res.data.me.powerplant.battery.power :
+								0;
           });
       }, 2000);
     </script>
