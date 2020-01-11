@@ -28,7 +28,7 @@ async function registerManager(email, password, managerPassword) {
   }
 
   if (managerPassword !== MANAGER_PASSWORD) {
-    return null;
+    return new Error("Invalid manager password");
   }
 
   // Hash and salt the password
