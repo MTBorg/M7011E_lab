@@ -3,7 +3,7 @@ services:
   app:
     build: app
     ports:
-      - "3000:3000"
+      - "80:3000"
     volumes:
       - ./app/server:/usr/src/app/server
       - ./app/client:/usr/src/app/client
@@ -12,7 +12,6 @@ services:
     depends_on:
       - db
       - simulator
-    network_mode: host
     environment:
       - NODE_ENV=production
     command: npm run prod
