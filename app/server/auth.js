@@ -53,9 +53,26 @@ function parseAuthToken(authToken) {
   return jwt.verify(authToken, privateKey, { algorithm: JWT_ALGORITHM });
 }
 
+function authenticateIsManager(req, res, next) {
+  const cookies = req.headers.cookie;
+  const authToken = getCookie("authToken", cookies);
+  if (authToken != null) {
+    const user = parseAuthToken(authToken);
+    if (user.manager) {
+      next();
+    } else {
+      res.render("partials/permissionDenied");
+      next();
+    }
+  } else {
+    res.redirect("pages/login");
+  }
+}
+
 module.exports = {
   authenticateRequest,
   authenticateLoggedOut,
+  authenticateIsManager,
   logoutUser,
   parseAuthToken
 };

@@ -12,6 +12,7 @@ const API_ADDRESS = process.env.API_ADDRESS || "http://localhost:8080/graphql";
 const {
   authenticateRequest,
   authenticateLoggedOut,
+  authenticateIsManager,
   logoutUser,
   parseAuthToken
 } = require("./auth.js");
@@ -105,16 +106,20 @@ app.get("/register", authenticateLoggedOut, (req, res) => {
   res.render("pages/register");
 });
 
-app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
-  const cookies = req.headers.cookie;
-  const authToken = getCookie("authToken", cookies);
-  const user = authToken ? parseAuthToken(authToken) : null;
-  try {
-    const response = await fetch(API_ADDRESS, {
-      method: "POST",
-      headers: { "content-type": "application/json", authToken },
-      body: JSON.stringify({
-        query: `
+app.get(
+  "/prosumer-overview",
+  authenticateRequest,
+  authenticateIsManager,
+  async (req, res) => {
+    const cookies = req.headers.cookie;
+    const authToken = getCookie("authToken", cookies);
+    const user = authToken ? parseAuthToken(authToken) : null;
+    try {
+      const response = await fetch(API_ADDRESS, {
+        method: "POST",
+        headers: { "content-type": "application/json", authToken },
+        body: JSON.stringify({
+          query: `
 					{
 						prosumers{
 							id
@@ -124,43 +129,48 @@ app.get("/prosumer-overview", authenticateRequest, async (req, res) => {
 							}
 						}
 					}`
-      })
-    });
-    const json = await response.json();
-    const { prosumers } = json.data;
-    res.render("pages/prosumerOverview", { prosumers, user });
-  } catch (error) {
-    console.log(error);
-    res.render("partials/error");
-  }
-});
-
-app.get("/prosumer-summary/:prosumerid", async (req, res) => {
-  const cookies = req.headers.cookie;
-  const authToken = getCookie("authToken", cookies);
-  const user = authToken ? parseAuthToken(authToken) : null;
-  try {
-    if (req.params.prosumerid == null) {
-      throw new Error("null prosumerid parameter");
+        })
+      });
+      const json = await response.json();
+      const { prosumers } = json.data;
+      res.render("pages/prosumerOverview", { prosumers, user });
+    } catch (error) {
+      console.log(error);
+      res.render("partials/error");
     }
+  }
+);
 
+app.get(
+  "/prosumer-summary/:prosumerid",
+  authenticateRequest,
+  authenticateIsManager,
+  async (req, res) => {
     const cookies = req.headers.cookie;
     const authToken = getCookie("authToken", cookies);
-
-    const imageQuery = fetch(
-      `http://localhost:8080/api/get_prosumer_image/${req.params.prosumerid}`,
-      {
-        method: "GET",
-        headers: { "Content-type": "image/jpeg", authToken }
+    const user = authToken ? parseAuthToken(authToken) : null;
+    try {
+      if (req.params.prosumerid == null) {
+        throw new Error("null prosumerid parameter");
       }
-    );
 
-    // TODO: This should use some form of token
-    const prosumerQuery = fetch(API_ADDRESS, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        query: `
+      const cookies = req.headers.cookie;
+      const authToken = getCookie("authToken", cookies);
+
+      const imageQuery = fetch(
+        `http://localhost:8080/api/get_prosumer_image/${req.params.prosumerid}`,
+        {
+          method: "GET",
+          headers: { "Content-type": "image/jpeg", authToken }
+        }
+      );
+
+      // TODO: This should use some form of token
+      const prosumerQuery = fetch(API_ADDRESS, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          query: `
 					{
 						prosumer(id:${req.params.prosumerid}){
 							id
@@ -169,18 +179,19 @@ app.get("/prosumer-summary/:prosumerid", async (req, res) => {
 							}
 						}
 					}`
-      })
-    });
-    const values = await Promise.all([imageQuery, prosumerQuery]);
-    const image = await values[0].buffer();
-    const prosumerJson = await values[1].json();
-    const { prosumer } = prosumerJson.data;
-    res.render("pages/prosumerSummary", { user, prosumer, image });
-  } catch (error) {
-    console.log(error);
-    res.render("partials/error");
+        })
+      });
+      const values = await Promise.all([imageQuery, prosumerQuery]);
+      const image = await values[0].buffer();
+      const prosumerJson = await values[1].json();
+      const { prosumer } = prosumerJson.data;
+      res.render("pages/prosumerSummary", { user, prosumer, image });
+    } catch (error) {
+      console.log(error);
+      res.render("partials/error");
+    }
   }
-});
+);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(
