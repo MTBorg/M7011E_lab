@@ -58,13 +58,16 @@ async function updateProsumerTick(prosumerId) {
 
         if (currBlackout) setBlackout(prosumerId, false);
 
-        // add any excess power, which couldnt be stored in the battery, to the market amount
-        if (chargedAmount !== batteryAmount) {
+        if (
+          ratioExcessMarket > 0 &&
+          chargedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)
+        ) {
+          // add any excess power, which couldnt be stored in the battery, to the market amount
           marketAmount += batteryAmount - chargedAmount;
-        }
 
-        // TODO: Handle balance for prosumers etc
-        if (!blocked) await sellToMarket(marketAmount);
+          // TODO: Handle balance for prosumers etc
+          if (!blocked) await sellToMarket(marketAmount);
+        }
       } else if (consumed > produced) {
         const deficit = consumed - produced;
         const ratioDeficitMarket = await deficitRatio(prosumerId);
@@ -78,17 +81,25 @@ async function updateProsumerTick(prosumerId) {
           marketAmount += batteryAmount - usedAmount;
         }
 
-        // TODO: Handle balance for prosumers etc
-        const boughtAmount = await buyFromMarket(marketAmount);
-        // Some rounding to compensate for floating point errors
-        if (boughtAmount.toPrecision(5) !== marketAmount.toPrecision(5)) {
-          console.log(`${prosumerId}: blackout`);
+        if (ratioDeficitMarket > 0) {
+          // TODO: Handle balance for prosumers etc
+          const boughtAmount = await buyFromMarket(marketAmount);
+
+          // Some rounding to compensate for floating point errors
+          if (boughtAmount.toPrecision(5) !== marketAmount.toPrecision(5)) {
+            console.log(
+              `WARNING: BLACKOUT for household where prosumer_id = ${prosumerId}\n	Reason: Not enough market supply`
+            );
+            setBlackout(prosumerId, true);
+          } else if (currBlackout) {
+            setBlackout(prosumerId, false);
+          }
+        } else if (usedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)) {
+          // prosumer not buying from market so batttery needs to supply all of the deficit
           console.log(
-            `${prosumerId}: market = ${marketAmount}, bought = ${boughtAmount}`
+            `WARNING: blackout for household where prosumer_id = ${prosumerId}\n	Reason: Not buying from market`
           );
-          setBlackout(prosumerId, true);
-        } else if (currBlackout) {
-          setBlackout(prosumerId, false);
+          if (!currBlackout) setBlackout(prosumerId, true);
         }
       }
 
@@ -138,37 +149,33 @@ async function updatePowerPlants() {
   // so this looping is kind of redundant, unless multiple power plants is
   // implemented in the future.
   powerPlants.rows.forEach(async powerPlant => {
-    const powerDiff = await pool.query(
-      `
-				SELECT (
-					(SELECT SUM(current_production) FROM prosumers) - 
-					(SELECT SUM(current_consumption) FROM prosumers)) as diff
-				`
-    );
-    pool
-      .query(
-        `
-    UPDATE batteries
-		SET power=(
-			CASE 
-			WHEN power+$1 > max_capacity then
-				max_capacity
-			WHEN power+$1 < 0 then
-				0
-			ELSE 
-				power+$1
-			end
-		)
-    WHERE id = (
-    SELECT battery_id
-    FROM power_plants
-    WHERE id = $2
-    )
-    `,
-        [POWERPLANT_OUTPUT - powerDiff.rows[0].diff, powerPlant.id]
-      )
-      .then()
-      .catch(e => console.error(e));
+    if (powerPlant.status === "started") {
+      pool
+        .query(
+          `
+					UPDATE batteries
+					SET power=(
+						CASE 
+						WHEN power+$1 > max_capacity then
+							max_capacity
+						WHEN power+$1 < 0 then
+							0
+						ELSE 
+							power+$1
+						end
+					)
+					WHERE id = (
+					SELECT battery_id
+					FROM power_plants
+					WHERE id = $2
+					)
+					`,
+          [POWERPLANT_OUTPUT, powerPlant.id]
+        )
+        .catch(e =>
+          console.error(`Error while charging power plant battery: ${e}`)
+        );
+    }
   });
 }
 
