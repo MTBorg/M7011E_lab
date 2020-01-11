@@ -56,7 +56,12 @@ async function registerManager(email, password, managerPassword) {
     return token;
   } catch (error) {
     await client.query("ROLLBACK");
+    // Unique constraint violation code
+    if (error.code == 23505) {
+      return new Error("Email already exists");
+    }
     console.log(`Failed to register manager: ${error}`);
+    return new Error("Unknown error");
   } finally {
     client.release();
   }
