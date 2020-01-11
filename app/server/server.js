@@ -106,55 +106,43 @@ app.get("/profile", authenticateRequest, async (req, res) => {
   }
 });
 
-app.get("/dashboard", authenticateRequest, (req, res) => {
+app.get("/dashboard", authenticateRequest, async (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
   if (user.manager) {
-    render(res, "pages/managerDashboard", { user });
-  } else {
-    render(res, "pages/prosumerDashboard", { user });
-  }
-});
-
-app.get("/register", authenticateLoggedOut, (req, res) => {
-  render(res, "pages/register");
-});
-
-app.get(
-  "/prosumer-overview",
-  authenticateRequest,
-  authenticateIsManager,
-  async (req, res) => {
-    const cookies = req.headers.cookie;
-    const authToken = getCookie("authToken", cookies);
-    const user = authToken ? parseAuthToken(authToken) : null;
     try {
       const response = await fetch(API_ADDRESS, {
         method: "POST",
         headers: { "content-type": "application/json", authToken },
         body: JSON.stringify({
           query: `
-					{
-						prosumers{
-							id
-							blocked
-							account{
-								email
+						{
+							prosumers{
+								id
+								blocked
+								account{
+									email
+								}
 							}
-						}
-					}`
+						}`
         })
       });
       const json = await response.json();
       const { prosumers } = json.data;
-      render(res, "pages/prosumerOverview", { prosumers, user });
+      res.render("pages/managerDashboard", { prosumers, user });
     } catch (error) {
       console.log(error);
       res.render("partials/error");
     }
+  } else {
+    res.render("pages/prosumerDashboard", { user });
   }
-);
+});
+
+app.get("/register", authenticateLoggedOut, (req, res) => {
+  render(res, "pages/register");
+});
 
 app.get(
   "/prosumer-summary/:prosumerid",
@@ -199,7 +187,7 @@ app.get(
       render(res, "pages/prosumerSummary", { user, prosumer, image });
     } catch (error) {
       console.log(error);
-      res.render("partials/error");
+      render(res, "partials/error");
     }
   }
 );

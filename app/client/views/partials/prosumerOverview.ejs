@@ -1,0 +1,15 @@
+<%- include("../partials/APIAddress") %>
+<script type="text/javascript" src="/js/util.js"></script>
+<script type="text/javascript" src="/js/prosumerOverview/prosumerOverview.js"></script>
+<script type="text/javascript" src="/js/prosumerOverview/blockProsumer.js"></script>
+<ul>
+	<% prosumers.forEach(prosumer => { %>
+		<li>
+			<a 
+				href=<%=`/prosumer-summary/${prosumer.id}`%>
+			><%= prosumer.id %> - <%= prosumer.account.email %></a>
+			<button onclick=<%= `blockProsumer(${prosumer.id})` %>>Block</button>
+			<span id=<%= `blocked-status-${prosumer.id}` %>><%=prosumer.blocked ? "Blocked" : "Not blocked" %></span>
+		</li>
+	<% }) %>
+</ul>

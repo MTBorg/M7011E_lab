@@ -41,10 +41,12 @@
 		<%- include("../partials/navbar.ejs") %>
     <div>
       <h1>Dashboard</h1>
+			
 			<div>
 				<span>Market demand: </span>
 				<span id="market-demand">0</span>
 			</div>
+
       <div>
 				<h2>Power plant</h3>
         <table>
@@ -67,43 +69,50 @@
             </tr>
           </tbody>
 				</table>
-				<div>
-					<h2>
-						Production ratio
-					</h2>
-					<label id="displayProdBatteryRatio" for="ratioProd"></label>
-					<%- include("../partials/slider", {id:"ratioProd"}) %>
-					<label id="displayProdMarketRatio" for="ratioProd"></label>
-				</div>
-				<div>
-					<h2>
-						Pricing
-					</h2>
-					<table>
-						<thead>
-							<tr>
-								<td>Current (SEK/kW)</td>
-								<td>Suggested (SEK/kW)</td>
-								<td>Difference (SEK)</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td id="currPrice"></td>
-								<td id="suggestedPrice"></td>
-								<td id="diffPrice"></td>
-							</tr>
-						</tbody>
-					</table>
-					<form onsubmit="submitPricingForm(event, this)">
-						<div>
-							<span>Set price</span>
-							<input id="priceInput" type="number" step="0.01" min="0" required>
-							<input type="submit" value="Update">
-						</div>
-					</form>
-				</div>
-      </div>
-    </div>
+			</div>
+
+			<div>
+				<h2>
+					Production ratio
+				</h2>
+				<label id="displayProdBatteryRatio" for="ratioProd"></label>
+				<%- include("../partials/slider", {id:"ratioProd"}) %>
+				<label id="displayProdMarketRatio" for="ratioProd"></label>
+			</div>
+
+			<div>
+				<h2>
+					Pricing
+				</h2>
+				<table>
+					<thead>
+						<tr>
+							<td>Current (SEK/kW)</td>
+							<td>Suggested (SEK/kW)</td>
+							<td>Difference (SEK)</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="currPrice"></td>
+							<td id="suggestedPrice"></td>
+							<td id="diffPrice"></td>
+						</tr>
+					</tbody>
+				</table>
+				<form onsubmit="submitPricingForm(event, this)">
+					<div>
+						<span>Set price</span>
+						<input id="priceInput" type="number" step="0.01" min="0" required>
+						<input type="submit" value="Update">
+					</div>
+				</form>
+			</div>
+
+			<div>
+				<h2>Prosumers</h2>
+				<%- include("../partials/prosumerOverview.ejs") %>
+			</div>
+		</div>
   </body>
 </html>
