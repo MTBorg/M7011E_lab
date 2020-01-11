@@ -11,19 +11,10 @@ const { pool } = require("./db.js");
 const app = express();
 const port = 8080;
 
-app.use(
-  cors({
-    origin: `http://${process.env.APP_HOST}:${process.env.APP_PORT}`
-  })
-);
 app.use(authMiddleWare);
 // Increase the maximum request limit in order to serve images
 app.use(bodyParser.json({ limit: "5mb" }));
-app.use(
-  cors({
-    origin: `http://${process.env.APP_HOST}:${process.env.APP_PORT}`
-  })
-);
+app.use(cors());
 app.use(
   "/graphql",
   expressGraphQL(req => ({
