@@ -25,15 +25,26 @@ app.use("/js", express.static(path.join(__dirname, "../client/js")));
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+/*
+ * Render the page and attach the API-address as a variable.
+ *
+ * @param {Response} res The response to render
+ * @param {String} The path to the page to render
+ * @param {Obj} An object containing the variables to pass to the page rendering
+ */
+function render(res, pagePath, obj) {
+  res.render(pagePath, { API_ADDRESS, ...obj });
+}
+
 app.get("/", (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
-  res.render("pages/index", { user });
+  render(res, "pages/index", { user });
 });
 
 app.get("/login", authenticateLoggedOut, (req, res) => {
-  res.render("pages/login");
+  render(res, "pages/login");
 });
 
 app.get("/profile", authenticateRequest, async (req, res) => {
@@ -83,12 +94,12 @@ app.get("/profile", authenticateRequest, async (req, res) => {
     const { battery } = user.manager
       ? accountResponse.data.me.powerplant
       : accountResponse.data.me;
-    res.render("pages/profile", {
+    render(res, "pages/profile", {
       user: { manager: user.manager, email, image, battery }
     });
   } catch (error) {
     console.log(error);
-    res.render("partials/error");
+    render(res, "partials/error");
   }
 });
 
@@ -97,14 +108,14 @@ app.get("/dashboard", authenticateRequest, (req, res) => {
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
   if (user.manager) {
-    res.render("pages/managerDashboard", { user });
+    render(res, "pages/managerDashboard", { user });
   } else {
-    res.render("pages/prosumerDashboard", { user });
+    render(res, "pages/prosumerDashboard", { user });
   }
 });
 
 app.get("/register", authenticateLoggedOut, (req, res) => {
-  res.render("pages/register");
+  render(res, "pages/register");
 });
 
 app.get(

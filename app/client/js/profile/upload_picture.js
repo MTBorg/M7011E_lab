@@ -1,4 +1,3 @@
-const API_ADDRESS = "http://localhost:8080/graphql";
 const API_REST_ADDRESS = "http://localhost:8080/api";
 
 function uploadImageFormSubmit(event) {
