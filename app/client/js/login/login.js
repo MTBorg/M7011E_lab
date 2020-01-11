@@ -1,10 +1,8 @@
-const API_ADDRESS = "http://localhost:8080/graphql";
-
 function submitLogin(event, form) {
   event.preventDefault();
 
-  let email = form[0].value;
-  let password = form[1].value;
+  const email = form[0].value;
+  const password = form[1].value;
 
   const query = `
 		mutation{
@@ -18,7 +16,7 @@ function submitLogin(event, form) {
   })
     .then(res => res.json())
     .then(res => {
-      let token = res.data.login || null;
+      const token = res.data.login || null;
       if (token) {
         document.cookie = `authToken=${res.data.login}`;
         window.location.replace("/profile");

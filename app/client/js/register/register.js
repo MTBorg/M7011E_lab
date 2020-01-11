@@ -1,5 +1,3 @@
-const API_ADDRESS = "http://localhost:8080/graphql";
-
 function submitRegisterForm(event, form) {
   event.preventDefault();
 
