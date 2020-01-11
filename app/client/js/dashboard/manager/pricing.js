@@ -30,6 +30,8 @@ async function getPricing() {
 }
 
 function displayPrices(price, simPrice) {
+  price = parseFloat(price);
+  simPrice = parseFloat(price);
   document.getElementById("currPrice").innerHTML = price.toFixed(2);
   document.getElementById("suggestedPrice").innerHTML = simPrice.toFixed(2);
   document.getElementById("diffPrice").innerHTML =
