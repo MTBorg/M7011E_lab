@@ -30,8 +30,8 @@ async function getPricing() {
 }
 
 function displayPrices(price, simPrice) {
-  document.getElementById("currPrice").innerHTML = price;
-  document.getElementById("suggestedPrice").innerHTML = simPrice;
+  document.getElementById("currPrice").innerHTML = price.toFixed(2);
+  document.getElementById("suggestedPrice").innerHTML = simPrice.toFixed(2);
   document.getElementById("diffPrice").innerHTML =
     price - simPrice > 0
       ? `+${(price - simPrice).toFixed(2)}`
