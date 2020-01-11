@@ -124,6 +124,7 @@ app.get("/dashboard", authenticateRequest, async (req, res) => {
 								account{
 									email
 								}
+								blackout
 							}
 						}`
         })

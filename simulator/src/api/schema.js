@@ -130,6 +130,10 @@ const prosumerType = new GraphQLObjectType({
       sqlColumn: "account_id",
       sqlJoin: (prosumerTable, accountTable) =>
         `${prosumerTable}.account_id = ${accountTable}.id`
+    },
+    blackout: {
+      type: GraphQLBoolean,
+      sqlColumn: "blackout"
     }
   })
 });

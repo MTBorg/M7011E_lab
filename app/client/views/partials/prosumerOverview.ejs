@@ -10,6 +10,7 @@
 			><%= prosumer.id %> - <%= prosumer.account.email %></a>
 			<button onclick=<%= `blockProsumer(${prosumer.id})` %>>Block</button>
 			<span id=<%= `blocked-status-${prosumer.id}` %>><%=prosumer.blocked ? "Blocked" : "Not blocked" %></span>
+			<span id=<%= `blackout-status-${prosumer.id}` %>><%=prosumer.blackout ? "Blackout" : "" %></span>
 		</li>
 	<% }) %>
 </ul>
