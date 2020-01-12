@@ -39,6 +39,7 @@ const {
   deleteAccount,
   deleteProsumerAccount
 } = require("./credentials.js");
+const { timestampUser } = require("./userActivity.js");
 const { blockProsumer } = require("../models/manager/manager.js");
 const { updateBatteryMaxCapacity } = require("../models/battery.js");
 const { calculateMarketDemand } = require("../models/market.js");
@@ -59,6 +60,15 @@ const accountType = new GraphQLObjectType({
     email: {
       type: GraphQLString,
       sqlColumn: "email"
+    },
+    lastActivity: {
+      type: GraphQLString,
+      sqlColumn: "last_activity"
+    },
+    online: {
+      type: GraphQLBoolean,
+      sqlExpr: prosumerTable =>
+        `(SELECT account_id FROM prosumers WHERE id=${prosumerTable}.id AND online=true AND age(CURRENT_TIMESTAMP, last_activity) < time '00:15:00')`
     }
   })
 });
@@ -314,6 +324,13 @@ const queryType = new GraphQLObjectType({
           calculateMarketDemand()
         )
       )
+    },
+    timestamp: {
+      type: GraphQLBoolean,
+      resolve: authenticateLoggedIn((_parent, _args, context) => {
+        timestampUser(context.user.accountId);
+        return true;
+      })
     }
   }
 });
