@@ -15,28 +15,36 @@
 	<script type="text/javascript" src="/js/prosumerSummary/deleteAccount.js"></script>
 	<script type="text/javascript" src="/js/prosumerSummary/ratios.js"
 		prosumerId=<%=prosumer.id%> ></script>
+	<style>
+	.container{
+		margin-top: 20px;
+	}
+	</style>
 </head>
 <body>
 	<%- include("../partials/navbar") %>
-	<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
-	<img style="max-height:10000;max-width:1000px" id="image" 
-		src=<%= typeof image !== "undefined" && image != "" ? image : "#"%>
-	>
-	<%- include("../partials/prosumerStatsTable") %>
-	<div>
-		<h3>Excessive production</h3>
-		<p id="block-status"></p>
-		<label id="displayExcessBatteryRatio" for="ratioExcess">0</label>
-		<%- include("../partials/slider", {id:"ratioExcess"}) %>
-		<label id="displayExcessMarketRatio" for="ratioExcess">100</label>
+	<div class="container card">
+		<div class="card-body">
+			<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
+			<img class="img-fluid" id="image" 
+				src=<%= typeof image !== "undefined" && image != "" ? image : "#"%>
+			>
+			<%- include("../partials/prosumerStatsTable") %>
+			<div>
+				<h3>Excessive production</h3>
+				<p id="block-status"></p>
+				<label id="displayExcessBatteryRatio" for="ratioExcess">0</label>
+				<%- include("../partials/slider", {id:"ratioExcess"}) %>
+				<label id="displayExcessMarketRatio" for="ratioExcess">100</label>
+			</div>
+			<div>
+				<h3>Under-production</h3>
+				<label id="displayDeficitBatteryRatio" for="ratioDeficit">0</label>
+				<%- include("../partials/slider", {id:"ratioDeficit", style:"color:red"}) %>
+				<label id="displayDeficitMarketRatio" for="ratioDeficit">100</label>
+			</div>
+			<input onclick=<%=`deleteProsumerAccount(${prosumer.id})`%> class="btn btn-danger" type="button" value="Delete account">
+		</div>
 	</div>
-	<div>
-		<h3>Under-production</h3>
-		<label id="displayDeficitBatteryRatio" for="ratioDeficit">0</label>
-		<%- include("../partials/slider", {id:"ratioDeficit", style:"color:red"}) %>
-		<label id="displayDeficitMarketRatio" for="ratioDeficit">100</label>
-	</div>
-	<br>
-	<input onclick=<%=`deleteProsumerAccount(${prosumer.id})`%> type="button" value="Delete account" style="background-color:red">
 </body>
 </html>
