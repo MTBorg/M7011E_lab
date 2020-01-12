@@ -17,34 +17,36 @@
   </head>
   <body>
 		<%- include("../partials/navbar.ejs") %>
-    <div>
-      <h1>Dashboard</h1>
-      <div>
-				<h2>Overview</h3>
-        <%- include("../partials/prosumerStatsTable") %>
-      </div>
-      <div>
-				<h2>Ratios</h2>
-        <div>
-          <h3>Excessive production</h3>
-					<span id="block-status"></span>
-          <div>
-						<label id="displayExcessBatteryRatio" for="ratioExcess"></label>
-						<%- include("../partials/slider", {id:"ratioExcess"}) %>
-						<label id="displayExcessMarketRatio" for="ratioExcess"></label>
-          </div>
-        </div>
-        <div>
-          <div>
-            <h3>Under-production</h3>
-            <div>
-							<label id="displayDeficitBatteryRatio" for="ratioDeficit"></label>
-							<%- include("../partials/slider", {id:"ratioDeficit"}) %>
-							<label id="displayDeficitMarketRatio" for="ratioDeficit"></label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="container card">
+			<div class="card-body">
+				<h1>Dashboard</h1>
+				<div>
+					<h2>Overview</h3>
+					<%- include("../partials/prosumerStatsTable") %>
+				</div>
+				<div>
+					<h2>Ratios</h2>
+					<div>
+						<h3>Excessive production</h3>
+						<span id="block-status"></span>
+						<div>
+							<label id="displayExcessBatteryRatio" for="ratioExcess"></label>
+							<%- include("../partials/slider", {id:"ratioExcess"}) %>
+							<label id="displayExcessMarketRatio" for="ratioExcess"></label>
+						</div>
+					</div>
+					<div>
+						<div>
+							<h3>Under-production</h3>
+							<div>
+								<label id="displayDeficitBatteryRatio" for="ratioDeficit"></label>
+								<%- include("../partials/slider", {id:"ratioDeficit"}) %>
+								<label id="displayDeficitMarketRatio" for="ratioDeficit"></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
   </body>
 </html>

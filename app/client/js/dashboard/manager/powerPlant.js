@@ -18,6 +18,8 @@ async function getPowerPlantStatus() {
   )}/${battery.maxCapacity.toFixed(0)}`;
   document.getElementById("operationButton").value =
     powerPlant.status == "stopped" ? "START" : "STOP";
+  document.getElementById("operationButton").className =
+    powerPlant.status == "stopped" ? "btn btn-success" : "btn btn-danger";
 }
 
 async function changePowerPlantStatus(event, button) {
@@ -61,6 +63,8 @@ async function changePowerPlantStatus(event, button) {
 
   document.getElementById("status").innerHTML = newStatus;
   button.value = newStatus == "stopped" ? "START" : "STOP";
+  button.className =
+    newStatus == "stopped" ? "btn btn-success" : "btn btn-danger";
   // Production will always be 0 after press since start up time
   document.getElementById("production").innerHTML = "0";
 

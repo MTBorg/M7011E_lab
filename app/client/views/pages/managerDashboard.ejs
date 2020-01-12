@@ -10,112 +10,88 @@
 		<script type="text/javascript" src="/js/dashboard/manager/displayRatios.js"></script>
 		<script type="text/javascript" src="/js/dashboard/manager/powerPlant.js"></script>
 		<script type="text/javascript" src="/js/dashboard/manager/pricing.js"></script>		
-		<script type="text/javascript" src="/js/dashboard/manager/marketDemand.js"></script>		
-    <style>
-      table,
-      th,
-      td {
-        border: 1px solid black;
-        border-collapse: collapse;
-      }
-
-      th,
-      td {
-        text-align: center;
-      }
-		</style>
 		<style>
-			input[type=number] {
-				-moz-appearance: textfield;
-			}
-			
-			input::-webkit-outer-spin-button,
-			input::-webkit-inner-spin-button {
-  			-webkit-appearance: none;
-  			margin: 0;
-			}
+		.container{
+			margin-top: 20px;
+		}
 		</style>
     <meta charset="UTF-8" />
     <title>Dashboard</title>
   </head>
   <body>
 		<%- include("../partials/navbar.ejs") %>
-    <div>
-      <h1>Dashboard</h1>
-			
-			<div>
-				<span>Market demand: </span>
-				<span id="market-demand">0</span>
-			</div>
-
-      <div>
-				<h2>Power plant</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Production (kW)</th>
-							<th>Operations</th>
-							<th>Battery (kW)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td id="status"></td>
-              <td id="production"></td>
-							<td id="operations">
-								<input id="operationButton" onclick="changePowerPlantStatus(event, this)" type="button">
-							</td>
-							<td id="battery"></td>
-            </tr>
-          </tbody>
-				</table>
-			</div>
-
-			<div>
-				<h2>
-					Production ratio
-				</h2>
-				<label id="displayProdBatteryRatio" for="ratioProd"></label>
-				<%- include("../partials/slider", {id:"ratioProd"}) %>
-				<label id="displayProdMarketRatio" for="ratioProd"></label>
-			</div>
-
-			<div>
-				<h2>
-					Pricing
-				</h2>
-				<table>
-					<thead>
-						<tr>
-							<td>Current (SEK/kW)</td>
-							<td>Suggested (SEK/kW)</td>
-							<td>Difference (SEK)</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td id="currPrice"></td>
-							<td id="suggestedPrice"></td>
-							<td id="diffPrice"></td>
-						</tr>
-					</tbody>
-				</table>
-				<form onsubmit="submitPricingForm(event, this)">
+    <div class="container card">
+			<div class="card-body">
+				<h1>Dashboard</h1>
+				<div>
+					<span>Market demand: </span>
+					<span id="market-demand">0</span>
+				</div>
+				<div>
+					<h2>Power plant</h3>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Status</th>
+								<th>Production (kW)</th>
+								<th>Operations</th>
+								<th>Battery (kW)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td id="status"></td>
+								<td id="production"></td>
+								<td id="operations">
+									<input id="operationButton" class="btn btn-danger" onclick="changePowerPlantStatus(event, this)" type="button">
+								</td>
+								<td id="battery"></td>
+							</tr>
+						</tbody>
+					</table>
 					<div>
-						<span>Set price</span>
-						<input id="priceInput" type="number" step="0.01" min="0" required>
-						<input type="submit" value="Update">
+						<h2>
+							Production ratio
+						</h2>
+						<label id="displayProdBatteryRatio" for="ratioProd"></label>
+						<%- include("../partials/slider", {id:"ratioProd"}) %>
+						<label id="displayProdMarketRatio" for="ratioProd"></label>
 					</div>
-				</form>
-			</div>
-
-			<div>
-				<h2>Prosumers</h2>
-				<h3>Status</h3>
-				<span id="prosumer-status"></span>
-				<h3>Overview</h3>
-				<%- include("../partials/prosumerOverview.ejs") %>
+					<div>
+						<h2>
+							Pricing
+						</h2>
+						<table class="table">
+							<thead>
+								<tr>
+									<td>Current (SEK/kW)</td>
+									<td>Suggested (SEK/kW)</td>
+									<td>Difference (SEK)</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td id="currPrice"></td>
+									<td id="suggestedPrice"></td>
+									<td id="diffPrice"></td>
+								</tr>
+							</tbody>
+						</table>
+						<form onsubmit="submitPricingForm(event, this)">
+							<div>
+								<span>Set price</span>
+								<input id="priceInput" type="number" step="0.01" min="0" required>
+								<input type="submit" class="btn btn-info" value="Update">
+							</div>
+						</form>
+					</div>
+				<div>
+					<h2>Prosumers</h2>
+					<h3>Status</h3>
+					<span id="prosumer-status"></span>
+					<h3>Overview</h3>
+					<%- include("../partials/prosumerOverview.ejs") %>
+				</div>
 			</div>
 		</div>
   </body>
