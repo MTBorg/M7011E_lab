@@ -148,7 +148,7 @@ app.get(
       });
       const json = await response.json();
       const { prosumers } = json.data;
-      res.render("pages/prosumerOverview", { prosumers, user });
+      render(res, "pages/prosumerOverview", { prosumers, user });
     } catch (error) {
       console.log(error);
       res.render("partials/error");
@@ -167,14 +167,15 @@ app.get(
     try {
       if (req.params.prosumerid == null) {
         throw new Error("null prosumerid parameter");
-			}
+      }
 
-    const imageQuery = fetch(
-      `${API_REST_ADDRESS}/get_prosumer_image/${req.params.prosumerid}`,
-      {
-        method: "GET",
-        headers: { "Content-type": "image/jpeg", authToken }
-      });
+      const imageQuery = fetch(
+        `${API_REST_ADDRESS}/get_prosumer_image/${req.params.prosumerid}`,
+        {
+          method: "GET",
+          headers: { "Content-type": "image/jpeg", authToken }
+        }
+      );
 
       // TODO: This should use some form of token
       const prosumerQuery = fetch(API_ADDRESS, {
@@ -196,7 +197,7 @@ app.get(
       const image = await values[0].buffer();
       const prosumerJson = await values[1].json();
       const { prosumer } = prosumerJson.data;
-      res.render("pages/prosumerSummary", { user, prosumer, image });
+      render(res, "pages/prosumerSummary", { user, prosumer, image });
     } catch (error) {
       console.log(error);
       res.render("partials/error");
