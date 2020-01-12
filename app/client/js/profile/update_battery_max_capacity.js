@@ -27,8 +27,8 @@ async function updateBatteryMaxCapacity(event) {
     // Display the new max capacity
     document.getElementById("max-capacity").innerText = newMaxCapacity;
 
-    alert("Successfully updated battery max capacity");
     document.getElementById("max-capacity-form").reset();
+    alert("Successfully updated battery max capacity");
   } catch (error) {
     alert(`Failed to update battery max capacity: ${error}`);
   }

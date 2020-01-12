@@ -29,9 +29,9 @@ window.setInterval(function() {
     .then(res => {
       document.getElementById("current-power").innerText =
         res.data.me.battery != null
-          ? res.data.me.battery.power
+          ? res.data.me.battery.power.toFixed(2)
           : res.data.me.powerplant.battery != null
-          ? res.data.me.powerplant.battery.power
+          ? res.data.me.powerplant.battery.power.toFixed(2)
           : 0;
     });
 }, POLL_INTERVAL);
