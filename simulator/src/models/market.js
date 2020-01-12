@@ -78,10 +78,26 @@ async function buyFromMarket(amount) {
   return Number(boughtAmount);
 }
 
+async function calculateMarketDemand() {
+  const result = await pool.query(`
+	SELECT
+		SUM((current_consumption - current_production) * ratio_deficit_market) as demand
+	FROM prosumers
+	WHERE current_consumption >= current_production;
+	`);
+
+  return result.rows[0].demand;
+}
+
+function test() {
+  return 4.0;
+}
 module.exports = {
   sellToMarket,
   buyFromMarket,
   sellQuery,
   buyQuery,
-  buyBeforeQuery
+  buyBeforeQuery,
+  calculateMarketDemand,
+  test
 };

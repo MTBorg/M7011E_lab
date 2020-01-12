@@ -41,6 +41,7 @@ const {
 } = require("./credentials.js");
 const { blockProsumer } = require("../models/manager/manager.js");
 const { updateBatteryMaxCapacity } = require("../models/battery.js");
+const { calculateMarketDemand } = require("../models/market.js");
 
 function joinMonsterQuery(resolveInfo) {
   return joinMonster.default(resolveInfo, {}, async sql => {
@@ -299,6 +300,14 @@ const queryType = new GraphQLObjectType({
           pool.query(sql)
         );
       })
+    },
+    marketDemand: {
+      type: GraphQLFloat,
+      resolve: authenticateLoggedIn(
+        authenticateIsManager((_parent, _args, _context, resolveInfo) =>
+          calculateMarketDemand()
+        )
+      )
     }
   }
 });

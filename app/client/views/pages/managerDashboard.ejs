@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="/js/dashboard/manager/displayRatios.js"></script>
 		<script type="text/javascript" src="/js/dashboard/manager/powerPlant.js"></script>
 		<script type="text/javascript" src="/js/dashboard/manager/pricing.js"></script>		
+		<script type="text/javascript" src="/js/dashboard/manager/marketDemand.js"></script>		
     <style>
       table,
       th,
@@ -40,6 +41,10 @@
 		<%- include("../partials/navbar.ejs") %>
     <div>
       <h1>Dashboard</h1>
+			<div>
+				<span>Market demand: </span>
+				<span id="market-demand">0</span>
+			</div>
       <div>
 				<h2>Power plant</h3>
         <table>
