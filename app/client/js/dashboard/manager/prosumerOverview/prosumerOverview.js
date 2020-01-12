@@ -1,5 +1,3 @@
-const POLL_INTERVAL = 3000;
-
 document.addEventListener("DOMContentLoaded", () => {
   pollFunc(updateData, POLL_INTERVAL);
 });
@@ -19,17 +17,29 @@ async function updateData() {
 					prosumers {
 						id
 						blocked
+						blackout
 					}
 				}
 				`
       })
     });
     const json = await response.json();
+    let numBlackout = 0;
     json.data.prosumers.forEach(prosumer => {
+      if (prosumer.blackout) numBlackout++;
       document.getElementById(
         `blocked-status-${prosumer.id}`
       ).innerText = prosumer.blocked ? "Blocked" : "Not blocked";
+      document.getElementById(
+        `blackout-status-${prosumer.id}`
+      ).innerText = prosumer.blackout ? "Blackout" : "";
     });
+    document.getElementById("prosumer-status").innerText =
+      numBlackout > 0
+        ? numBlackout > 1
+          ? `${numBlackout} prosumers are currently experiencing blackouts`
+          : `${numBlackout} prosumer is currently experiencing a blackout`
+        : `No prosumers are exeriencing blackouts`;
   } catch (error) {
     alert(`Failed to fetch prosumers: ${error}`);
   }

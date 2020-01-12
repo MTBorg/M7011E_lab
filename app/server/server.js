@@ -131,13 +131,13 @@ app.get("/dashboard", authenticateRequest, async (req, res) => {
       });
       const json = await response.json();
       const { prosumers } = json.data;
-      res.render("pages/managerDashboard", { prosumers, user });
+      render(res, "pages/managerDashboard", { prosumers, user });
     } catch (error) {
       console.log(error);
-      res.render("partials/error");
+      render(res, "partials/error");
     }
   } else {
-    res.render("pages/prosumerDashboard", { user });
+    render(res, "pages/prosumerDashboard", { user });
   }
 });
 
