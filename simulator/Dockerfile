@@ -4,14 +4,13 @@ RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
 
-# Copy package and source files
 COPY package.json .
 COPY package-lock.json .
-COPY src/ .
 
-# Install packages
 RUN npm install -g
 RUN npm install --only-dev # Dev dependencies
+
+COPY src/ .
 
 EXPOSE 8080
 
