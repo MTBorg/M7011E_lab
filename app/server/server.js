@@ -24,6 +24,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../client/views"));
 
 app.use("/js", express.static(path.join(__dirname, "../client/js")));
+app.use("/static", express.static(path.join(__dirname, "../client/static")));
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
