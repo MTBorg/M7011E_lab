@@ -19,74 +19,90 @@
 		<%- include("../partials/bootstrap") %>
     <script src="../../js/util.js" type="text/javascript"></script>
     <script type="text/javascript" src="/js/profile/profile.js"></script>
+		<style>
+			.container{
+				margin-top: 20px;
+			}
+		</style>
   </head>
   <body>
     <%- include("../partials/navbar") %>
-    <h1>Profile</h1>
-    <% if (typeof user !== "undefined") { %> <% if (user.email) { %>
-    <h2 id="email-header"><%= user.email %></h2>
-    <% } %> <% } %> <img style="max-height:10000;max-width:1000px" id="image"
-    src=<%= user.image%> alt="Profile picture">
-    <div>
-      <h3>Upload picture</h3>
-      <form onsubmit="uploadImageFormSubmit(event)">
-        <input type="file" accept="image/jpeg" /><br />
-        <input type="submit" value="Upload" />
-      </form>
-    </div>
-    <form onsubmit="updateEmail(event)">
-      <label for="update-email"> Update email </label>
-      <input id="update-email" type="email" placeholder="email" required />
-      <input type="submit" value="Update" />
-    </form>
-    <form onsubmit="updatePassword(event, this)">
-      <label for="update-password"> Update password </label>
-      <input
-        id="update-password"
-        type="password"
-        placeholder="password"
-        required
-      />
-      <input type="submit" value="Update" />
-    </form>
-    <div style="border:1px solid black">
-      <h3 style="margin: 0px">Battery</h3>
-      <% if (typeof user.battery !== "undefined") { %>
-      <div id="battery-status">
-        <div>
-          <span>Max capacity</span>
-          <span id="max-capacity"><%= user.battery.maxCapacity%></span>
-          <form
-            id="max-capacity-form"
-            onsubmit="updateBatteryMaxCapacity(event)"
-          >
-            <label for="new-max-capacity">New max capacity</label>
-            <input
-              id="new-max-capacity"
-              type="number"
-              min="0"
-              placeholder="Max capacity"
-              style="-webkit-appearance:none;-moz-appearance:textfield;"
-            />
-            <input type="submit" value="Update max capacity" />
-          </form>
-          <br />
-        </div>
-        <div>
-          <span>Currently available: </span>
-          <span id="current-power"><%= user.battery.power.toFixed(2)%></span
-          ><br />
-        </div>
-      </div>
-      <% } else{ %>
-      <span> No battery </span>
-      <% } %>
-    </div>
-    <input
-      onclick="deleteAccount()"
-      type="button"
-      value="Delete account"
-      style="background-color:red"
-    />
+		<div class="container card">
+			<div class="card-body">
+				<h1>Profile</h1>
+				<% if (typeof user !== "undefined") { %> <% if (user.email) { %>
+				<h2 id="email-header"><%= user.email %></h2>
+				<% } %> <% } %> <img class="rounded img-fluid" id="image"
+				src=<%= user.image%> alt="Profile picture">
+				<div style="margin-top: 20px;margin-bottom: 20px;" class="card">
+					<div class="card-body">
+						<h3>Upload picture</h3>
+						<form onsubmit="uploadImageFormSubmit(event)">
+							<input type="file" accept="image/jpeg" /><br />
+							<input type="submit" value="Upload" />
+						</form>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<form onsubmit="updateEmail(event)">
+							<label for="update-email"> Update email </label>
+							<input id="update-email" type="email" placeholder="email" required />
+							<input class="btn btn-info" type="submit" value="Update" />
+						</form>
+						<form onsubmit="updatePassword(event, this)">
+							<label for="update-password"> Update password </label>
+							<input
+								id="update-password"
+								type="password"
+								placeholder="password"
+								required
+							/>
+							<input class="btn btn-info" type="submit" value="Update" />
+						</form>
+					</div>
+				</div>
+				<div style="margin-bottom:20px;margin-top:20px" class="card">
+					<div class="card-body">
+						<h3 style="margin: 0px">Battery</h3>
+						<% if (typeof user.battery !== "undefined") { %>
+						<div id="battery-status">
+							<div>
+								<span>Max capacity:</span>
+								<span id="max-capacity"><%= user.battery.maxCapacity%></span>
+								<form id="max-capacity-form" onsubmit="updateBatteryMaxCapacity(event)">
+									<label for="new-max-capacity">New max capacity:</label>
+									<input
+										id="new-max-capacity"
+										type="number"
+										min="0"
+										placeholder="Max capacity"
+										style="-webkit-appearance:none;-moz-appearance:textfield;"
+									/>
+									<input class="btn btn-info" type="submit" value="Update max capacity" />
+								</form>
+								<br />
+							</div>
+							<div>
+								<span>Currently available: </span>
+								<span id="current-power"><%= user.battery.power.toFixed(2)%></span><br />
+							</div>
+						</div>
+						<% } else{ %>
+						<span> No battery </span>
+					<% } %>
+					</div>
+				</div>
+				<input
+					onclick="deleteAccount()"
+		 			class="btn btn-danger"
+					type="button"
+					value="Delete account"
+				/>
+				<form method="post" action="/action/logout">
+					<input type="submit" value="log out" />
+				</form>
+			</div>
+		</div>
   </body>
 </html>
