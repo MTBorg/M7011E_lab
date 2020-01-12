@@ -268,12 +268,14 @@ const queryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLNonNull(GraphQLInt) }
       },
-      where: (prosumerTable, args, _context) => {
+      where: (prosumerTable, args) => {
         return `${prosumerTable}.id = ${args.id}`;
       },
-      resolve(_parent, _args, _context, resolveInfo) {
-        return joinMonsterQuery(resolveInfo);
-      }
+      resolve: authenticateLoggedIn(
+        authenticateIsManager((_parent, _args, _context, resolveInfo) =>
+          joinMonsterQuery(resolveInfo)
+        )
+      )
     },
     prosumers: {
       type: GraphQLList(prosumerType),

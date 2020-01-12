@@ -165,10 +165,9 @@ app.get(
         }
       );
 
-      // TODO: This should use some form of token
       const prosumerQuery = fetch(API_ADDRESS, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", authToken },
         body: JSON.stringify({
           query: `
 					{
