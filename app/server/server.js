@@ -1,24 +1,24 @@
 const express = require("express");
 const path = require("path");
 const fetch = require("node-fetch");
-
-const app = express();
 const bodyParser = require("body-parser");
 
-const { getCookie } = require("./util.js");
-
-const API_ADDRESS = process.env.API_ADDRESS || "http://localhost:8080/graphql";
-const API_REST_ADDRESS =
-  process.env.API_REST_ADDRESS || "http://localhost:8080/api";
-const SERVER_PORT = process.env.SERVER_PORT || "3000";
-
+const {
+  getCookie,
+  API_ADDRESS,
+  API_REST_ADDRESS,
+  SERVER_PORT
+} = require("./util.js");
 const {
   authenticateRequest,
   authenticateLoggedOut,
   authenticateIsManager,
   logoutUser,
-  parseAuthToken
+  parseAuthToken,
+  timestampUser
 } = require("./auth.js");
+
+const app = express();
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../client/views"));
@@ -42,6 +42,7 @@ app.get("/", (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
+  timestampUser(authToken);
   render(res, "pages/index", { user });
 });
 

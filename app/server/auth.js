@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const fetch = require("node-fetch");
 
-const { getCookie } = require("./util.js");
+const { getCookie, API_ADDRESS } = require("./util.js");
 
 const privateKey = process.env.secret || "secret";
 const TOKEN_NAME = "authToken";
@@ -14,6 +15,7 @@ function authenticateRequest(req, res, next) {
       if (err) {
         res.redirect("/login");
       } else {
+        timestampUser(token);
         next();
       }
     });
@@ -69,10 +71,28 @@ function authenticateIsManager(req, res, next) {
   }
 }
 
+function timestampUser(authToken) {
+  fetch(API_ADDRESS, {
+    method: "POST",
+    headers: { "content-type": "application/json", authToken },
+    body: JSON.stringify({
+      query: `
+					mutation {
+						timestamp
+					}`
+    })
+  }).catch(err =>
+    console.error(
+      `Failed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp userFailed to timestamp user: ${err}`
+    )
+  );
+}
+
 module.exports = {
   authenticateRequest,
   authenticateLoggedOut,
   authenticateIsManager,
   logoutUser,
+  timestampUser,
   parseAuthToken
 };

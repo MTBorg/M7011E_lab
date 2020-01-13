@@ -1,10 +1,22 @@
 <script>
-  function logoutUser() {
+  async function logoutUser() {
+    const authToken = getCookie("authToken", document.cookie);
+    // Mark user as offline
+    await fetch(API_ADDRESS, {
+      method: "POST",
+      headers: { "content-type": "application/json", authToken },
+      body: JSON.stringify({
+        query: `
+  			mutation {
+  				logout
+  			}`
+      })
+    });
+
     // Clear the authentication cookie
     const expirationDate = new Date();
     expirationDate.setTime(expirationDate.getTime() - 1);
     document.cookie = `authToken=; expires=${expirationDate.toGMTString()}`;
-
     window.location.replace("/");
   }
 </script>
