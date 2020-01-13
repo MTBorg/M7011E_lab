@@ -9,6 +9,7 @@ const {
   GraphQLUnionType,
   GraphQLBoolean
 } = require("graphql");
+const { GraphQLDateTime } = require("graphql-iso-date");
 const joinMonster = require("join-monster");
 const { registerProsumer, registerManager } = require("./registration.js");
 const { pool } = require("../db.js");
@@ -39,7 +40,7 @@ const {
   deleteAccount,
   deleteProsumerAccount
 } = require("./credentials.js");
-const { timestampUser } = require("./userActivity.js");
+const { timestampUser, setUserOffline } = require("./userActivity.js");
 const { blockProsumer } = require("../models/manager/manager.js");
 const { updateBatteryMaxCapacity } = require("../models/battery.js");
 const { calculateMarketDemand } = require("../models/market.js");
@@ -62,7 +63,7 @@ const accountType = new GraphQLObjectType({
       sqlColumn: "email"
     },
     lastActivity: {
-      type: GraphQLString,
+      type: GraphQLDateTime,
       sqlColumn: "last_activity"
     },
     online: {
@@ -332,11 +333,16 @@ const mutationType = new GraphQLObjectType({
   name: "Mutation",
   fields: {
     timestamp: {
-      type: GraphQLBoolean,
-      resolve: authenticateLoggedIn((_parent, _args, context) => {
-        timestampUser(context.user.accountId);
-        return true;
-      })
+      type: GraphQLDateTime,
+      resolve: authenticateLoggedIn((_parent, _args, context) =>
+        timestampUser(context.user.accountId)
+      )
+    },
+    logout: {
+      type: GraphQLString,
+      resolve: authenticateLoggedIn((_parent, _arg, context) =>
+        setUserOffline(context.user.accountId)
+      )
     },
     startPowerPlant: {
       type: GraphQLString,
