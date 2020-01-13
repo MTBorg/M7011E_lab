@@ -18,6 +18,9 @@ async function updateData() {
 						id
 						blocked
 						blackout
+						account {
+							online
+						}
 					}
 				}
 				`
@@ -33,6 +36,9 @@ async function updateData() {
       document.getElementById(
         `blackout-status-${prosumer.id}`
       ).innerText = prosumer.blackout ? "Blackout" : "";
+      document.getElementById(
+        `online-status-${prosumer.id}`
+      ).innerText = prosumer.account.online ? "Online" : "Offline";
     });
     document.getElementById("prosumer-status").innerText =
       numBlackout > 0

@@ -4,6 +4,7 @@
 <ul>
 	<% prosumers.forEach(prosumer => { %>
 		<li>
+			<span id=<%= `online-status-${prosumer.id}` %>><%=prosumer.account.online ? "Online" : "Offline" %></span>
 			<a 
 				href=<%=`/prosumer-summary/${prosumer.id}`%>
 			><%= prosumer.id %> - <%= prosumer.account.email %></a>
