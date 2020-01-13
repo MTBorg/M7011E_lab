@@ -67,8 +67,8 @@ const accountType = new GraphQLObjectType({
     },
     online: {
       type: GraphQLBoolean,
-      sqlExpr: prosumerTable =>
-        `(SELECT account_id FROM prosumers WHERE id=${prosumerTable}.id AND online=true AND age(CURRENT_TIMESTAMP, last_activity) < time '00:15:00')`
+      sqlExpr: () =>
+        `(SELECT id FROM accounts WHERE id=account_id AND online=true AND age(CURRENT_TIMESTAMP, last_activity) < time '00:15:00')`
     }
   })
 });
@@ -324,13 +324,6 @@ const queryType = new GraphQLObjectType({
           calculateMarketDemand()
         )
       )
-    },
-    timestamp: {
-      type: GraphQLBoolean,
-      resolve: authenticateLoggedIn((_parent, _args, context) => {
-        timestampUser(context.user.accountId);
-        return true;
-      })
     }
   }
 });
@@ -338,6 +331,13 @@ const queryType = new GraphQLObjectType({
 const mutationType = new GraphQLObjectType({
   name: "Mutation",
   fields: {
+    timestamp: {
+      type: GraphQLBoolean,
+      resolve: authenticateLoggedIn((_parent, _args, context) => {
+        timestampUser(context.user.accountId);
+        return true;
+      })
+    },
     startPowerPlant: {
       type: GraphQLString,
       resolve: authenticateIsManager((_obj, _args, context) =>
