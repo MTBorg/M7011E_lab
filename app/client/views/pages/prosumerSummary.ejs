@@ -14,34 +14,52 @@
 	<script type="text/javascript" src="/js/prosumerSummary/deleteAccount.js"></script>
 	<script type="text/javascript" src="/js/prosumerSummary/ratios.js"
 		prosumerId=<%=prosumer.id%> ></script>
-	<style>
-	.container{
-		margin-top: 20px;
-	}
-	</style>
+    <style>
+      .container {
+        margin-top: 20px;
+      }
+      .card {
+        margin: 10px;
+      }
+    </style>
 </head>
 <body>
 	<%- include("../partials/navbar") %>
 	<div class="container card">
 		<div class="card-body">
-			<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
-			<img class="rounded img-fluid" id="image"
+				<h3 class="card-title"><%= prosumer.id %> - <%= prosumer.account.email %></h3>
+				<img class="rounded img-fluid" id="image"
         onerror="this.onerror=null; this.src='/static/default.png';
 				this.style='width: 25%'" src=<%= image %>
-			>
-			<%- include("../partials/prosumerStatsTable") %>
-			<div>
-				<h3>Excessive production</h3>
-				<p id="block-status"></p>
-				<label id="displayExcessBatteryRatio" for="ratioExcess">0</label>
-				<%- include("../partials/slider", {id:"ratioExcess"}) %>
-				<label id="displayExcessMarketRatio" for="ratioExcess">100</label>
+				>
 			</div>
-			<div>
-				<h3>Under-production</h3>
-				<label id="displayDeficitBatteryRatio" for="ratioDeficit">0</label>
-				<%- include("../partials/slider", {id:"ratioDeficit", style:"color:red"}) %>
-				<label id="displayDeficitMarketRatio" for="ratioDeficit">100</label>
+			<div class="card">
+				<h3 class="card-header">Overview</h3>
+				<%- include("../partials/prosumerStatsTable") %>
+			</div>
+			<div class="card">
+				<h3 class="card-header">Ratios</h3>
+				<div class="card-body">
+					<h4 class="card-title">Excessive production</h4>
+					<p class="card-text">
+						The ratio of electricity sold to the market and stored in the
+						battery during excessive production
+					</p>
+					<p id="block-status"></p>
+					<label id="displayExcessBatteryRatio" for="ratioExcess">0</label>
+					<%- include("../partials/slider", {id:"ratioExcess"}) %>
+					<label id="displayExcessMarketRatio" for="ratioExcess">100</label>
+				</div>
+				<div class="card-body">
+					<h4 class="card-title">Under-production</h4>
+					<p class="card-text">
+						The ratio of electricity bought from the market and taken from the
+						battery during under-production
+					</p>
+					<label id="displayDeficitBatteryRatio" for="ratioDeficit">0</label>
+					<%- include("../partials/slider", {id:"ratioDeficit", style:"color:red"}) %>
+					<label id="displayDeficitMarketRatio" for="ratioDeficit">100</label>
+				</div>
 			</div>
 			<input onclick=<%=`deleteProsumerAccount(${prosumer.id})`%> class="btn btn-danger" type="button" value="Delete account">
 		</div>
