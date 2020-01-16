@@ -13,6 +13,9 @@
 		.container{
 			margin-top: 20px;
 		}
+		.card{
+			margin: 10px;
+		}
 		</style>
     <meta charset="UTF-8" />
     <title>Dashboard</title>
@@ -26,29 +29,33 @@
 					<span>Market demand: </span>
 					<span id="market-demand">0</span>
 				</div>
-				<div>
-					<h2>Power plant</h3>
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Status</th>
-								<th>Production (kW)</th>
-								<th>Operations</th>
-								<th>Battery (kW)</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td id="status"></td>
-								<td id="production"></td>
-								<td id="operations">
-									<input id="operationButton" class="btn btn-danger" onclick="changePowerPlantStatus(event, this)" type="button">
-								</td>
-								<td id="battery"></td>
-							</tr>
-						</tbody>
-					</table>
-					<div>
+				<div class="card">
+					<div class="card-body">
+						<h2>Power plant</h3>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Status</th>
+									<th>Production (kW)</th>
+									<th>Operations</th>
+									<th>Battery (kW)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td id="status"></td>
+									<td id="production"></td>
+									<td id="operations">
+										<input id="operationButton" class="btn btn-danger" onclick="changePowerPlantStatus(event, this)" type="button">
+									</td>
+									<td id="battery"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
 						<h2>
 							Production ratio
 						</h2>
@@ -56,7 +63,9 @@
 						<%- include("../partials/slider", {id:"ratioProd"}) %>
 						<label id="displayProdMarketRatio" for="ratioProd"></label>
 					</div>
-					<div>
+				</div>
+				<div class="card">
+					<div class="card-body">
 						<h2>
 							Pricing
 						</h2>
@@ -84,6 +93,7 @@
 							</div>
 						</form>
 					</div>
+				</div>
 				<div class="card">
 					<div class="card-body">
 						<h3>Prosumer overview</h3>
