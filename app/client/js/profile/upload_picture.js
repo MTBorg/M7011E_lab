@@ -11,7 +11,12 @@ function uploadImageFormSubmit(event) {
       headers: { "content-type": "application/json", authToken },
       body: JSON.stringify({ image })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 413) {
+          throw new Error("Image size too large");
+        }
+        return res.json();
+      })
       .then(res => (document.getElementById("image").src = image))
       .catch(error => alert(`Failed to upload image: ${error}`));
   };

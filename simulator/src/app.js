@@ -13,8 +13,19 @@ const port = 8080;
 
 app.use(authMiddleWare);
 // Increase the maximum request limit in order to serve images
-app.use(bodyParser.json({ limit: "5mb" }));
 app.use(cors());
+app.use(bodyParser.json({ limit: "5mb" }));
+
+// Detect if a request is too large
+app.use(function(error, req, res, next) {
+  if (error.type === "entity.too.large") {
+    res.status(413).send();
+    res.end();
+  } else {
+    next();
+  }
+});
+
 app.use(
   "/graphql",
   expressGraphQL(req => ({
