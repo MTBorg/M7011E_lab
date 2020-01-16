@@ -33,9 +33,7 @@ describe("registration", () => {
       });
 
       it("should return null if no manager password is passed", async () => {
-        expect(
-          await registerManager("email", "password", "managerPassword")
-        ).to.be.equal(null);
+        expect(await registerManager("email", "password")).to.be.equal(null);
       });
 
       it("should return null if an error is raised", async () => {
