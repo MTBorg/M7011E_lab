@@ -20,10 +20,9 @@ async function blockProsumer(prosumerId) {
     if (json.data.blockProsumer != null) {
       if (json.data.blockProsumer) {
         document.getElementById(`blocked-status-${prosumerId}`).innerText =
-          "Blocked";
+          "\u2714";
       } else {
-        document.getElementById(`blocked-status-${prosumerId}`).innerText =
-          "Not blocked";
+        document.getElementById(`blocked-status-${prosumerId}`).innerText = "";
         alert("Failed to block prosumer");
       }
     }

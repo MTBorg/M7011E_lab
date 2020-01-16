@@ -1,16 +1,35 @@
 <script type="text/javascript" src="/js/util.js"></script>
 <script type="text/javascript" src="/js/dashboard/manager/prosumerOverview/prosumerOverview.js"></script>
 <script type="text/javascript" src="/js/dashboard/manager/prosumerOverview/blockProsumer.js"></script>
-<ul>
+<table class="table">
+	<thead>
+		<tr>
+			<td>Prosumer id - email</td>
+			<td>Online</td>
+			<td>Block</td>
+			<td>Blocked</td>
+			<td>Blackout</td>
+		</tr>
+	</thead>
 	<% prosumers.forEach(prosumer => { %>
-		<li>
-			<span id=<%= `online-status-${prosumer.id}` %>><%=prosumer.account.online ? "Online" : "Offline" %></span>
-			<a 
-				href=<%=`/prosumer-summary/${prosumer.id}`%>
-			><%= prosumer.id %> - <%= prosumer.account.email %></a>
-			<button onclick=<%= `blockProsumer(${prosumer.id})` %>>Block</button>
-			<span id=<%= `blocked-status-${prosumer.id}` %>><%=prosumer.blocked ? "Blocked" : "Not blocked" %></span>
-			<span id=<%= `blackout-status-${prosumer.id}` %>><%=prosumer.blackout ? "Blackout" : "" %></span>
-		</li>
+		<tr>
+			<td>
+				<a 
+					href=<%=`/prosumer-summary/${prosumer.id}`%>
+				><%= prosumer.id %> - <%= prosumer.account.email %></a>
+			</td>
+			<td>
+				<span id=<%= `online-status-${prosumer.id}` %>><%=prosumer.account.online ? "\u2714" : "" %></span>
+			</td>
+			<td>
+				<button class="btn btn-danger" onclick=<%= `blockProsumer(${prosumer.id})` %>>Block</button>
+			</td>
+			<td>
+				<span id=<%= `blocked-status-${prosumer.id}` %>><%= prosumer.blocked ? "\u2714" : "" %></span>
+			</td>
+			<td>
+				<span id=<%= `blackout-status-${prosumer.id}` %>><%=prosumer.blackout ? "\u2714" : "" %></span>
+			</td>
+		</tr>
 	<% }) %>
-</ul>
+</table>

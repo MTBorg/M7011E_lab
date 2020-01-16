@@ -1,3 +1,4 @@
+const POLL_INTERVAL = 3000;
 document.addEventListener("DOMContentLoaded", () => {
   pollFunc(updateData, POLL_INTERVAL);
 });
@@ -32,13 +33,13 @@ async function updateData() {
       if (prosumer.blackout) numBlackout++;
       document.getElementById(
         `blocked-status-${prosumer.id}`
-      ).innerText = prosumer.blocked ? "Blocked" : "Not blocked";
+      ).innerText = prosumer.blocked ? "\u2714" : "";
       document.getElementById(
         `blackout-status-${prosumer.id}`
-      ).innerText = prosumer.blackout ? "Blackout" : "";
+      ).innerText = prosumer.blackout ? "\u2714" : "";
       document.getElementById(
         `online-status-${prosumer.id}`
-      ).innerText = prosumer.account.online ? "Online" : "Offline";
+      ).innerText = prosumer.account.online ? "\u2714" : "";
     });
     document.getElementById("prosumer-status").innerText =
       numBlackout > 0
