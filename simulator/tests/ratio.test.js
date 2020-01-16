@@ -10,10 +10,10 @@ const {
   deficitRatioQuery,
   setDeficitRatioQuery,
   setExcessRatioQuery,
-  setManagerProdRatio,
-  setManagerProdRatioQuery,
-  managerProdRatio,
-  managerProdRatioQuery
+  setPowerPlantProdRatio,
+  setPowerPlantProdRatioQuery,
+  powerPlantProdRatio,
+  powerPlantProdRatioQuery
 } = require("../src/models/ratio.js");
 
 describe("Ratios", () => {
@@ -67,23 +67,23 @@ describe("Ratios", () => {
     });
   });
 
-  describe("setManagerProdRatio", async () => {
-    it("should return the managers new production ratio", async () => {
+  describe("setPowerPlantProdRatio", async () => {
+    it("should return the power plants new production ratio", async () => {
       poolStub = sinon
         .stub(pool, "query")
-        .withArgs(setManagerProdRatioQuery, [1, 0.2])
+        .withArgs(setPowerPlantProdRatioQuery, [0.2])
         .resolves({ rows: [{}] });
-      expect(await setManagerProdRatio(1, 0.2)).to.equal(0.2);
+      expect(await setPowerPlantProdRatio(0.2)).to.equal(0.2);
     });
   });
 
-  describe("managerProdRatio", async () => {
-    it("should return the managers market production ratio", async () => {
+  describe("powerPlantProdRatio", async () => {
+    it("should return the power plants market production ratio", async () => {
       poolStub = sinon
         .stub(pool, "query")
-        .withArgs(managerProdRatioQuery, [1])
+        .withArgs(powerPlantProdRatioQuery)
         .resolves({ rows: [{ ratio_production_market: 0.8 }] });
-      expect(await managerProdRatio(1)).to.equal(0.8);
+      expect(await powerPlantProdRatio(1)).to.equal(0.8);
     });
   });
 });
