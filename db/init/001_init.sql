@@ -46,6 +46,8 @@ CREATE TYPE power_plant_status as ENUM('stopped', 'started', 'starting');
 CREATE TABLE power_plants (
 	id SERIAL,
 	battery_id INTEGER,
+	market_electricity NUMERIC DEFAULT 0,
+	ratio_production_market NUMERIC DEFAULT 0.5,
 	status power_plant_status,
 	PRIMARY KEY (id),
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)
@@ -56,7 +58,6 @@ CREATE TABLE managers(
 	id SERIAL,
 	account_id INT NOT NULL,
 	power_plant_id INT NOT NULL DEFAULT 1,
-	ratio_production_market NUMERIC DEFAULT 0.5,
 	PRIMARY KEY (id),
 	FOREIGN KEY (account_id) REFERENCES accounts (id),
 	FOREIGN KEY (power_plant_id) REFERENCES power_plants (id)

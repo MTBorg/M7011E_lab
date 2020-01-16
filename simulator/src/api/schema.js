@@ -26,7 +26,7 @@ const {
 const {
   setDeficitRatio,
   setExcessRatio,
-  setManagerProdRatio
+  setPowerPlantProdRatio
 } = require("../models/ratio");
 const {
   authenticateLoggedIn,
@@ -176,6 +176,10 @@ const powerPlantType = new GraphQLObjectType({
       resolve(_obj, _args, context) {
         return getCurrentProduction(context.user.accountId);
       }
+    },
+    ratioProductionMarket: {
+      type: GraphQLFloat,
+      sqlColumn: "ratio_production_market"
     }
   })
 });
@@ -197,10 +201,6 @@ const managerType = new GraphQLObjectType({
       sqlColumn: "account_id",
       sqlJoin: (managerTable, accountTable) =>
         `${managerTable}.account_id = ${accountTable}.id`
-    },
-    ratioProductionMarket: {
-      type: GraphQLFloat,
-      sqlColumn: "ratio_production_market"
     },
     powerplant: {
       type: powerPlantType,
@@ -236,7 +236,6 @@ userUnionType._typeConfig = {
 			blocked,
 			battery_id,
 			blackout,
-			NULL as ratio_production_market,
 			NULL as power_plant_id,
 			'prosumer' as "$type"
 		FROM prosumers
@@ -253,7 +252,6 @@ userUnionType._typeConfig = {
 			NULL as blocked,
 			NULL as battery_id,
 			NULL as blackout,
-			ratio_production_market,
 			power_plant_id,
 			'manager' as "$type"
 		FROM managers)`,
@@ -361,8 +359,8 @@ const mutationType = new GraphQLObjectType({
       args: {
         ratio: { type: GraphQLFloat }
       },
-      resolve: authenticateIsManager((_obj, args, context) =>
-        setManagerProdRatio(context.user.accountId, args.ratio)
+      resolve: authenticateIsManager((_obj, args) =>
+        setPowerPlantProdRatio(args.ratio)
       )
     },
     setRatioDeficitMarket: {

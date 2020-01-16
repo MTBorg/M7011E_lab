@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const ratios = await getRatios();
-  const ratioProdMarket = ratios.ratioProductionMarket * 100;
+  const ratioProdMarket = ratios.powerplant.ratioProductionMarket * 100;
 
   document.getElementById("ratioProd").setAttribute("value", ratioProdMarket);
 

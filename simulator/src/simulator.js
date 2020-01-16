@@ -87,18 +87,18 @@ async function updateProsumerTick(prosumerId) {
 
           // Some rounding to compensate for floating point errors
           if (boughtAmount.toPrecision(5) !== marketAmount.toPrecision(5)) {
-            console.log(
-              `WARNING: BLACKOUT for household where prosumer_id = ${prosumerId}\n	Reason: Not enough market supply`
-            );
+            // console.log(
+            //   `WARNING: BLACKOUT for household where prosumer_id = ${prosumerId}\n	Reason: Not enough market supply`
+            // );
             setBlackout(prosumerId, true);
           } else if (currBlackout) {
             setBlackout(prosumerId, false);
           }
         } else if (usedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)) {
           // prosumer not buying from market so batttery needs to supply all of the deficit
-          console.log(
-            `WARNING: blackout for household where prosumer_id = ${prosumerId}\n	Reason: Not buying from market`
-          );
+          // console.log(
+          //   `WARNING: blackout for household where prosumer_id = ${prosumerId}\n	Reason: Not buying from market`
+          // );
           if (!currBlackout) setBlackout(prosumerId, true);
         }
       }
@@ -139,9 +139,14 @@ function updateProsumers(tickReset) {
 }
 
 async function updatePowerPlants() {
+  // NOTE: query needs changing if more than one power plant
   const powerPlants = await pool.query(
     `
-		SELECT id, status FROM power_plants;
+		SELECT 
+			power_plants.id,
+			power_plants.status,
+			ratio_production_market
+		FROM power_plants WHERE id=1 
 		`
   );
 
@@ -150,6 +155,20 @@ async function updatePowerPlants() {
   // implemented in the future.
   powerPlants.rows.forEach(async powerPlant => {
     if (powerPlant.status === "started") {
+      const marketAmount =
+        POWERPLANT_OUTPUT * powerPlant.ratio_production_market;
+      const batteryAmount =
+        POWERPLANT_OUTPUT * (1 - powerPlant.ratio_production_market);
+
+      // Supply market with a ratio of the produced electricity
+      pool.query(
+        `
+				UPDATE power_plants SET market_electricity = $1 WHERE id = $2 
+			`,
+        [marketAmount, powerPlant.id]
+      );
+
+      // Charge power plant battery
       pool
         .query(
           `
@@ -170,7 +189,7 @@ async function updatePowerPlants() {
 					WHERE id = $2
 					)
 					`,
-          [POWERPLANT_OUTPUT, powerPlant.id]
+          [batteryAmount, powerPlant.id]
         )
         .catch(e =>
           console.error(`Error while charging power plant battery: ${e}`)

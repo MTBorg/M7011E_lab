@@ -16,12 +16,13 @@ const setExcessRatioQuery = `
 UPDATE prosumers SET ratio_excess_market = $2 WHERE id = (SELECT id FROM prosumers WHERE account_id = $1)
 `;
 
+// NOTE: needs changing if more than one power plant
 const setManagerProdRatioQuery = `
-UPDATE managers SET ratio_production_market = $2 WHERE account_id = $1
+UPDATE power_plants SET ratio_production_market = $1 WHERE id = 1
 `;
 
 const managerProdRatioQuery = `
-SELECT ratio_production_market FROM managers WHERE id = $1
+SELECT ratio_production_market FROM power_plants WHERE id = 1
 `;
 
 /**
@@ -76,13 +77,12 @@ async function setDeficitRatio(accountId, ratio) {
 
 /**
  * Gets the ratio of power plants production which will be sent to the market
- * @param {Number} managerId the managers id
  * @returns the ratio
  */
-async function managerProdRatio(managerId) {
+async function powerPlantProdRatio() {
   let ratioProd = null;
   await pool
-    .query(managerProdRatioQuery, [managerId])
+    .query(managerProdRatioQuery)
     .then(res => (ratioProd = res.rows[0].ratio_production_market))
     .catch(err =>
       console.error("Error while querying manager production ratio: ", err)
@@ -90,9 +90,9 @@ async function managerProdRatio(managerId) {
   return ratioProd;
 }
 
-async function setManagerProdRatio(accountId, ratio) {
+async function setPowerPlantProdRatio(ratio) {
   try {
-    await pool.query(setManagerProdRatioQuery, [accountId, ratio]);
+    await pool.query(setManagerProdRatioQuery, [ratio]);
   } catch (err) {
     console.error(`Failed while setting manager ratio: ${err}`);
   }
@@ -104,12 +104,12 @@ module.exports = {
   deficitRatio,
   setDeficitRatio,
   setExcessRatio,
-  setManagerProdRatio,
+  setPowerPlantProdRatio,
   excessRatioQuery,
   deficitRatioQuery,
   setDeficitRatioQuery,
   setExcessRatioQuery,
   setManagerProdRatioQuery,
-  managerProdRatio,
+  powerPlantProdRatio,
   managerProdRatioQuery
 };

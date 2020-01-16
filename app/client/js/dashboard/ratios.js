@@ -6,7 +6,9 @@ async function getRatios() {
 				ratioDeficitMarket
 			},
 			... on manager {
-				ratioProductionMarket
+				powerplant {
+					ratioProductionMarket
+				}
 			}
 		}
 	}`;

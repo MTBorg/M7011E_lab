@@ -19,10 +19,29 @@ UPDATE batteries
 `;
 
 // NOTE: Needs to change if more power plants
-const buyBeforeQuery = `
+const powerPlantStatusQuery = `
+SELECT status FROM power_plants WHERE id = 1
+`;
+const buyMarketSupplyBeforeQuery = `
+SELECT market_electricity FROM power_plants WHERE id=1 FOR UPDATE
+`;
+const buyMarketSupplyQuery = `
+UPDATE power_plants
+  SET market_electricity = (
+		CASE
+			WHEN market_electricity - $1 < 0 THEN
+				0
+			ELSE
+				market_electricity - $1
+		END
+	)
+	WHERE id=1
+	RETURNING market_electricity AS after_amount
+`;
+const buyBatteryBeforeQuery = `
 SELECT power FROM batteries WHERE id = (SELECT battery_id FROM power_plants WHERE id = 1) FOR UPDATE
 `;
-const buyQuery = `
+const buyBatteryQuery = `
 UPDATE batteries
 	SET power = (
 		CASE
@@ -54,8 +73,9 @@ async function sellToMarket(amount) {
 }
 
 /**
- * Buys a specified amount of power from the power plant. Note that the amount bought might not
- * equal the amount specified if the power plants battery is depleted.
+ * Buys a specified amount of power from the power plant,
+ * if the power plant is producing the electricity directed to the market is bought (battery if not producing).
+ * Note that the amount bought might not equal the amount specified if the full amount can not be supplied.
  * @param {Number} amount the amount of power to buy
  * @retuns the amount bought
  */
@@ -63,11 +83,22 @@ async function buyFromMarket(amount) {
   let boughtAmount = null;
   const client = await pool.connect();
   try {
+    const res = await client.query(powerPlantStatusQuery);
+    const powerPlantStatus = res.rows[0].status;
     await client.query("BEGIN");
-    const before = await client.query(buyBeforeQuery);
-    const beforeAmount = before.rows[0].power;
-    const after = await client.query(buyQuery, [amount]);
-    boughtAmount = beforeAmount - after.rows[0].after_amount;
+    // if the power plant is not producing buy electricity from battery
+    if (powerPlantStatus !== "started") {
+      const before = await client.query(buyBatteryBeforeQuery);
+      const beforeAmount = before.rows[0].power;
+      const after = await client.query(buyBatteryQuery, [amount]);
+      boughtAmount = beforeAmount - after.rows[0].after_amount;
+    } else {
+      // buy directly from the electricity supplied for the market while producing
+      const before = await client.query(buyMarketSupplyBeforeQuery);
+      const beforeAmount = before.rows[0].market_electricity;
+      const after = await client.query(buyMarketSupplyQuery, [amount]);
+      boughtAmount = beforeAmount - after.rows[0].after_amount;
+    }
     await client.query("COMMIT");
   } catch (e) {
     await client.query("ROLLBACK");
@@ -89,15 +120,14 @@ async function calculateMarketDemand() {
   return result.rows[0].demand;
 }
 
-function test() {
-  return 4.0;
-}
 module.exports = {
   sellToMarket,
   buyFromMarket,
   sellQuery,
-  buyQuery,
-  buyBeforeQuery,
+  buyBatteryQuery,
+  buyBatteryBeforeQuery,
+  buyMarketSupplyBeforeQuery,
+  buyMarketSupplyQuery,
   calculateMarketDemand,
-  test
+  powerPlantStatusQuery
 };
