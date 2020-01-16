@@ -23,6 +23,10 @@
 			.container{
 				margin-top: 20px;
 			}
+
+			.card{
+				margin-top: 20px;
+			}
 		</style>
   </head>
   <body>
@@ -30,11 +34,15 @@
 		<div class="container card">
 			<div class="card-body">
 				<h1>Profile</h1>
-				<% if (typeof user !== "undefined") { %> <% if (user.email) { %>
-				<h2 id="email-header"><%= user.email %></h2>
-				<% } %> <% } %> <img class="rounded img-fluid" id="image"
-				src=<%= user.image%> alt="Profile picture">
-				<div style="margin-top: 20px;margin-bottom: 20px;" class="card">
+				<% if (typeof user !== "undefined") { %> 
+					<% if (user.email) { %>
+						<h2 id="email-header"><%= user.email %></h2>
+					<% } %> 
+						<img class="rounded img-fluid" id="image"
+						onerror="this.onerror=null; this.src='static/default.png'"
+						src=<%= user.image %>>
+				<% } %> 
+				<div class="card">
 					<div class="card-body">
 						<h3>Upload picture</h3>
 						<form onsubmit="uploadImageFormSubmit(event)">
@@ -62,7 +70,7 @@
 						</form>
 					</div>
 				</div>
-				<div style="margin-bottom:20px;margin-top:20px" class="card">
+				<div class="card">
 					<div class="card-body">
 						<h3 style="margin: 0px">Battery</h3>
 						<% if (typeof user.battery !== "undefined") { %>
