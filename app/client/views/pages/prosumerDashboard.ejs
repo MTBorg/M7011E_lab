@@ -1,51 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-		<%- include("../partials/bootstrap") %>
-		<script type="text/javascript" src="/js/util.js"></script>
+    <%- include("../partials/bootstrap") %>
+    <script type="text/javascript" src="/js/util.js"></script>
+    <script type="text/javascript" src="/js/fragments/fragments.js"></script>
+    <script type="text/javascript" src="/js/dashboard/ratios.js"></script>
     <script
       type="text/javascript"
-      src="/js/fragments/fragments.js"
+      src="/js/dashboard/prosumer/displayRatios.js"
     ></script>
-    <script type="text/javascript" src="/js/dashboard/ratios.js"></script>
-		<script type="text/javascript" src="/js/dashboard/prosumer/displayRatios.js"></script>
-		<script type="text/javascript" src="/js/dashboard/data.js"></script>
-		<script type="text/javascript" src="/js/dashboard/prosumer/dashboard.js"></script>
+    <script type="text/javascript" src="/js/dashboard/data.js"></script>
+    <script
+      type="text/javascript"
+      src="/js/dashboard/prosumer/dashboard.js"
+    ></script>
+    <style>
+      .container {
+        margin-top: 20px;
+      }
+      .card {
+        margin: 10px;
+      }
+    </style>
     <meta charset="UTF-8" />
     <title>Dashboard</title>
   </head>
   <body>
-		<%- include("../partials/navbar.ejs") %>
+    <%- include("../partials/navbar.ejs") %>
     <div class="container card">
-			<div class="card-body">
-				<h1>Dashboard</h1>
-				<div>
-					<h2>Overview</h3>
-					<%- include("../partials/prosumerStatsTable") %>
-				</div>
-				<div>
-					<h2>Ratios</h2>
-					<div>
-						<h3>Excessive production</h3>
-						<span id="block-status"></span>
-						<div>
-							<label id="displayExcessBatteryRatio" for="ratioExcess"></label>
-							<%- include("../partials/slider", {id:"ratioExcess"}) %>
-							<label id="displayExcessMarketRatio" for="ratioExcess"></label>
-						</div>
-					</div>
-					<div>
-						<div>
-							<h3>Under-production</h3>
-							<div>
-								<label id="displayDeficitBatteryRatio" for="ratioDeficit"></label>
-								<%- include("../partials/slider", {id:"ratioDeficit"}) %>
-								<label id="displayDeficitMarketRatio" for="ratioDeficit"></label>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+      <div class="card-body">
+        <h1>Dashboard</h1>
+        <div class="card">
+          <h3 class="card-header">Overview</h3>
+          <div class="card-body">
+            <%- include("../partials/prosumerStatsTable") %>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-header">Ratios</h3>
+          <div class="card-body">
+            <h4 class="card-title">Excessive production</h4>
+            <p class="card-text">
+              The ratio of electricity sold to the market and stored in the
+              battery during excessive production
+            </p>
+            <span id="block-status"></span>
+            <label id="displayExcessBatteryRatio" for="ratioExcess"></label>
+            <%- include("../partials/slider", {id:"ratioExcess"}) %>
+            <label id="displayExcessMarketRatio" for="ratioExcess"></label>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title">Under-production</h4>
+            <p class="card-text">
+              The ratio of electricity bought from the market and taken from the
+              battery during under-production
+            </p>
+            <label id="displayDeficitBatteryRatio" for="ratioDeficit"></label>
+            <%- include("../partials/slider", {id:"ratioDeficit"}) %>
+            <label id="displayDeficitMarketRatio" for="ratioDeficit"></label>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
