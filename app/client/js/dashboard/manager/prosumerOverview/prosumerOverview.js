@@ -46,7 +46,7 @@ async function updateData() {
         ? numBlackout > 1
           ? `${numBlackout} prosumers are currently experiencing blackouts`
           : `${numBlackout} prosumer is currently experiencing a blackout`
-        : `No prosumers are exeriencing blackouts`;
+        : `No prosumers are currently exeriencing blackouts`;
   } catch (error) {
     alert(`Failed to fetch prosumers: ${error}`);
   }

@@ -22,10 +22,8 @@ async function updateMarketDemand() {
       })
     });
     const json = await response.json();
-
-    document.getElementById(
-      "market-demand"
-    ).innerText = json.data.marketDemand.toFixed(2);
+    const demand = json.data.marketDemand.toFixed(2);
+    document.getElementById("market-demand").innerText = `${demand} kW`;
   } catch (error) {
     console.error(`Failed to get market demand: ${error}`);
   }
