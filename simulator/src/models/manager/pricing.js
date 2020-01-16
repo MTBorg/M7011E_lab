@@ -2,8 +2,8 @@ const { pool } = require("../../db.js");
 const { turbineOutput } = require("../prosumer/windturbine");
 
 // Price in SEK
-const START_PRICE = 0.5;
-const PRICE_COEFFICIENT = 0.05;
+const START_PRICE = 0.35;
+const PRICE_COEFFICIENT = 0.15;
 
 const PROSUMERS_QUERY =
   "SELECT current_consumption, current_wind_speed, ratio_excess_market, ratio_deficit_market FROM prosumers";
