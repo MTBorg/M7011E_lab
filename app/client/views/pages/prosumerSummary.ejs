@@ -25,8 +25,9 @@
 	<div class="container card">
 		<div class="card-body">
 			<h1><%= prosumer.id %> - <%= prosumer.account.email %></h1>
-			<img class="img-fluid" id="image" 
-				src=<%= typeof image !== "undefined" && image != "" ? image : "#"%>
+			<img class="rounded img-fluid" id="image"
+        onerror="this.onerror=null; this.src='/static/default.png';
+				this.style='width: 25%'" src=<%= image %>
 			>
 			<%- include("../partials/prosumerStatsTable") %>
 			<div>
