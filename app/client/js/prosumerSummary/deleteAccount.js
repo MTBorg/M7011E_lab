@@ -20,7 +20,7 @@ async function deleteProsumerAccount(prosumerId) {
       alert("Failed to delete account, error: unkown");
     } else {
       alert("Successfully deleted account");
-      window.location.replace("/prosumer-overview");
+      window.location.replace("/dashboard");
     }
   } catch (error) {
     alert(`Failed to delete account: ${error}`);
