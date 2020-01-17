@@ -11,25 +11,6 @@
 			<td>Blackout</td>
 		</tr>
 	</thead>
-	<% prosumers.forEach(prosumer => { %>
-		<tr>
-			<td>
-				<a 
-					href=<%=`/prosumer-summary/${prosumer.id}`%>
-				><%= prosumer.id %> - <%= prosumer.account.email %></a>
-			</td>
-			<td>
-				<span id=<%= `online-status-${prosumer.id}` %>><%=prosumer.account.online ? "\u2714" : "" %></span>
-			</td>
-			<td>
-				<button class="btn btn-danger" onclick=<%= `blockProsumer(${prosumer.id})` %>>Block</button>
-			</td>
-			<td>
-				<span id=<%= `blocked-status-${prosumer.id}` %>><%= prosumer.blocked ? "\u2714" : "" %></span>
-			</td>
-			<td>
-				<span id=<%= `blackout-status-${prosumer.id}` %>><%=prosumer.blackout ? "\u2714" : "" %></span>
-			</td>
-		</tr>
-	<% }) %>
+	<tbody id="prosumer-overview-body">
+	</tbody>
 </table>
