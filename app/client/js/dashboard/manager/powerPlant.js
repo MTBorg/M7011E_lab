@@ -1,14 +1,8 @@
-const INTERVAL_TIMER = 10000;
 const POWERPLANT_STARTUP_TIME = 30 * 1000;
 
-document.addEventListener("DOMContentLoaded", () => {
-  pollFunc(getPowerPlantStatus, INTERVAL_TIMER);
-});
-
-async function getPowerPlantStatus() {
-  const data = await getData();
-  const powerPlant = data.me.powerplant;
-  const battery = data.me.powerplant.battery;
+registerPollCallback(e => {
+  const powerPlant = e.detail.data.me.powerplant;
+  const { battery } = e.detail.data.me.powerplant;
 
   document.getElementById("status").innerHTML = powerPlant.status;
   document.getElementById("production").innerHTML =
@@ -20,7 +14,7 @@ async function getPowerPlantStatus() {
     powerPlant.status == "stopped" ? "START" : "STOP";
   document.getElementById("operationButton").className =
     powerPlant.status == "stopped" ? "btn btn-success" : "btn btn-danger";
-}
+});
 
 async function changePowerPlantStatus(event, button) {
   event.preventDefault();

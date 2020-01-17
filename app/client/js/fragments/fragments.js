@@ -38,3 +38,14 @@ fragment prosumerOverviewFields on prosumer{
 	}
 }
 `;
+
+const powerPlantStatusFields = `
+fragment powerPlantStatusFields on powerPlant{
+	status,
+	battery {
+		power,
+		maxCapacity
+	},
+	currentProduction
+}
+`;

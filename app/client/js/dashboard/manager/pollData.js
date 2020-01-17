@@ -13,9 +13,17 @@ async function getDashboardData() {
 		prosumers{
 			... prosumerOverviewFields
 		},
-		marketDemand
+		marketDemand,
+		me{
+			... on manager{
+				powerplant{
+					... powerPlantStatusFields
+				}
+			}
+		}
 	}
 	${prosumerOverviewFields}
+	${powerPlantStatusFields}
 	`;
   const authToken = getCookie("authToken", document.cookie);
   try {
