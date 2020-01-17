@@ -23,7 +23,9 @@ registerPollCallback(e => {
 				<a href="/prosumer-summary/${prosumer.id}">${prosumer.id} - ${prosumer.account.email}</a>
 				`;
       onlineCell.innerHTML = `
-				<span id="${onlineCellId}"> ${prosumer.account.online ? "\u2714" : ""}</span>
+				<span id="${onlineCellId}" class="dot-status ${
+        prosumer.account.online ? `dot-status-online"` : `dot-status-offline"`
+      }></span>
 				`;
       blockBtnCell.innerHTML = `
 				<button class="btn btn-danger" onclick="blockProsumer(${prosumer.id})">Block</button>
@@ -41,11 +43,22 @@ registerPollCallback(e => {
       document.getElementById(blackoutCellId).innerText = prosumer.blackout
         ? "\u2714"
         : "";
-      document.getElementById(onlineCellId).innerText = prosumer.account.online
-        ? "\u2714"
-        : "";
+      const onlineCell = document.getElementById(onlineCellId);
+      // Updates the prosumers online status
+      if (
+        !onlineCell.classList.replace(
+          "dot-status-offline",
+          prosumer.account.online ? "dot-status-online" : "dot-status-offline"
+        )
+      ) {
+        onlineCell.classList.replace(
+          "dot-status-online",
+          prosumer.account.online ? "dot-status-online" : "dot-status-offline"
+        );
+      }
     }
   });
+
   document.getElementById("prosumer-status").innerText =
     numBlackout > 0
       ? numBlackout > 1
