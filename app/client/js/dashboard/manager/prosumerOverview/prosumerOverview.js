@@ -1,4 +1,3 @@
-// const POLL_INTERVAL = 3000;
 document.addEventListener("DOMContentLoaded", () => {
   pollFunc(updateData, POLL_INTERVAL);
 });
