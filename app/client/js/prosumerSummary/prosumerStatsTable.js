@@ -23,6 +23,9 @@ async function updateData() {
   document.getElementById("block-status").innerHTML = prosumer.blocked
     ? "<i data-feather='x-octagon' style=color:red></i> Blocked from selling"
     : "";
+  document.getElementById("blackout-status").innerHTML = prosumer.blackout
+    ? "<i data-feather='alert-triangle' style=color:red></i> Prosumer is currently experiencing a blackout"
+    : "";
   feather.replace();
 
   const netProd = prosumer.currentProduction - prosumer.currentConsumption;

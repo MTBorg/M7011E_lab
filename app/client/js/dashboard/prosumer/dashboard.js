@@ -19,6 +19,7 @@ async function updateData() {
 							currentWindSpeed
 							currentProduction
 							currentConsumption
+							blackout
 							blocked
 							battery{
 								power
@@ -46,10 +47,13 @@ async function updateData() {
       "consumption"
     ).innerHTML = prosumer.currentConsumption.toFixed(2);
 
-  document.getElementById("block-status").innerHTML = prosumer.blocked
-    ? "<i data-feather='x-octagon' style=color:red></i> You are blocked from selling"
-    : "";
-  feather.replace();
+    document.getElementById("block-status").innerHTML = prosumer.blocked
+      ? "<i data-feather='x-octagon' style=color:red></i> You are blocked from selling"
+      : "";
+    document.getElementById("blackout-status").innerHTML = prosumer.blackout
+      ? "<i data-feather='alert-triangle' style=color:red></i> You are currently experiencing a blackout"
+      : "";
+    feather.replace();
 
     const netProd = prosumer.currentProduction - prosumer.currentConsumption;
     document.getElementById("netProduction").innerHTML = netProd.toFixed(2);

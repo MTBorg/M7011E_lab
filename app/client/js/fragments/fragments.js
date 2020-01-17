@@ -20,6 +20,7 @@ fragment prosumerFields on prosumer {
 	ratioExcessMarket,
 	ratioDeficitMarket,
 	blocked,
+	blackout,
 	battery {
 		power,
 		maxCapacity
