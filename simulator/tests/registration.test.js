@@ -81,7 +81,7 @@ describe("registration", () => {
         sinon.stub(pool, "connect").resolves(mockClient);
 
         const token = await mockModule.registerManager(
-          "email",
+          "email@email.com",
           "password",
           "manager"
         );
