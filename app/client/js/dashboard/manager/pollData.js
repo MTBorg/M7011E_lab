@@ -1,10 +1,13 @@
-const TEST_INTERVAL = 3000;
+const POLL_INTERVAL = 3000;
 const POLL_MESSAGE_NAME = "POLL_UPDATE";
 
 document.addEventListener("DOMContentLoaded", () => {
-  pollFunc(getDashboardData, TEST_INTERVAL);
+  pollFunc(getDashboardData, POLL_INTERVAL);
 });
 
+/*
+ * Fetches all data needed to render the manager dashboard page properly.
+ */
 async function getDashboardData() {
   const query = `
 	{
@@ -51,6 +54,18 @@ async function getDashboardData() {
   }
 }
 
+/*
+ * Register a callback function that will be called on every poll interval.
+ *
+ * The callback will be passed an event object with a property detail which contains the
+ * property data which will be populated with all the data from the query. E.g. this will
+ * retrieve the data from the query
+ * function myCallback(e){
+ * 	const { data } = e.detail;
+ * }
+ *
+ * @param {Function} The callback function to call on every poll interval.
+ */
 function registerPollCallback(callback) {
   document.addEventListener(POLL_MESSAGE_NAME, callback);
 }
