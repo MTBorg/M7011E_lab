@@ -9,8 +9,12 @@ async function getDashboardData() {
   const query = `
 	{
 		simPricing,
-		pricing
+		pricing,
+		prosumers{
+			... prosumerOverviewFields
+		}
 	}
+	${prosumerOverviewFields}
 	`;
   const authToken = getCookie("authToken", document.cookie);
   try {

@@ -26,3 +26,15 @@ fragment prosumerFields on prosumer {
 	}
 } 
 `;
+
+const prosumerOverviewFields = `
+fragment prosumerOverviewFields on prosumer{
+	id
+	blocked
+	blackout
+	account{
+		online
+		email
+	}
+}
+`;
