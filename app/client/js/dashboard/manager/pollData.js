@@ -12,7 +12,8 @@ async function getDashboardData() {
 		pricing,
 		prosumers{
 			... prosumerOverviewFields
-		}
+		},
+		marketDemand
 	}
 	${prosumerOverviewFields}
 	`;
