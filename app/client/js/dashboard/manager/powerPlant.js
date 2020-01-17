@@ -1,5 +1,3 @@
-const POWERPLANT_STARTUP_TIME = 30 * 1000;
-
 registerPollCallback(e => {
   const powerPlant = e.detail.data.me.powerplant;
   const { battery } = e.detail.data.me.powerplant;
@@ -61,11 +59,4 @@ async function changePowerPlantStatus(event, button) {
     newStatus == "stopped" ? "btn btn-success" : "btn btn-danger";
   // Production will always be 0 after press since start up time
   document.getElementById("production").innerHTML = "0";
-
-  // Update power plant table when the power plant has started
-  if (newStatus == "starting") {
-    setTimeout(() => {
-      getPowerPlantStatus();
-    }, POWERPLANT_STARTUP_TIME);
-  }
 }
