@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+const validator = require("email-validator");
+
 const { pool } = require("../db.js");
 
 const privateKey = process.env.SECRET || "secret";
@@ -29,6 +31,10 @@ async function registerManager(email, password, managerPassword) {
 
   if (managerPassword !== MANAGER_PASSWORD) {
     return new Error("Invalid manager password");
+  }
+
+  if (!validator.validate(email)) {
+    return new Error("Invalid email format");
   }
 
   // Hash and salt the password
