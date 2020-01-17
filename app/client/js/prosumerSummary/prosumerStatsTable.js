@@ -20,9 +20,10 @@ async function updateData() {
     "consumption"
   ).innerHTML = prosumer.currentConsumption.toFixed(2);
 
-  document.getElementById("block-status").innerText = prosumer.blocked
-    ? "Blocked from selling"
+  document.getElementById("block-status").innerHTML = prosumer.blocked
+    ? "<i data-feather='x-octagon' style=color:red></i> Blocked from selling"
     : "";
+  feather.replace();
 
   const netProd = prosumer.currentProduction - prosumer.currentConsumption;
   document.getElementById("netProduction").innerHTML = netProd.toFixed(2);

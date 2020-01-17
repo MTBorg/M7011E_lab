@@ -6,6 +6,7 @@
 	<%- include("../partials/bootstrap") %>
 	<script type="text/javascript" src="/js/util.js"></script>
 	<script type="text/javascript" src="/js/fragments/fragments.js"></script>
+	<script src="https://unpkg.com/feather-icons"></script>
 	<script 
 		type="text/javascript" 
 		src="/js/prosumerSummary/prosumerStatsTable.js"
@@ -45,7 +46,7 @@
 						The ratio of electricity sold to the market and stored in the
 						battery during excessive production
 					</p>
-					<p id="block-status"></p>
+					<p class="card-text" id="block-status"></p>
 					<label id="displayExcessBatteryRatio" for="ratioExcess">0</label>
 					<%- include("../partials/slider", {id:"ratioExcess"}) %>
 					<label id="displayExcessMarketRatio" for="ratioExcess">100</label>

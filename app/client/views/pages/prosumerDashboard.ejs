@@ -9,6 +9,7 @@
       type="text/javascript"
       src="/js/dashboard/prosumer/displayRatios.js"
     ></script>
+    <script src="https://unpkg.com/feather-icons"></script>
     <script type="text/javascript" src="/js/dashboard/data.js"></script>
     <script
       type="text/javascript"
@@ -44,7 +45,7 @@
               The ratio of electricity sold to the market and stored in the
               battery during excessive production
             </p>
-            <span id="block-status"></span>
+            <p class="card-text" id="block-status"></p>
             <label id="displayExcessBatteryRatio" for="ratioExcess"></label>
             <%- include("../partials/slider", {id:"ratioExcess"}) %>
             <label id="displayExcessMarketRatio" for="ratioExcess"></label>
