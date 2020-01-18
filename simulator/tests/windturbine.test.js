@@ -16,7 +16,7 @@ describe("turbineOutput", () => {
   });
 
   it("Should not output power greater than the rated output power", () => {
-    expect(turbineOutput(cutOutSpeed * 0.9)).to.equal(ratedOutputPower);
+    expect(turbineOutput(cutOutSpeed * 0.9)).to.equal(ratedOutputPower + 50);
   });
 
   it("Should output power when the wind speed is inbetween the cut in and cut out wind speed", () => {
