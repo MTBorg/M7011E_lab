@@ -56,11 +56,11 @@ async function updateProsumerTick(prosumerId) {
         const batteryAmount = (1 - ratioExcessMarket) * excess;
         const chargedAmount = await chargeBattery(prosumerId, batteryAmount);
 
-        if (currBlackout) setBlackout(prosumerId, false);
+        if (currBlackout) await setBlackout(prosumerId, false);
 
         if (
           ratioExcessMarket > 0 &&
-          chargedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)
+          chargedAmount.toPrecision(5) < batteryAmount.toPrecision(5)
         ) {
           // add any excess power, which couldnt be stored in the battery, to the market amount
           marketAmount += batteryAmount - chargedAmount;
@@ -73,12 +73,14 @@ async function updateProsumerTick(prosumerId) {
         const ratioDeficitMarket = await deficitRatio(prosumerId);
         let marketAmount = ratioDeficitMarket * deficit;
         const batteryAmount = (1 - ratioDeficitMarket) * deficit;
+        let depletedBattery = false;
 
-        const usedAmount = await useBatteryPower(prosumerId, batteryAmount);
+        let usedAmount = await useBatteryPower(prosumerId, batteryAmount);
 
         // if the power stored in the battery was less than battery amount buy more from the market
-        if (usedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)) {
+        if (usedAmount.toPrecision(5) < batteryAmount.toPrecision(5)) {
           marketAmount += batteryAmount - usedAmount;
+          depletedBattery = true;
         }
 
         if (ratioDeficitMarket > 0) {
@@ -86,20 +88,26 @@ async function updateProsumerTick(prosumerId) {
           const boughtAmount = await buyFromMarket(marketAmount);
 
           // Some rounding to compensate for floating point errors
-          if (boughtAmount.toPrecision(5) !== marketAmount.toPrecision(5)) {
-            // console.log(
-            //   `WARNING: BLACKOUT for household where prosumer_id = ${prosumerId}\n	Reason: Not enough market supply`
-            // );
-            setBlackout(prosumerId, true);
+          if (boughtAmount.toPrecision(5) < marketAmount.toPrecision(5)) {
+            // if the market could not supply enough, try covering the rest with battery power
+            if (!depletedBattery) {
+              const missingAmount = marketAmount - boughtAmount;
+              usedAmount = await useBatteryPower(prosumerId, missingAmount);
+
+              if (usedAmount.toPrecision(5) < missingAmount.toPrecision(5)) {
+                setBlackout(prosumerId, true);
+              } else {
+                setBlackout(prosumerId, false);
+              }
+            } else {
+              setBlackout(prosumerId, true);
+            }
           } else if (currBlackout) {
             setBlackout(prosumerId, false);
           }
-        } else if (usedAmount.toPrecision(5) !== batteryAmount.toPrecision(5)) {
+        } else if (usedAmount.toPrecision(5) < batteryAmount.toPrecision(5)) {
           // prosumer not buying from market so batttery needs to supply all of the deficit
-          // console.log(
-          //   `WARNING: blackout for household where prosumer_id = ${prosumerId}\n	Reason: Not buying from market`
-          // );
-          if (!currBlackout) setBlackout(prosumerId, true);
+          if (!currBlackout) await setBlackout(prosumerId, true);
         }
       }
 
