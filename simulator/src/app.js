@@ -33,7 +33,7 @@ app.use(
     context: {
       user: req.user
     },
-    graphiql: true
+    graphiql: process.env.NODE_ENV !== "production"
   }))
 );
 
