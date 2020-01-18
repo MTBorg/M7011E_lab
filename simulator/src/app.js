@@ -96,7 +96,7 @@ app.listen(port, () => {
   );
 });
 
-const SIM_TICK_INTERVAL = 1000;
+const SIM_TICK_INTERVAL = 3000;
 const SIM_TICK_RATIO = 24;
 const SIM_TIME_SCALE = 1000 * 3600 * 24; // One day
 const SIM_START_TIME = Date.now(); // Simulate time starting from now
