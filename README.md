@@ -7,12 +7,12 @@ This project consisting of the labs in the course **M7011E - Design of Dynamic W
 # Installation guide
 Bellow follows information on how to get the system up and running on your local machine.
 
-## Prerequisite
+## Prerequisites
 - [docker](https://docs.docker.com/install/)
 - [docker-compose](https://docs.docker.com/compose/install/) (version 1.10.0 or later)
 
 ## Quick setup
-To quickly deploy and test the system locally clone the project and create the following (empty) files:
+To quickly deploy and test the system in dev environment locally clone the project and create the following (empty) files:
 - Place a file in the simulator directory called sim.env
 - Place a file in the app directory called app.env
 - Place a file in the db directory called db.env
@@ -20,7 +20,7 @@ To quickly deploy and test the system locally clone the project and create the f
 Then simply `docker-compose up --build` to start the system. By default the website is available at http://localhost:3000.
 
 ## Custom setup
-If you want to change any of the enviroment variables the following files has to be created and filled out.
+If you want to change hostname, ports etc. the following files has to be created and filled out.
 ### Simulator/API
 Place a file in the simulator directory called sim.env and fill out as below
 ```
