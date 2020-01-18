@@ -21,7 +21,7 @@ const prosumerRegistrationAccountsQuery = `
 	VALUES ($1, $2) 
 	RETURNING id`;
 const prosumerRegistrationBatteryQuery = `
-	INSERT INTO batteries (max_capacity) VALUES (0) RETURNING id;
+	INSERT INTO batteries (max_capacity) VALUES (50) RETURNING id;
 `;
 
 async function registerManager(email, password, managerPassword) {
