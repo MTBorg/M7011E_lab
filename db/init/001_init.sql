@@ -1,9 +1,11 @@
-CREATE USER gle;
-CREATE DATABASE gle;
-GRANT ALL PRIVILEGES ON DATABASE gle TO gle;
-ALTER DATABASE gle OWNER TO gle;
+\set db_user `echo "${DB_USER:-gle}"`
+\set db_name `echo "${DB_DATABASE:-gle}"`
+CREATE USER :db_user;
+CREATE DATABASE :db_name;
+GRANT ALL PRIVILEGES ON DATABASE :db_name TO :db_user;
+ALTER DATABASE :db_name OWNER TO :db_user;
 
-\c gle
+\c :db_name
 
 CREATE TABLE batteries (
 	id SERIAL,
@@ -11,7 +13,7 @@ CREATE TABLE batteries (
 	max_capacity NUMERIC,
 	PRIMARY KEY (id)
 );
-ALTER TABLE batteries OWNER TO gle;
+ALTER TABLE batteries OWNER TO :db_user;
 
 CREATE TABLE accounts (
 	id SERIAL,
@@ -22,7 +24,7 @@ CREATE TABLE accounts (
 	online BOOLEAN NOT NULL DEFAULT false,
 	PRIMARY KEY (id)
 );
-ALTER TABLE accounts OWNER TO gle;
+ALTER TABLE accounts OWNER TO :db_user;
 
 CREATE TABLE prosumers (
 	id SERIAL,
@@ -40,7 +42,7 @@ CREATE TABLE prosumers (
 	FOREIGN KEY (account_id) REFERENCES accounts(id),
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)
 );
-ALTER TABLE prosumers OWNER TO gle;
+ALTER TABLE prosumers OWNER TO :db_user;
 
 CREATE TYPE power_plant_status as ENUM('stopped', 'started', 'starting');
 CREATE TABLE power_plants (
@@ -52,7 +54,7 @@ CREATE TABLE power_plants (
 	PRIMARY KEY (id),
 	FOREIGN KEY (battery_id) REFERENCES batteries (id)
 );
-ALTER TABLE power_plants OWNER TO gle;
+ALTER TABLE power_plants OWNER TO :db_user;
 
 CREATE TABLE managers(
 	id SERIAL,
@@ -62,10 +64,10 @@ CREATE TABLE managers(
 	FOREIGN KEY (account_id) REFERENCES accounts (id),
 	FOREIGN KEY (power_plant_id) REFERENCES power_plants (id)
 );
-ALTER TABLE managers OWNER TO gle;
+ALTER TABLE managers OWNER TO :db_user;
 
 CREATE TABLE prices(
 	price NUMERIC NOT NULL,
 	PRIMARY KEY (price)
 );
-ALTER TABLE prices OWNER TO gle;
+ALTER TABLE prices OWNER TO :db_user;
