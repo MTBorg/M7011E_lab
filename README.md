@@ -19,11 +19,11 @@ To quickly deploy and test the system in dev environment locally clone the proje
 
 Then simply `docker-compose up --build` to start the system. By default the website is available at http://localhost:3000.
 
-In order to run the tests either run npm test in the docker container or install npm and dependencies locally using
+In order to run the simulator tests either run npm test in the docker container or install npm and dependencies locally by running
 ```
 npm install && npm install --only-dev
 ```
-and then
+from the simulator folder and then
 ```
 npm test
 ```
