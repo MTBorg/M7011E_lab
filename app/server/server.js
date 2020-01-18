@@ -46,7 +46,6 @@ app.get("/", async (req, res) => {
 
   if (user) {
     timestampUser(authToken);
-    console.log("user logged in");
     if (user.manager) {
       try {
         const response = await fetch(API_ADDRESS, {
@@ -77,7 +76,6 @@ app.get("/", async (req, res) => {
       render(res, "pages/prosumerDashboard", { user });
     }
   } else {
-    console.log("user NOT logged in");
     render(res, "pages/login", { user });
   }
 });
