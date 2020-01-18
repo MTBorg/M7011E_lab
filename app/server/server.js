@@ -39,12 +39,47 @@ function render(res, pagePath, obj) {
   res.render(pagePath, { API_ADDRESS, ...obj });
 }
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   const cookies = req.headers.cookie;
   const authToken = getCookie("authToken", cookies);
   const user = authToken ? parseAuthToken(authToken) : null;
-  timestampUser(authToken);
-  render(res, "pages/index", { user });
+
+  if (user) {
+    timestampUser(authToken);
+    console.log("user logged in");
+    if (user.manager) {
+      try {
+        const response = await fetch(API_ADDRESS, {
+          method: "POST",
+          headers: { "content-type": "application/json", authToken },
+          body: JSON.stringify({
+            query: `
+							{
+								prosumers{
+									id
+									blocked
+									account{
+										email
+									}
+									blackout
+								}
+							}`
+          })
+        });
+        const json = await response.json();
+        const { prosumers } = json.data;
+        render(res, "pages/managerDashboard", { prosumers, user });
+      } catch (error) {
+        console.log(error);
+        render(res, "partials/error");
+      }
+    } else {
+      render(res, "pages/prosumerDashboard", { user });
+    }
+  } else {
+    console.log("user NOT logged in");
+    render(res, "pages/login", { user });
+  }
 });
 
 app.get("/login", authenticateLoggedOut, (req, res) => {
